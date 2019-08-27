@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "---\ntitle: \"README\"\nauthor: \"Loic Verlingue\"\ndate: \"17 août 2019\"\noutput: html_document\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n\n## Installation\n\n```{r install}\nlibrary(devtools)\ninstall_github(\"https://gitlab.curie.fr/lverling/amonet.git\") #, host = \"gitlab.curie.fr\")\n```\n",
+    "contents" : "# AMoNet package V1\nAuthor: Loic Verlingue\n\n## Installation\n```{r install}\nlibrary(devtools)\ninstall_git('https://user:password@gitlab.curie.fr/lverling/amonet.git')\n```\n\n## Usage\nSee vignettes with:\n```{r}\nvignette(AMoNet_overview)\n```\n",
     "created" : 1566900480225.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3997241885",
+    "hash" : "3517801831",
     "id" : "8B67EBE6",
-    "lastKnownWriteTime" : 1566900683,
-    "last_content_update" : 1566900683911,
+    "lastKnownWriteTime" : 1566901436,
+    "last_content_update" : 1566901436955,
     "path" : "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet/README.md",
     "project_path" : "README.md",
     "properties" : {
