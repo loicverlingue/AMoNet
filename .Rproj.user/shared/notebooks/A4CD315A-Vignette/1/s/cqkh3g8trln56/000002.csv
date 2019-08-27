@@ -1,0 +1,5 @@
+"0","net<-simulate(net, nsim = 10, Logic = ""Sigmoid"", Parallel = F)"
+"1","[1]"
+"1"," ""As no Init, iStates, Mut or treatm defined, simulation will take 10 random initial states"""
+"1","
+"

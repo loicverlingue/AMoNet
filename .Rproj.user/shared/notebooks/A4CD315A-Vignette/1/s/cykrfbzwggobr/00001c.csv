@@ -1,0 +1,3 @@
+"0","#dim(net$TotAttractors)"
+"0","#print(net$history)"
+"0","#plot(net,LEGEND = F, PDF = F)"

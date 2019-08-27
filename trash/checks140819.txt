@@ -1,0 +1,492 @@
+Updating AMoNet documentation
+Writing NAMESPACE
+Loading AMoNet
+Writing NAMESPACE
+Writing LoadCleanTCGA.Rd
+-- Building ------------------------------------------------------------------- AMoNet --
+Setting env vars:
+* CFLAGS    : -Wall -pedantic
+* CXXFLAGS  : -Wall -pedantic
+* CXX11FLAGS: -Wall -pedantic
+-----------------------------------------------------------------------------------------
+v  checking for file 'C:\Users\L_VERLINGUE\Desktop\ModelK\Rpack\AMoNet/DESCRIPTION' (738ms)
+-  preparing 'AMoNet': (387ms)
+v  checking DESCRIPTION meta-information ... 
+-  installing the package to build vignettes
+v  creating vignettes (4m 8.1s)
+   Warning: 'inst/doc' file
+       'VignetteTCGA.R'
+     ignored as vignettes have been rebuilt.
+     Run R CMD build with --no-build-vignettes to prevent rebuilding.
+-  checking for LF line-endings in source and make files and shell scripts (763ms)
+-  checking for empty or unneeded directories
+   Removed empty directory 'AMoNet/tmp'
+-  looking to see if a 'data/datalist' file should be added
+-  building 'AMoNet_0.1.0.tar.gz'
+   
+-- Checking ------------------------------------------------------------------- AMoNet --
+Setting env vars:
+* _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
+* _R_CHECK_CRAN_INCOMING_       : FALSE
+* _R_CHECK_FORCE_SUGGESTS_      : FALSE
+-- R CMD check --------------------------------------------------------------------------
+-  using log directory 'C:/Users/L_VERLINGUE/AppData/Local/Temp/Rtmpop3quy/AMoNet.Rcheck' (1.7s)
+-  using R version 3.4.4 (2018-03-15)
+-  using platform: x86_64-w64-mingw32 (64-bit)
+-  using session charset: ISO8859-1
+-  using options '--no-manual --as-cran'
+v  checking for file 'AMoNet/DESCRIPTION'
+-  checking extension type ... Package
+-  this is package 'AMoNet' version '0.1.0'
+-  package encoding: UTF-8
+v  checking package namespace information ...
+v  checking package dependencies (2.9s)
+v  checking if this is a source package ...
+v  checking if there is a namespace ...
+v  checking for .dll and .exe files
+v  checking for hidden files and directories ... 
+v  checking for portable file names ... 
+v  checking whether package 'AMoNet' can be installed (6.4s)
+v  checking package directory (566ms)
+v  checking 'build' directory ...
+W  checking DESCRIPTION meta-information (1s)
+   Non-standard license specification:
+     What license is it under?
+   Standardizable: FALSE
+N  checking top-level files
+   Non-standard files/directories found at top level:
+     'model' 'trash'
+v  checking for left-over files ...
+v  checking index information (1.1s)
+v  checking package subdirectories (1s)
+v  checking R files for non-ASCII characters (357ms)
+v  checking R files for syntax errors (556ms)
+v  checking whether the package can be loaded (887ms)
+-  checking whether the package can be loaded with stated dependencies ...Erreur : package or namespace load failed for 'AMoNet': (558ms)
+    l'objet 'simulate' est introuvable pendant le chargement de l'espace de noms 'AMoNet'
+   Exécution arrêtée
+   
+   It looks like this package (or one of its dependent packages) has an
+   unstated dependence on a standard package.  All dependencies must be
+   declared in DESCRIPTION.
+   See section 'The DESCRIPTION file' in the 'Writing R Extensions'
+   manual.
+W  checking whether the package can be unloaded cleanly (620ms)
+   Erreur : package or namespace load failed for 'AMoNet':
+    l'objet 'simulate' est introuvable pendant le chargement de l'espace de noms 'AMoNet'
+   Exécution arrêtée
+W  checking whether the namespace can be loaded with stated dependencies (545ms)
+   Erreur : object 'simulate' not found whilst loading namespace 'AMoNet'
+   Exécution arrêtée
+   
+   A namespace must be able to be loaded with just the base namespace
+   loaded: otherwise if the namespace gets loaded by a saved object, the
+   session will be unable to start.
+   
+   Probably some imports need to be declared in the NAMESPACE file.
+v  checking whether the namespace can be unloaded cleanly (900ms)
+v  checking loading without being on the library search path (1.4s)
+N  checking dependencies in R code (573ms)
+   Erreur : package or namespace load failed for 'AMoNet':
+    object 'simulate' not found whilst loading namespace 'AMoNet'
+   Séquence d'appel :
+   6: stop(msg, call. = FALSE, domain = NA)
+   5: value[[3L]](cond)
+   4: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+   3: tryCatchList(expr, classes, parentenv, handlers)
+   2: tryCatch({
+          attr(package, "LibPath") <- which.lib.loc
+          ns <- loadNamespace(package, lib.loc)
+          env <- attachNamespace(ns, pos = pos, deps)
+      }, error = function(e) {
+          P <- if (!is.null(cc <- conditionCall(e))) 
+              paste(" in", deparse(cc)[1L])
+          else ""
+          msg <- gettextf("package or namespace load failed for %s%s:\n %s", 
+              sQuote(package), P, conditionMessage(e))
+          if (logical.return) 
+              message(paste("Error:", msg), domain = NA)
+          else stop(msg, call. = FALSE, domain = NA)
+      })
+   1: library(package, lib.loc = lib.loc, character.only = TRUE, verbose = FALSE)
+   Exécution arrêtée
+W  checking S3 generic/method consistency (1.5s)
+   AMoNet:
+     function(GENESman, ...)
+   AMoNet.default:
+     function(GENESman)
+   
+   print:
+     function(x, ...)
+   print.AMoNet.history:
+     function(object, ...)
+   
+   split:
+     function(x, f, drop, ...)
+   split.AMoNet:
+     function(net, RETURN)
+   
+   plot:
+     function(x, ...)
+   plot.AMoNet:
+     function(net, network, simulations, LEGEND, PDF, Npat, DIR, Species,
+              ...)
+   
+   plot:
+     function(x, ...)
+   plot.AMoNet.history:
+     function(object)
+   
+   plot:
+     function(x, ...)
+   plot.predict.AMoNet:
+     function(object, main, ylab, xlab, pch, ...)
+   
+   predict:
+     function(object, ...)
+   predict.AMoNet:
+     function(net, newy, newInit, newiStates, newMUT, newtreatmt, RETURN,
+              Logic, Mode, MinSteps, LSTM, Parallel, no_cores, ValMut)
+   
+   simulate:
+     function(object, nsim, seed, ...)
+   simulate.AMoNet:
+     function(net, Init, iStates, MUT, treatmt, Logic, Mode, ValMut,
+              MinSteps, LSTM, Ct, Parallel, no_cores, Steepness, RETURN)
+   
+   See section 'Generic functions and methods' in the 'Writing R
+   Extensions' manual.
+v  checking replacement functions (382ms)
+v  checking foreign function calls (1.1s)
+N  checking R code for possible problems (15.8s)
+   Erreur : object 'simulate' not found whilst loading namespace 'AMoNet'
+   Exécution arrêtée
+W  checking Rd files (825ms)
+   checkRd: (7) RandomiStates.Rd:17: Tag \dontrun not recognized
+   prepare_Rd: RunBackSimul.Rd:69-71: Dropping empty section \examples
+   prepare_Rd: predict.AMoNet.Rd:40-42: Dropping empty section \details
+v  checking Rd metadata ... 
+v  checking Rd line widths (345ms)
+v  checking Rd cross-references (478ms)
+W  checking for missing documentation entries (491ms)
+   Undocumented code objects:
+     'Boundaries' 'CGS' 'Default' 'GenesSelecHall' 'GenesSelecImuno'
+     'names_MECA'
+   Undocumented data sets:
+     'Boundaries' 'CGS' 'Default' 'GenesSelecHall' 'GenesSelecImuno'
+     'names_MECA'
+   All user-level objects in a package should have documentation entries.
+   See chapter 'Writing R documentation files' in the 'Writing R
+   Extensions' manual.
+v  checking for code/documentation mismatches (1.3s)
+W  checking Rd \usage sections (582ms)
+   Undocumented arguments in documentation object 'AMoNet'
+     'GENESman' '...'
+   
+   Undocumented arguments in documentation object 'AMoNet.default'
+     'GENESman'
+   
+   Undocumented arguments in documentation object 'BackBoolSimul'
+     'Logic' 'Mode' 'Y' 'MinSteps' 'FixNodes' 'Parallelize' 'TotiState'
+     'gradClipping' 'LSTM' 'alpha' 'lambda'
+   
+   Undocumented arguments in documentation object 'BoolSimul'
+     'NETall' 'Logic' 'Mode' 'iStates' 'MUT' 'treatmt' 'ValMut' 'MinSteps'
+     'LSTM' 'Ct' 'Parallel' 'no_cores' 'Steepness'
+   
+   Undocumented arguments in documentation object 'NETforOpt'
+     'WRITE' 'NETall' 'GENESman' 'treatmt' 'InteractionBase' 'MeanWinit'
+     'SdWinit' 'RestrictedBuilding' 'nblayers' 'MinConnect' 'FilterCGS'
+     'LSTM' 'Adam' 'Activity' 'addOutputs' 'Phenotypes' 'KeepPhenotypes'
+     'RestrictedBase' 'NameProj' 'no_cores'
+   Documented arguments not in \usage in documentation object 'NETforOpt':
+     'NETall:' 'GENESman:' 'treatmt:' 'InteractionBase:' 'MeanWinit:'
+     'SdWinit:' 'RestrictedBuilding:' 'nblayers:' 'MinConnect:'
+     'FilterCGS:' 'LSTM:' 'Adam:' 'Activity:' 'addOutputs:' 'Phenotypes:'
+     'KeepPhenotypes:' 'RestrictedBase:' 'NameProj:'
+   
+   Undocumented arguments in documentation object 'RunBackSimul'
+     'NETall' 'Ct' 'learning_rate' 'adaptive_iStates' 'FixNodes'
+     'Parallelize' 'no_cores' 'Logic' 'Mode' 'ModeBack' 'MinStepsForward'
+     'MinStepsBackward' 'LSTM' 'gradClipping' 'LearningRateDecay' 'ValMut'
+     'PDF' 'GIF' 'NameProj'
+   Documented arguments not in \usage in documentation object 'RunBackSimul':
+     'Nodefix'
+   
+   Undocumented arguments in documentation object 'RunTCGAopt'
+     'no_cores' 'KeepData'
+   
+   Undocumented arguments in documentation object 'build.AMoNet'
+     'no_cores' 'WRITE'
+   Documented arguments not in \usage in documentation object 'build.AMoNet':
+     'GENESman'
+   
+   Undocumented arguments in documentation object 'normalized'
+     'x'
+   
+   Undocumented arguments in documentation object 'plot.AMoNet'
+     'network' 'simulations' 'DIR' '...'
+   
+   Undocumented arguments in documentation object 'plot.predict.AMoNet'
+     'main' 'ylab' 'xlab' 'pch'
+   
+   Undocumented arguments in documentation object 'predict.AMoNet'
+     'Logic' 'Mode' 'MinSteps' 'LSTM' 'Parallel' 'no_cores' 'ValMut'
+   
+   Undocumented arguments in documentation object 'print.AMoNet.history'
+     '...'
+   
+   Duplicated \argument entries in documentation object 'simulate.AMoNet':
+     'iStates'
+   
+   Undocumented arguments in documentation object 'split.AMoNet'
+     'net'
+   
+   Undocumented arguments in documentation object 'train.AMoNet'
+     'Ct' 'learning_rate' 'adaptive_iStates' 'FixNodes' 'Parallelize'
+     'no_cores' 'Logic' 'Mode' 'ModeBack' 'MinStepsForward'
+     'MinStepsBackward' 'LSTM' 'gradClipping' 'LearningRateDecay' 'ValMut'
+     'PDF' 'GIF' 'NameProj'
+   Documented arguments not in \usage in documentation object 'train.AMoNet':
+     'Nodefix'
+   
+   Functions with \usage entries need to have the appropriate \alias
+   entries, and all their arguments documented.
+   The \usage entries must correspond to syntactically valid R code.
+   See chapter 'Writing R documentation files' in the 'Writing R
+   Extensions' manual.
+v  checking Rd contents (2.8s)
+v  checking for unstated dependencies in examples (701ms)
+v  checking contents of 'data' directory ...
+v  checking data for non-ASCII characters (1.1s)
+v  checking data for ASCII and uncompressed saves (3.7s)
+    WARNING
+   'qpdf' is needed for checks on size reduction of PDFs
+v  checking installed files from 'inst/doc' ... 
+v  checking files in 'vignettes' ... 
+v  checking examples (1.9s)
+v  checking for unstated dependencies in vignettes (1.1s)
+v  checking package vignettes in 'inst/doc' ... 
+W  checking re-building of vignette outputs (6.7s)
+   Error in re-building vignettes:
+     ...
+   Quitting from lines 75-76 (Vignette.Rmd) 
+   Erreur : le traitement de la vignette 'Vignette.Rmd' a échoué avec le diagnostic :
+   3 simultaneous processes spawned
+   Exécution arrêtée
+   
+   
+   See
+     'C:/Users/L_VERLINGUE/AppData/Local/Temp/Rtmpop3quy/AMoNet.Rcheck/00check.log'
+   for details.
+   
+   
+-- R CMD check results ------------------------------------------------ AMoNet 0.1.0 ----
+Duration: 1m 3.5s
+
+> checking DESCRIPTION meta-information ... WARNING
+  Non-standard license specification:
+    What license is it under?
+  Standardizable: FALSE
+
+> checking whether the package can be unloaded cleanly ... WARNING
+  Erreur : package or namespace load failed for 'AMoNet':
+   l'objet 'simulate' est introuvable pendant le chargement de l'espace de noms 'AMoNet'
+  Exécution arrêtée
+
+> checking whether the namespace can be loaded with stated dependencies ... WARNING
+  Erreur : object 'simulate' not found whilst loading namespace 'AMoNet'
+  Exécution arrêtée
+  
+  A namespace must be able to be loaded with just the base namespace
+  loaded: otherwise if the namespace gets loaded by a saved object, the
+  session will be unable to start.
+  
+  Probably some imports need to be declared in the NAMESPACE file.
+
+> checking S3 generic/method consistency ... WARNING
+  AMoNet:
+    function(GENESman, ...)
+  AMoNet.default:
+    function(GENESman)
+  
+  print:
+    function(x, ...)
+  print.AMoNet.history:
+    function(object, ...)
+  
+  split:
+    function(x, f, drop, ...)
+  split.AMoNet:
+    function(net, RETURN)
+  
+  plot:
+    function(x, ...)
+  plot.AMoNet:
+    function(net, network, simulations, LEGEND, PDF, Npat, DIR, Species,
+             ...)
+  
+  plot:
+    function(x, ...)
+  plot.AMoNet.history:
+    function(object)
+  
+  plot:
+    function(x, ...)
+  plot.predict.AMoNet:
+    function(object, main, ylab, xlab, pch, ...)
+  
+  predict:
+    function(object, ...)
+  predict.AMoNet:
+    function(net, newy, newInit, newiStates, newMUT, newtreatmt, RETURN,
+             Logic, Mode, MinSteps, LSTM, Parallel, no_cores, ValMut)
+  
+  simulate:
+    function(object, nsim, seed, ...)
+  simulate.AMoNet:
+    function(net, Init, iStates, MUT, treatmt, Logic, Mode, ValMut,
+             MinSteps, LSTM, Ct, Parallel, no_cores, Steepness, RETURN)
+  
+  See section 'Generic functions and methods' in the 'Writing R
+  Extensions' manual.
+
+> checking Rd files ... WARNING
+  checkRd: (7) RandomiStates.Rd:17: Tag \dontrun not recognized
+  prepare_Rd: RunBackSimul.Rd:69-71: Dropping empty section \examples
+  prepare_Rd: predict.AMoNet.Rd:40-42: Dropping empty section \details
+
+> checking for missing documentation entries ... WARNING
+  Undocumented code objects:
+    'Boundaries' 'CGS' 'Default' 'GenesSelecHall' 'GenesSelecImuno'
+    'names_MECA'
+  Undocumented data sets:
+    'Boundaries' 'CGS' 'Default' 'GenesSelecHall' 'GenesSelecImuno'
+    'names_MECA'
+  All user-level objects in a package should have documentation entries.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+
+> checking Rd \usage sections ... WARNING
+  Undocumented arguments in documentation object 'AMoNet'
+    'GENESman' '...'
+  
+  Undocumented arguments in documentation object 'AMoNet.default'
+    'GENESman'
+  
+  Undocumented arguments in documentation object 'BackBoolSimul'
+    'Logic' 'Mode' 'Y' 'MinSteps' 'FixNodes' 'Parallelize' 'TotiState'
+    'gradClipping' 'LSTM' 'alpha' 'lambda'
+  
+  Undocumented arguments in documentation object 'BoolSimul'
+    'NETall' 'Logic' 'Mode' 'iStates' 'MUT' 'treatmt' 'ValMut' 'MinSteps'
+    'LSTM' 'Ct' 'Parallel' 'no_cores' 'Steepness'
+  
+  Undocumented arguments in documentation object 'NETforOpt'
+    'WRITE' 'NETall' 'GENESman' 'treatmt' 'InteractionBase' 'MeanWinit'
+    'SdWinit' 'RestrictedBuilding' 'nblayers' 'MinConnect' 'FilterCGS'
+    'LSTM' 'Adam' 'Activity' 'addOutputs' 'Phenotypes' 'KeepPhenotypes'
+    'RestrictedBase' 'NameProj' 'no_cores'
+  Documented arguments not in \usage in documentation object 'NETforOpt':
+    'NETall:' 'GENESman:' 'treatmt:' 'InteractionBase:' 'MeanWinit:'
+    'SdWinit:' 'RestrictedBuilding:' 'nblayers:' 'MinConnect:'
+    'FilterCGS:' 'LSTM:' 'Adam:' 'Activity:' 'addOutputs:' 'Phenotypes:'
+    'KeepPhenotypes:' 'RestrictedBase:' 'NameProj:'
+  
+  Undocumented arguments in documentation object 'RunBackSimul'
+    'NETall' 'Ct' 'learning_rate' 'adaptive_iStates' 'FixNodes'
+    'Parallelize' 'no_cores' 'Logic' 'Mode' 'ModeBack' 'MinStepsForward'
+    'MinStepsBackward' 'LSTM' 'gradClipping' 'LearningRateDecay' 'ValMut'
+    'PDF' 'GIF' 'NameProj'
+  Documented arguments not in \usage in documentation object 'RunBackSimul':
+    'Nodefix'
+  
+  Undocumented arguments in documentation object 'RunTCGAopt'
+    'no_cores' 'KeepData'
+  
+  Undocumented arguments in documentation object 'build.AMoNet'
+    'no_cores' 'WRITE'
+  Documented arguments not in \usage in documentation object 'build.AMoNet':
+    'GENESman'
+  
+  Undocumented arguments in documentation object 'normalized'
+    'x'
+  
+  Undocumented arguments in documentation object 'plot.AMoNet'
+    'network' 'simulations' 'DIR' '...'
+  
+  Undocumented arguments in documentation object 'plot.predict.AMoNet'
+    'main' 'ylab' 'xlab' 'pch'
+  
+  Undocumented arguments in documentation object 'predict.AMoNet'
+    'Logic' 'Mode' 'MinSteps' 'LSTM' 'Parallel' 'no_cores' 'ValMut'
+  
+  Undocumented arguments in documentation object 'print.AMoNet.history'
+    '...'
+  
+  Duplicated \argument entries in documentation object 'simulate.AMoNet':
+    'iStates'
+  
+  Undocumented arguments in documentation object 'split.AMoNet'
+    'net'
+  
+  Undocumented arguments in documentation object 'train.AMoNet'
+    'Ct' 'learning_rate' 'adaptive_iStates' 'FixNodes' 'Parallelize'
+    'no_cores' 'Logic' 'Mode' 'ModeBack' 'MinStepsForward'
+    'MinStepsBackward' 'LSTM' 'gradClipping' 'LearningRateDecay' 'ValMut'
+    'PDF' 'GIF' 'NameProj'
+  Documented arguments not in \usage in documentation object 'train.AMoNet':
+    'Nodefix'
+  
+  Functions with \usage entries need to have the appropriate \alias
+  entries, and all their arguments documented.
+  The \usage entries must correspond to syntactically valid R code.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+
+> checking data for ASCII and uncompressed saves ... OK
+   WARNING
+  'qpdf' is needed for checks on size reduction of PDFs
+
+> checking re-building of vignette outputs ... WARNING
+  Error in re-building vignettes:
+    ...
+  Quitting from lines 75-76 (Vignette.Rmd) 
+  Erreur : le traitement de la vignette 'Vignette.Rmd' a échoué avec le diagnostic :
+  3 simultaneous processes spawned
+  Exécution arrêtée
+
+> checking top-level files ... NOTE
+  Non-standard files/directories found at top level:
+    'model' 'trash'
+
+> checking dependencies in R code ... NOTE
+  Erreur : package or namespace load failed for 'AMoNet':
+   object 'simulate' not found whilst loading namespace 'AMoNet'
+  Séquence d'appel :
+  6: stop(msg, call. = FALSE, domain = NA)
+  5: value[[3L]](cond)
+  4: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+  3: tryCatchList(expr, classes, parentenv, handlers)
+  2: tryCatch({
+         attr(package, "LibPath") <- which.lib.loc
+         ns <- loadNamespace(package, lib.loc)
+         env <- attachNamespace(ns, pos = pos, deps)
+     }, error = function(e) {
+         P <- if (!is.null(cc <- conditionCall(e))) 
+             paste(" in", deparse(cc)[1L])
+         else ""
+         msg <- gettextf("package or namespace load failed for %s%s:\n %s", 
+             sQuote(package), P, conditionMessage(e))
+         if (logical.return) 
+             message(paste("Error:", msg), domain = NA)
+         else stop(msg, call. = FALSE, domain = NA)
+     })
+  1: library(package, lib.loc = lib.loc, character.only = TRUE, verbose = FALSE)
+  Exécution arrêtée
+
+> checking R code for possible problems ... NOTE
+  Erreur : object 'simulate' not found whilst loading namespace 'AMoNet'
+  Exécution arrêtée
+
+0 errors v | 9 warnings x | 3 notes x

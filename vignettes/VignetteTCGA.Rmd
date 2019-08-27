@@ -1,0 +1,136 @@
+---
+title: "AMoNET TCGA"
+author: "Loic Verlingue"
+date: "31 juillet 2019"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AMoNet_TCGA}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, loadpack}
+#install.packages("AMoNet", dependencies=T)
+library(AMoNet)
+if(TRUE){
+    print("Loading packages")
+    library(reshape2)
+    library(parallel)
+    library(stringr)
+    library(splines)
+    library(cgdsr)
+    library(survival)
+    library(magick)
+    library(matrixStats)
+    library(survivalROC)
+    library(pec)
+  }
+
+set.seed(1234)
+```
+
+
+```{r, import Default in global.env()}
+data("Default");data("Boundaries")
+```
+
+Build AMoNet focused on oncogenic relation between *TP53* and *MTOR* within hallmarks of cancer cells.
+Remember to set the number of output values (addOutputs) > 1 to learn on survival data.
+
+## Gene(s) query
+```{r, Gene query}
+net<-AMoNet(c("TP53","EGFR"))
+```
+
+## Build AMoNet 
+```{r, build_AMoNet}
+net<-build.AMoNet(net, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.1, SdWinit = 0.1, Phenotypes=GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 10, Optimizer = "Adam", KeepPhenotypes=T, no_cores = 3, NameProj = "AMoNet TCGA")
+```
+
+
+
+## Plot your network
+```{r}
+plot(net, network = T)
+```
+
+## Load TCGA data
+You need connection to internet. Testing connection integrated in cgdsr() package
+```{r, loadTCGA}
+Species<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)
+
+net<-LoadCleanTCGA(net, Species = Species, Param = "", RestrictUnique = T, organ = "luad")
+```
+
+## Create random initial states
+```{r}
+net<-RandomiStates(net, RETURN = T)
+iStates<-net$iStates
+```
+
+# Check data dimensions
+```{r}
+dim(net$Data$y);length(net$Data$MUT);dim(iStates); length(Species)
+
+```
+
+
+## Run optimisation
+The train() function takes as input the *AMoNet* object, and optionnaly perturbation data (MUT), treatments (treatm), initial states (iStates), forced initial states (Init) and the labels y. It takes several arguments as hyperparameters, that can be ignored and replaced by the defaults ones. For more details print(Default)
+
+```{r, training}
+net<-train.AMoNet(net,y=net$Data$y,MUT=net$Data$MUT, treatmt=NULL,
+                         iStates=iStates, Init = NULL,
+                         ValMut = 100, Ct=NULL, 
+                         MiniBatch=16, 
+                         iteration=2, 
+                         Optimizer="Momentum", 
+                         beta1=0.9, beta2=0.999,
+                         alpha = 0, lambda = 0,
+                         Parallelize= T, no_cores = 2,
+                         learning_rate=0.01,  
+                         LearningRateDecay = NULL,
+                         adaptive_iStates= T,
+                         Logic = "Sigmoid", Mode = "LAYER", ModeBack = "LAYER",
+                         MinStepsForward = 6, 
+                         MinStepsBackward = 1,
+                         gradClipping=NULL, 
+                         LSTM=FALSE, 
+                         FixNodes = NULL, 
+                         PDF=F, GIF=F, Visualize=NULL) #"Output"
+```
+
+# Visualization and interpretation of AMoNet
+## Visualize learning phase
+```{r}
+plot(net$history)
+#print(net$history)
+```
+
+Optionnaly you can plot the optimized netowrk
+```{r}
+plot(net,LEGEND = F, PDF = F,network = T)
+```
+
+
+## Predict
+Perform predictions
+```{r, predictions}
+net<-predict(net)
+```
+
+Plot predictions
+```{r}
+plot(net$Predict)
+```
+
+
+```{r}
+print("end")
+```
+

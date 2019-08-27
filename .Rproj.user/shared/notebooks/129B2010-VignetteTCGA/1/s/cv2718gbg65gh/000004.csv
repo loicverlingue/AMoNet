@@ -1,0 +1,82 @@
+"0","Species<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)"
+"0","net<-LoadCleanTCGA(net, Species = Species, Param = """", RestrictUnique = T, organ = ""luad"")"
+"1","getCancerStudies... "
+"1"," "
+"1","OK
+"
+"1","getCaseLists (1/2) ... "
+"1"," "
+"1","OK
+"
+"1","getCaseLists (2/2) ... "
+"1"," "
+"1","OK
+"
+"1","getGeneticProfiles (1/2) ... "
+"1"," "
+"1","OK
+"
+"1","getGeneticProfiles (2/2) ... "
+"1"," "
+"1","OK
+"
+"1","getClinicalData (1/1) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (1/6) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (2/6) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (3/6) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (4/6) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (5/6) ... "
+"1"," "
+"1","OK
+"
+"1","getProfileData (6/6) ... "
+"1"," "
+"1","OK
+"
+"2","Read 433 items
+"
+"2","Read 53 items
+"
+"2","Read 53 items
+"
+"2","Read 103 items
+"
+"1","[1]"
+"1"," ""Pooling : luad_tcga_pub"""
+"1","
+"
+"1","[1]"
+"1"," ""warning message ok"""
+"1","
+"
+"2","Aggregation function missing: defaulting to length
+"
+"2","Aggregation function missing: defaulting to length
+"
+"2","Aggregation function missing: defaulting to length
+"
+"2","Aggregation function missing: defaulting to length
+"
+"1","[1]"
+"1"," ""Data: 133 patients & 99 genes"""
+"1","
+"
+"1","[1]"
+"1"," ""Restricted to: 76 patients & 99 genes"""
+"1","
+"

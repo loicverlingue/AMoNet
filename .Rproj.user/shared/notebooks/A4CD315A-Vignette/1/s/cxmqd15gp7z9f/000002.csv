@@ -1,0 +1,2 @@
+"0","# plot your network"
+"0"," PlotOptNet(NETall1,PDF = F,Optimized = F,PrintOptNET = F,LEGEND = F, NameProj = ""MyAMoNet"")"

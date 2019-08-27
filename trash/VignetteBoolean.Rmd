@@ -1,0 +1,101 @@
+---
+title: "AMoNET_Boolean"
+author: "Loic Verlingue"
+date: "31 juillet 2019"
+output: rmarkdown::html_vignette
+author: "Loic Verlingue"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{"AMoNET_Boolean"}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+```{r}
+#install.packages("AMoNet", dependencies=T)
+library(AMoNet)
+if(TRUE){
+    print("Loading packages")
+    library(reshape2)
+    library(parallel)
+    library(stringr)
+    library(splines)
+    library(cgdsr)
+    library(survival)
+    library(magick)
+    library(matrixStats)
+    library(survivalROC)
+    library(pec)
+  }
+
+```
+
+
+# data in AMoNet package
+AMoNet comes with several data.
+OMNI, is a directed protein protein interaction (PPI) database
+GenesSelecImuno
+GenesSelecHall
+
+```{r}
+
+GenesSelec<-rbind(GenesSelecImuno,GenesSelecHall)
+MECA<-unique(GenesSelec$target_hgnc) # do an interactcive function to choose MECA
+
+```
+
+
+# Network buiding
+
+## build an AMoNet from simple gene(s) query
+
+```{r}
+
+NETalldata<-NETforOpt(GENESman=c("EGFR","TP53"),treatmt="", InteractionBase = OMNI, nblayers = 1, MinConnect = 1, RestrictedBuilding = T, MeanWinit = 2, SdWinit = 0.1, Phenotypes=GenesSelec, MECA=MECA, RestrictedBase = T, addOutputs = 1, FilterCGS = F, LSTM = F, Adam = T, Activity = F,  KeepPhenotypes=T, WRITE = F, no_cores = 3)
+
+NETall1<-NETalldata$NETall
+
+```
+
+```{r}
+# plot your network
+ PlotOptNet(NETall1,PDF = F,Optimized = F,PrintOptNET = F,LEGEND = F, NameProj = "MyAMoNet")
+
+# retreive the species in your network
+Species<-union(NETall1$source_hgnc,NETall1$target_hgnc)
+
+```
+
+
+# Simulation
+
+## Boolean (add a link for Boolean simulations and vizualizations)
+```{r}
+#Generate random initial states to compute future initial stable states
+iStates<-InitStates(NETall = NETall1, istates = NULL, Logic = "Boolean", NumiStates = 200)
+
+# Generate logical gates
+NETall1[,"LogicRule"]<-"OR" # begin with OR connectors only
+NETall1[NETall1$interaction_directed_signed%in%"INHIBIT","LogicRule"]<-"AND"
+
+# Simulate
+TotAttractors<-BoolSimul(NETall=NETall1, Logic = "Boolean", Mode = "LAYER", iStates=iStates, MinSteps = 10, Discretize = F, LSTM = F, MUT=NULL, Parallel = T, no_cores = 3)
+
+```
+
+# simulation analysis and vizualisation for boolean
+
+*todo change dir of video*
+```{r}
+# can take some times
+Path<-DrawPath(TotAttractors = TotAttractors, Reduction=50, NameProj="transition_graph",PDF = F)
+
+DissectPath(Path = Path, NTrans=3, Smooth=5, Cordplot=T, plot3D=T,PDF = F)
+
+```
+
+

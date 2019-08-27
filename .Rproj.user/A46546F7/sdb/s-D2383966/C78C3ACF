@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"AMoNET TCGA\"\nauthor: \"Loic Verlingue\"\ndate: \"31 juillet 2019\"\noutput: rmarkdown::html_vignette\nvignette: >\n  %\\VignetteIndexEntry{AMoNet_TCGA}\n  %\\VignetteEngine{knitr::rmarkdown}\n  \\usepackage[utf8]{inputenc}\n---\n\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n```\n\n```{r, loadpack}\n#install.packages(\"AMoNet\", dependencies=T)\nlibrary(AMoNet)\nif(TRUE){\n    print(\"Loading packages\")\n    library(reshape2)\n    library(parallel)\n    library(stringr)\n    library(splines)\n    library(cgdsr)\n    library(survival)\n    library(magick)\n    library(matrixStats)\n    library(survivalROC)\n    library(pec)\n  }\n\nset.seed(1234)\n```\n\n\n```{r, import Default in global.env()}\ndata(\"Default\");data(\"Boundaries\")\n```\n\nBuild AMoNet focused on oncogenic relation between *TP53* and *MTOR* within hallmarks of cancer cells.\nRemember to set the number of output values (addOutputs) > 1 to learn on survival data.\n\n## Gene(s) query\n```{r, Gene query}\nnet<-AMoNet(c(\"TP53\",\"EGFR\"))\n```\n\n## Build AMoNet \n```{r, build_AMoNet}\nnet<-build.AMoNet(net, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.1, SdWinit = 0.1, Phenotypes=GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 10, Optimizer = \"Adam\", KeepPhenotypes=T, no_cores = 3, NameProj = \"AMoNet TCGA\")\n```\n\n\n\n## Plot your network\n```{r}\nplot(net, network = T)\n```\n\n## Load TCGA data\nYou need connection to internet. Testing connection integrated in cgdsr() package\n```{r, loadTCGA}\nSpecies<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)\n\nnet<-LoadCleanTCGA(net, Species = Species, Param = \"\", RestrictUnique = T, organ = \"luad\")\n```\n\n## Create random initial states\n```{r}\nnet<-RandomiStates(net, RETURN = T)\niStates<-net$iStates\n```\n\n# Check data dimensions\n```{r}\ndim(net$Data$y);length(net$Data$MUT);dim(iStates); length(Species)\n\n```\n\n\n## Run optimisation\nThe train() function takes as input the *AMoNet* object, and optionnaly perturbation data (MUT), treatments (treatm), initial states (iStates), forced initial states (Init) and the labels y. It takes several arguments as hyperparameters, that can be ignored and replaced by the defaults ones. For more details print(Default)\n\n```{r, training}\nnet<-train.AMoNet(net,y=net$Data$y,MUT=net$Data$MUT, treatmt=NULL,\n                         iStates=iStates, Init = NULL,\n                         ValMut = 100, Ct=NULL, \n                         MiniBatch=16, \n                         iteration=2, \n                         Optimizer=\"Momentum\", \n                         beta1=0.9, beta2=0.999,\n                         alpha = 0, lambda = 0,\n                         Parallelize= T, no_cores = 2,\n                         learning_rate=0.01,  \n                         LearningRateDecay = NULL,\n                         adaptive_iStates= T,\n                         Logic = \"Sigmoid\", Mode = \"LAYER\", ModeBack = \"LAYER\",\n                         MinStepsForward = 6, \n                         MinStepsBackward = 1,\n                         gradClipping=NULL, \n                         LSTM=FALSE, \n                         FixNodes = NULL, \n                         PDF=F, GIF=F, Visualize=NULL) #\"Output\"\n```\n\n# Visualization and interpretation of AMoNet\n## Visualize learning phase\n```{r}\nplot(net$history)\n#print(net$history)\n```\n\nOptionnaly you can plot the optimized netowrk\n```{r}\nplot(net,LEGEND = F, PDF = F,network = T)\n```\n\n\n## Predict\nPerform predictions\n```{r, predictions}\nnet<-predict(net)\n```\n\nPlot predictions\n```{r}\nplot(net$Predict)\n```\n\n\n```{r}\nprint(\"end\")\n```\n\n",
+    "created" : 1565938329197.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "932542009",
+    "id" : "C78C3ACF",
+    "lastKnownWriteTime" : 1566890874,
+    "last_content_update" : 1566890874474,
+    "path" : "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet/vignettes/VignetteTCGA.Rmd",
+    "project_path" : "vignettes/VignetteTCGA.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "last_setup_crc32" : "9B03619Fbb338d19",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,2 @@
+"0","net<-AMoNet(c(""TP53"",""EGFR""))"
+"0","#print(names(net))"

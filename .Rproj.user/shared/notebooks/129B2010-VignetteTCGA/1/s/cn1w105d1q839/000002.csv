@@ -1,0 +1,28 @@
+"0","#install.packages(""AMoNet"", dependencies=T)"
+"0","library(AMoNet)"
+"0","if(TRUE){"
+"0","    print(""Loading packages"")"
+"0","    library(reshape2)"
+"0","    library(parallel)"
+"0","    library(stringr)"
+"0","    library(splines)"
+"0","    library(cgdsr)"
+"0","    library(survival)"
+"0","    library(magick)"
+"0","    library(matrixStats)"
+"0","    library(survivalROC)"
+"0","    library(pec)"
+"0","  }"
+"1","[1]"
+"1"," ""Loading packages"""
+"1","
+"
+"2","Please send questions to cbioportal@googlegroups.com
+"
+"2","Linking to ImageMagick 6.9.9.14
+Enabled features: cairo, freetype, fftw, ghostscript, lcms, pango, rsvg, webp
+Disabled features: fontconfig, x11
+"
+"2","Le chargement a nécessité le package : prodlim
+"
+"0","set.seed(1234)"

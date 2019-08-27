@@ -1,0 +1,2 @@
+"0","net<-RandomiStates(net, RETURN = T)"
+"0","iStates<-net$iStates"

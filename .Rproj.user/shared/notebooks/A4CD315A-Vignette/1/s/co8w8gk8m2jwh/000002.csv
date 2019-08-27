@@ -1,0 +1,5 @@
+"0","plot(net, Npat = 1:2, PDF = F, ylim=c(0,1), Species = ""Output"", col=c(2,3))"
+"1","[1]"
+"1"," ""Plot simulations"""
+"1","
+"

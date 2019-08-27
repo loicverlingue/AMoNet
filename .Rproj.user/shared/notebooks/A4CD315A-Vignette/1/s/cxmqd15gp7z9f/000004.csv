@@ -1,0 +1,2 @@
+"0","# retreive the species in your network"
+"0","Species<-union(NETall1$source_hgnc,NETall1$target_hgnc)"

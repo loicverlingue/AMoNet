@@ -1,0 +1,181 @@
+---
+title: "AMoNet overview"
+author: "Loic Verlingue"
+date: "29 juillet 2019"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AMoNet_overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+---
+```{r}
+#install.packages("AMoNet", dependencies=T)
+library(AMoNet)
+if(TRUE){
+    print("Loading packages")
+    library(reshape2)
+    library(parallel)
+    library(stringr)
+    library(splines)
+    library(cgdsr)
+    library(survival)
+    library(magick)
+    library(matrixStats)
+    library(survivalROC)
+    library(pec)
+  }
+
+set.seed(1234)
+
+```
+
+
+# Data in AMoNet package
+AMoNet comes with 
+
+  * Data to build the network
+
+    + OMNI is a directed protein protein interaction (PPI) database from omnypath [omnipath](http://omnipathdb.org/) pooled with [ACSN](https://acsn.curie.fr/ACSN2/ACSN2.html) and immune models (in house).
+    + GenesSelecImmuno are immuno related gene set
+    + GenesSelecHall are hallmarks related gene set [MSigDB hallmarks](http://software.broadinstitute.org/gsea/msigdb/)
+  
+  * Data to train AMoNet
+    + LoadCleanTCGA() function to load TCGA data
+
+  * Default hyper-parameters for simulations and training
+    + Default are the default hyper-parameters
+    + Boundaries are the limit of the hyper-parameter search
+
+The user can set hyper-parameters either in the Default object or in the related functions arguments.
+
+```{r, import Default in global.env()}
+#data("Default");data("Boundaries")
+head(Default)
+length(Default)
+```
+
+
+# Network buiding
+## Initiate AMoNet from simple gene(s) query
+
+```{r, eval = FALSE}
+net<-AMoNet() # and check in you console to enter the names of your genes
+```
+
+Or
+```{r}
+net<-AMoNet(c("TP53","EGFR"))
+#print(names(net))
+```
+
+
+## Build AMoNet network from OMNI molecular interaction database
+```{r}
+net<-build.AMoNet(net, InteractionBase = OMNI, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.01, SdWinit = 0.01, Phenotypes = GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 1, Optimizer = "Adam", KeepPhenotypes=T, no_cores = 1, NameProj = "MyAMoNet")
+```
+
+
+## Plot your network
+```{r}
+plot(net, network = T)
+```
+
+## Simulate with sigmoid update
+```{r}
+net<-simulate(net, nsim = 10, Logic = "Sigmoid", Parallel = F)
+```
+
+## Plot simulation results
+```{r}
+plot(net,Npat=2)
+#summary(net,perPatient = F,Species = NULL)
+
+```
+
+
+# Alterations of the network
+A simple example with 2 patients,  1 single output and artificial mutation data.
+```{r}
+# prepare mutations data
+Species<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)
+MUT<-matrix(NA,nrow = 2,ncol = length(Species))
+colnames(MUT)<-Species
+rownames(MUT)<-c("Pat1","Pat2")#,"Pat3")
+
+# mutate it
+# to ways: either descrete ("non NA") or numeric. Numeric is prefered.
+if(FALSE){
+  MUT[2,"TP53"]<-"mut"
+  MUT[2,"EGFR"]<-"mut"
+} else{ # or
+  MUT[2,"TP53"]<-(-1)
+  MUT[2,"EGFR"]<-1
+}
+
+print(MUT[,1:10])
+```
+
+## Simulation
+Simulate and plot simulation for a selected sample (Npat=2)
+```{r}
+net<-simulate(net, nsim = 10, Logic = "Sigmoid", Mode = "LAYER", MUT=MUT, ValMut = 100, Parallel = F)
+
+plot(net, Npat = 2, ylim=c(0,1))
+```
+
+Plot selected species in the network simulation for more that one samples (Npat=1:2)
+```{r}
+plot(net, Npat = 1:2, PDF = F, ylim=c(0,1), Species = "Output", col=c(2,3))
+```
+
+
+# Optimisation
+## Generate outputs
+```{r}
+Clin<-matrix(c(0.9,0.2),nrow = 1)
+colnames(Clin)<-c("Pat1","Pat2")
+rownames(Clin)<-"Output"
+print(Clin)
+```
+
+
+## Run optimisation
+```{r}
+net<-train.AMoNet(net,y=Clin,MUT=MUT,ValMut = 100,iteration=10, learning_rate=0.04, PDF=F, GIF=F, Visualize=NULL, Parallelize=F, alpha=0, Optimizer=NULL)
+```
+
+# Visualization and interpretation of AMoNet
+## Visualize learning phase
+```{r}
+plot(net$history)
+
+#dim(net$TotAttractors)
+#print(net$history)
+#plot(net,LEGEND = F, PDF = F)
+```
+
+## Relation of phenotype weights to outputs
+```{r}
+NETall1<-net$history$NETallList[[length(net$history$NETallList)]]
+par(mar=c(5, 4, 4, 2) + 0.1)
+#par(mar=c(15, 4, 4, 2) + 0.1)
+barplot(NETall1[NETall1$Output,"Weights"],names.arg =NETall1[NETall1$Output,1], las=2, cex.names = 0.5)
+
+```
+
+## Predictions
+```{r}
+net<-predict(net,newMUT = MUT)
+
+plot(net,Npat = 2,PDF = F, ylim=c(0,1),LEGEND = F)
+
+plot(net,Npat = c(1,2),PDF = F,LEGEND = T, ylim=c(0,1), Species = "Output", col=c(2,3))
+```
+
+```{r}
+print("end")
+```
+
+
