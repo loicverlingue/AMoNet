@@ -11,10 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Installation
 
-
 ```{r install}
 library(devtools)
-install_github("gitlab/curie/", "AMoNet")
+install_github("https://gitlab.curie.fr/lverling/amonet.git") #, host = "gitlab.curie.fr")
 ```
-
-
