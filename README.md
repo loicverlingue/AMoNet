@@ -15,13 +15,13 @@ library(AMoNet)
 ## Usage
 Several options:
 
-*Dowload vignettes in Rmarkdown format at https://gitlab.curie.fr/lverling/amonet/tree/master/vignettes and open it with R studio.
+* Dowload vignettes in Rmarkdown format at https://gitlab.curie.fr/lverling/amonet/tree/master/vignettes and open it with R studio.
 
-*If installation was made with building vignettes (or installation with source package):
+* If installation was made with building vignettes (or installation with source package):
 ```{r}
 browseVignettes("AMoNet")
 ```
-*Build vignettes yourself with
+* Build vignettes yourself with
 ```{r}
 build_vignettes("AMoNet")
 browseVignettes("AMoNet")
