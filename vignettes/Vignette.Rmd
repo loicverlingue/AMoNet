@@ -11,9 +11,8 @@ vignette: >
 
 ---
 ```{r}
-#install.packages("AMoNet", dependencies=T)
 library(AMoNet)
-if(TRUE){
+if(FALSE){
     print("Loading packages")
     library(reshape2)
     library(parallel)
