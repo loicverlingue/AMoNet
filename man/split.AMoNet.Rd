@@ -5,7 +5,7 @@
 \alias{split}
 \title{Split samples from a *AMoNet* object}
 \usage{
-split(x=net,f=0.7, drop=F, RETURN=F)
+split(x,f=0.7, drop=F, RETURN=F)
 }
 \arguments{
 \item{x}{*AMoNet* object}

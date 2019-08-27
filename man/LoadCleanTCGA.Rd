@@ -4,12 +4,11 @@
 \alias{LoadCleanTCGA}
 \title{Loads cBioportal data}
 \usage{
-LoadCleanTCGA(net = net, Species = NULL, Param = "",
-  RestrictUnique = T, PLOT = F, FunctionalAnnot = T,
-  organ = Default$organ)
+LoadCleanTCGA(object, Species = NULL, Param = "", RestrictUnique = T,
+  PLOT = F, FunctionalAnnot = T, organ = Default$organ)
 }
 \arguments{
-\item{net}{AMoNet object.}
+\item{object}{AMoNet object.}
 
 \item{Species}{character vectors. Gene names in Hugo nomenclature.}
 

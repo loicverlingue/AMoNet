@@ -95,6 +95,7 @@ For character objects in hyperparameters (for eg Optimizer can be "Adam", "RMSpr
 Setting argument \code{MinStepsBackward} > 1 can result in vanishing gradient. Nevertheless, using \code{LSTM=TRUE} in this context may help.
 }
 \examples{
-see the \\code{train()} function from AMoNet package
-
+\dontrun{
+#see the \\code{?train()} function from AMoNet package
+}
 }

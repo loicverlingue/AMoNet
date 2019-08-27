@@ -5,7 +5,7 @@
 \alias{train}
 \title{AMoNet training}
 \usage{
-train(object=net, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T, KeepData=T, Ct=NULL, MiniBatch=Default$MiniBatch, Optimizer=Default$Optimizer, beta1=Default$beta1, beta2=Default$beta2, iteration=Default$iteration, learning_rate=Default$learningrate, adaptive_iStates=Default$adaptive_iStates, FixNodes=NULL, Parallelize=Default$Parallelize, no_cores=Default$no_cores, Logic = Default$Logic, Mode = Default$Mode, ModeBack=Default$Mode, MinStepsForward = Default$MinStepsForward,MinStepsBackward=Default$MinStepsBackward, LSTM=Default$LSTM, gradClipping=Default$gradClipping, LearningRateDecay=Default$LearningRateDecay, ValMut=Default$ValMut, PDF=F, GIF=F, NameProj=net$call$build_call$NameProj, Visualize=Default$Visualize, alpha=Default$alpha, lambda=Default$lambda)
+train(object, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T, KeepData=T, Ct=NULL, MiniBatch=Default$MiniBatch, Optimizer=Default$Optimizer, beta1=Default$beta1, beta2=Default$beta2, iteration=Default$iteration, learning_rate=Default$learningrate, adaptive_iStates=Default$adaptive_iStates, FixNodes=NULL, Parallelize=Default$Parallelize, no_cores=Default$no_cores, Logic = Default$Logic, Mode = Default$Mode, ModeBack=Default$Mode, MinStepsForward = Default$MinStepsForward,MinStepsBackward=Default$MinStepsBackward, LSTM=Default$LSTM, gradClipping=Default$gradClipping, LearningRateDecay=Default$LearningRateDecay, ValMut=Default$ValMut, PDF=F, GIF=F, NameProj=net$call$build_call$NameProj, Visualize=Default$Visualize, alpha=Default$alpha, lambda=Default$lambda)
 }
 \arguments{
 \item{object}{*AMoNet* object, S3 class.}

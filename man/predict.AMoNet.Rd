@@ -5,7 +5,7 @@
 \alias{predict}
 \title{Perform predictions from a trained *AMoNet* object}
 \usage{
-predict(object=net, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, MinSteps = Default$MinStepsForward, LSTM = Default$LSTM, Parallelize = Default$Parallelize, no_cores = Default$no_cores, ValMut = Default$ValMut)
+predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, MinSteps = Default$MinStepsForward, LSTM = Default$LSTM, Parallelize = Default$Parallelize, no_cores = Default$no_cores, ValMut = Default$ValMut)
 }
 \arguments{
 \item{object}{*AMoNet* object, S3 class.}
