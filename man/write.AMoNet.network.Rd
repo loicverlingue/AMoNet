@@ -12,8 +12,5 @@ write.AMoNet.network(object, file = stop("'file' must be specified"))
 \item{file}{a (writable binary-mode) connection or the name of the file where the data will be saved.}
 }
 \description{
-Write the network of the *AMoNet* object
-}
-\details{
-Useful to export a .csv file for visualization and other applications
+Used to export a .csv file for visualization and other applications
 }
