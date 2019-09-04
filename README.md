@@ -17,7 +17,7 @@ Within the ```install_git()``` function you can:
 
 ```{r install}
 library(devtools)
-install_git('https://user:password@gitlab.curie.fr/lverling/amonet.git', dependencies = TRUE)
+install_git("https://user:password@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE)
 library(AMoNet)
 ```
 

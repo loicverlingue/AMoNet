@@ -27,8 +27,8 @@ Imports:
   survival (>= 2.41.3),
   survivalROC (>= 1.0.3)
   MASS (>=7.3.49)
-  circlize (>=0.4.3)
-  rgl (>=0.99.16)
+  circlize (>= 0.4.3)
+  rgl (>= 0.99.16)
 Suggests:
   rmarkdown (>= 1.9),
   knitr (>= 1.20)
