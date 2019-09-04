@@ -3,7 +3,7 @@
 \name{plot.predict.AMoNet}
 \alias{plot.predict.AMoNet}
 \alias{plot}
-\title{plot predictions generated from the \code{predicte()} function.}
+\title{Plot predictions generated from the \code{predicte()} function}
 \usage{
 plot(x=net$Predict, ...)
 }
@@ -16,5 +16,5 @@ plot(x=net$Predict, ...)
 The relation between true and predicted values.
 }
 \description{
-plot predictions generated from the \code{predicte()} function.
+Plot predictions generated from the \code{predicte()} function
 }

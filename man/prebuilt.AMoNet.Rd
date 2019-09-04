@@ -4,15 +4,17 @@
 \alias{prebuilt.AMoNet}
 \title{Use already built network in AMoNet}
 \usage{
-prebuilt.AMoNet(object, NETall = NULL, MeanWinit = Default$MeanWinit,
-  SdWinit = Default$SdWinit, LSTM = Default$LSTM,
-  Optimizer = Default$Optimizer, Outputs = "Output",
-  NameProj = "My AMoNet")
+prebuilt.AMoNet(object, NETall = NULL, Weights = NULL,
+  MeanWinit = Default$MeanWinit, SdWinit = Default$SdWinit,
+  LSTM = Default$LSTM, Optimizer = Default$Optimizer,
+  Outputs = "Output", NameProj = "My AMoNet")
 }
 \arguments{
 \item{object}{*AMoNet* object.}
 
 \item{NETall}{data frame. The newtork you provide to *AMoNet*. See the "details" section for format requirements.}
+
+\item{Weights}{numeric vector. User-defined weights for each interactions. Same lengths as number of rows in NETall. B terms are initialized to zeros. Leave comment if other options needed.}
 
 \item{MeanWinit}{numeric. The mean value of the normal distribution used to initiate the weights.}
 

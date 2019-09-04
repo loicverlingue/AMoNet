@@ -1,7 +1,9 @@
 #' Use already built network in AMoNet
-#'
+#' @aliases prebuilt.AMoNet
+
 #' @param object *AMoNet* object.
 #' @param NETall data frame. The newtork you provide to *AMoNet*. See the "details" section for format requirements.
+#' @param Weights numeric vector. User-defined weights for each interactions. Same lengths as number of rows in NETall. B terms are initialized to zeros. Leave comment if other options needed.
 #' @param MeanWinit numeric. The mean value of the normal distribution used to initiate the weights.
 #' @param SdWinit numeric. The standard deviation of the normal distribution used to initiate the weights.
 #' @param LSTM boolean. Will you use LSTM unit update in the learning phase?
@@ -31,7 +33,7 @@
 #'
 #' @return An object of class *AMoNet*. Stores the name of the project, the network, the initial states \code{iStates=NULL} and \code{Ct=NULL} if LSTM.
 #' @export
-prebuilt.AMoNet<-function(object, NETall=NULL,
+prebuilt.AMoNet<-function(object, NETall=NULL, Weights=NULL,
                        MeanWinit=Default$MeanWinit, SdWinit=Default$SdWinit,
                        LSTM=Default$LSTM, Optimizer = Default$Optimizer,
                        Outputs="Output", NameProj="My AMoNet"){
@@ -54,10 +56,16 @@ prebuilt.AMoNet<-function(object, NETall=NULL,
   NETall$Layer<-Analysis$Layers
 
   # add weigths to new nodes or remove new nodes
+  if(is.null(Weights)){
   NETall<-addWeights(NETall = NETall, SdWinit = object$Parameters$Default$SdWinit,
                      MeanWinit = object$Parameters$Default$MeanWinit , Scaling = T,
                      Adam = !is.null(object$Parameters$Default$Optimizer), LSTM = object$Parameters$Default$LSTM)
-
+  } else {
+    NETall$Weights<-Weights
+    NETall$bterm<-0
+    print("Set optimizer to standard gradient descent")
+    object$Parameters$Default$Optimizer<-NULL
+  }
 
   # output
   netLIST<-list(call=list(build_call=CALL), NETall=NETall,iStates=NULL,Ct=NULL) # Parameters=list(object$Parameters$Default=object$Parameters$Default, Boundaries=Boundaries)

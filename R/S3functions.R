@@ -539,7 +539,7 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
 
 }
 
-#' plot predictions generated from the \code{predicte()} function.
+#' Plot predictions generated from the \code{predicte()} function
 #' @aliases plot
 #' @usage plot(x=net$Predict, ...)
 #' @param x object of class *predict.AMoNet* generated with the \code{predict()} function and accessible with *AMoNet* object subobject \code{object$Predict}.
@@ -570,3 +570,12 @@ plot.predict.AMoNet<-function(x=net$Predict,
 
 }
 
+
+#' Write the network of the *AMoNet* object
+#' @description Used to export a .csv file for visualization and other applications
+#' @param object *AMoNet* object, S3 class.
+#' @param file a (writable binary-mode) connection or the name of the file where the data will be saved.
+#' @export
+write.AMoNet.network<-function(object, file=stop("'file' must be specified")){
+  write.csv(x = object$NETall, file = file)
+}

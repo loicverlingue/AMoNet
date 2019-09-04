@@ -1,7 +1,7 @@
 
-#' Wrapper function to run the AMonet workflow on TCGA data
+#' Wrapper function to run the AMonet workflow with grid search on TCGA data
 #'
-#' AMonet workflow comprise building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
+#' @description AMonet workflow comprise building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
 #'
 #' @param Param character vector: the hyperparameters to randomly test
 #' @param DIR directory: directory of the models storing
