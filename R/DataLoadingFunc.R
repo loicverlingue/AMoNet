@@ -24,14 +24,16 @@
 #' Init is a normalized expression matrix
 #'
 #' @export
-LoadCleanTCGA<-function(object,Species=NULL,
-                        Param="", RestrictUnique=T, PLOT=F, FunctionalAnnot=T, organ=Default$organ){
+#'
+LoadCleanTCGA<-function(object, Species=NULL,
+                        Param="", RestrictUnique=T,
+                        PLOT=F, FunctionalAnnot=T, organ=Default$organ){
   if(is.null(Species)){
     Species<-union(object$NETall$source_hgnc,object$NETall$target_hgnc)
   }
 
   if(is.null(organ)){
-    organ<-Default$organ
+    organ<-object$Parameters$Default$organ
   } else {
     object$Parameters$Default$organ<-organ
   }
@@ -40,20 +42,20 @@ LoadCleanTCGA<-function(object,Species=NULL,
 
     TCGAdata<-LoadcBioportal(Genes = Species[Species%in%CGS$Gene.Symbol[CGS$Hallmark=="Yes"]],
                              Organ = organ, ClinicNeeded = T,
-                             RNANeeded = Default$EXPinit, MutNeeded = Default$MUTinit,
+                             RNANeeded = object$Parameters$Default$EXPinit, MutNeeded = object$Parameters$Default$MUTinit,
                              FunctionalAnnot=FunctionalAnnot,
                              NormalizeRNA = T, PDF = F, Tests=T)
   } else {
     TCGAdata<-LoadcBioportal(Genes = Species, Organ = organ, ClinicNeeded = T,
-                             RNANeeded = Default$EXPinit, MutNeeded = Default$MUTinit,
+                             RNANeeded = object$Parameters$Default$EXPinit, MutNeeded = object$Parameters$Default$MUTinit,
                              FunctionalAnnot=FunctionalAnnot,
-                             NormalizeRNA = Default$EXPinit, PDF = F, Tests=T)
+                             NormalizeRNA = object$Parameters$Default$EXPinit, PDF = F, Tests=T)
   }
 
   ### adjust max boundary minibatch
   if("MiniBatch"%in%Param){
-    Boundaries$MiniBatch[2]<<-  ceiling(log2(nrow(TCGAdata$CLINIC)))
-    Default<<-HyperP(C="MiniBatch",Default = Default,Boundaries = Boundaries)
+    object$Parameters$Boundaries$MiniBatch[2] <-  ceiling(log2(nrow(TCGAdata$CLINIC)))
+    object$Parameters$Default <- HyperP(C="MiniBatch",Default = object$Parameters$Default,Boundaries = object$Parameters$Boundaries)
   }
 
   # remove follow up = 0
@@ -75,14 +77,15 @@ LoadCleanTCGA<-function(object,Species=NULL,
   TCGAdata$CLINIC[TCGAdata$CLINIC$OS_MONTHS>quantile(TCGAdata$CLINIC$OS_MONTHS,0.95),"OS"]<-as.numeric(quantile(TCGAdata$CLINIC$OS_MONTHS,0.95))
 
   # if Npat in the parameters to randomize: learning curve
-  if(Default$Npat<nrow(TCGAdata$CLINIC)){
+  if(object$Parameters$Default$Npat<nrow(TCGAdata$CLINIC)){
 
+    Selec<-sample(seq(nrow(TCGAdata$CLINIC)),object$Parameters$Default$Npat)
     Clin=TCGAdata$CLINIC[Selec,]
     MUTa=TCGAdata$MUT[Selec,]
     EXP=TCGAdata$EXP[Selec,]
     dim(Clin);dim(MUTa);dim(EXP)
   } else {
-    Default$Npat<-nrow(TCGAdata$CLINIC)
+    object$Parameters$Default$Npat<-nrow(TCGAdata$CLINIC)
     Clin=TCGAdata$CLINIC
     MUTa=TCGAdata$MUT
     EXP=TCGAdata$EXP
@@ -146,12 +149,13 @@ LoadCleanTCGA<-function(object,Species=NULL,
   rownames(Y_base_raw)<-c("Output","Status")
 
   # 2. with descrete time estimation
-  NYsurv<-SurvEstimator(Interval = ifelse(Default$Interval>1,Default$Interval,10), time = Y_base_raw["Output",],
+  NYsurv<-SurvEstimator(Interval = ifelse(object$Parameters$Default$Interval>1,
+                                          object$Parameters$Default$Interval,10), time = Y_base_raw["Output",],
                         status = Y_base_raw["Status",], PDF = F)
 
-  if(Default$Interval>1){
+  if(object$Parameters$Default$Interval>1){
     Y_base<-NYsurv$ProbMat
-    rownames(Y_base)<-paste("Output",seq(Default$Interval),sep = "")
+    rownames(Y_base)<-paste("Output",seq(object$Parameters$Default$Interval),sep = "")
   } else {
     Y_base<-NYsurv$MeanProbMat
     Y_base<-t(NYsurv$MeanProbMat)
@@ -163,5 +167,10 @@ LoadCleanTCGA<-function(object,Species=NULL,
 # list2env(list(y=Clin,SurvData=Y_base_raw,MUTa=MUTa,MUT=MUTl,Init=EXP), envir = .GlobalEnv)
   DATA<-list(y=Clin,SurvData=Y_base_raw,MUTa=MUTa,MUT=MUTl,Init=EXP)
   object$Data<-DATA
+
+  # update Default and Boundaries in .GlobalEnv
+  assign("Default",object$Parameters$Default,envir = .GlobalEnv)
+  assign("Boundaries",object$Parameters$Boundaries,envir = .GlobalEnv)
+
   return(object)
 }

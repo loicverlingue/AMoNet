@@ -200,7 +200,7 @@ Bondaries<-list(learningrate=c(1e-5,0.05), MeanWinit=c(10^-4,0.99), SdWinit = c(
 
 #save(Default,file = file.path(getwd(),"data/Default.RData"))
 }
-
+if(FALSE){
 HyperP<-function(C=Param, Default=Default, Bondaries=Bondaries){
 
   # define distribution you want
@@ -232,6 +232,7 @@ HyperP<-function(C=Param, Default=Default, Bondaries=Bondaries){
 
   list2env(Default, envir = .GlobalEnv)
   return(Default)
+}
 }
 
 #### control optional arguments

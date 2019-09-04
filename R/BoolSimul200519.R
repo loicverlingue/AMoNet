@@ -165,9 +165,9 @@ BoolSimul<-function(NETall=NETall, Logic="Sigmoid", Mode="LAYER",
 
         EXPORT<-c("FunDf","NETall","Update.","Ospecies", "TotiState", "Round",
                   "Sigmoid", "tanh", "ReLU", "BuildNetMat")
-        clusterExport(cl,EXPORT, envir = environment())
+        parallel::clusterExport(cl,EXPORT, envir = environment())
 
-        Lgates<-parLapply(cl,FunDf,function(FunDfx){
+        Lgates<-parallel::parLapply(cl,FunDf,function(FunDfx){
           Update.(NETall=NETall,Ospecies=Ospecies,TotiState=TotiState,
                   NameWeigts=FunDfx[[1]], NameB = FunDfx[[2]],
                   FUN=FunDfx[[3]], Round = Round)
@@ -457,7 +457,7 @@ BoolSimul<-function(NETall=NETall, Logic="Sigmoid", Mode="LAYER",
   # Initiate cluster
   if(Parallel){
 
-      no_cores_detect <- detectCores()
+      no_cores_detect <- parallel::detectCores()
       if(no_cores_detect<no_cores){
         print(paste("Changed",no_cores,"to",no_cores_detect,"detected cores"))
         no_cores<-no_cores_detect
@@ -468,7 +468,7 @@ BoolSimul<-function(NETall=NETall, Logic="Sigmoid", Mode="LAYER",
       no_cores<-floor(nrow(iStates)/2)
       print(paste("Changed",no_cores1,"to",no_cores,"cores"))
     }
-  cl <- makeCluster(no_cores)
+  cl <- parallel::makeCluster(no_cores)
 
   }
 
@@ -509,10 +509,10 @@ BoolSimul<-function(NETall=NETall, Logic="Sigmoid", Mode="LAYER",
       EXPORT<-c(EXPORT,"ReLU")
     }
 
-    clusterExport(cl,EXPORT, envir = environment())
+    parallel::clusterExport(cl,EXPORT, envir = environment())
   # NMini<-EpochMini[[2]]
 
-    LAttractorsAZ<-parLapply(cl,EpochMini,function(NMini){
+    LAttractorsAZ<-parallel::parLapply(cl,EpochMini,function(NMini){
       Simulation(TotiState = TotiState[NMini,,,,drop=F] , NETall=NETall,
                  Mode=Mode, MinSteps=MinSteps, LSTM = LSTM,
                  MUT=MUT[NMini,drop=F], Parallel=Parallel)

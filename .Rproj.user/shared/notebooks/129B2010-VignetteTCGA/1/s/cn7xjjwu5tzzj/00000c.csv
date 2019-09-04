@@ -1,1 +1,1 @@
-"0","#print(net$history)"
+"0","plot(net$history)"

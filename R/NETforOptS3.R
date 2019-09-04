@@ -182,7 +182,6 @@ build.AMoNet<-function(object,
 
 
   # output
-  #object<<-list()
   netLIST<-list(call=list(build_call=CALL), NETall=NETall,iStates=NULL,Ct=NULL) # Parameters=list(object$Parameters$Default=object$Parameters$Default, Boundaries=Boundaries)
   DIFF<-setdiff(names(object),names(netLIST))
 

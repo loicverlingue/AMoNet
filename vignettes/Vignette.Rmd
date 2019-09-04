@@ -49,8 +49,7 @@ AMoNet comes with
 
 The user can set hyper-parameters either in the Default object or in the related functions arguments.
 
-```{r, import Default in global.env()}
-#data("Default");data("Boundaries")
+```{r, show hyper-parameters}
 head(Default)
 length(Default)
 ```

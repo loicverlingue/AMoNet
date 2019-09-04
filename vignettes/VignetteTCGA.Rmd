@@ -10,10 +10,6 @@ vignette: >
 ---
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ```{r, loadpack}
 library(AMoNet)
 if(TRUE){
@@ -35,7 +31,7 @@ set.seed(1234)
 
 
 ```{r, import Default in global.env()}
-data("Default");data("Boundaries")
+#data("Default");data("Boundaries")
 ```
 
 Build AMoNet focused on oncogenic relation between *TP53* and *MTOR* within hallmarks of cancer cells.
@@ -112,7 +108,6 @@ net<-train.AMoNet(net,y=net$Data$y,MUT=net$Data$MUT, treatmt=NULL,
 ## Visualize learning phase
 ```{r}
 plot(net$history)
-#print(net$history)
 ```
 
 Optionnaly you can plot the optimized netowrk
@@ -131,6 +126,7 @@ Plot predictions
 ```{r}
 plot(net$Predict)
 ```
+
 
 ## write your optimized network 
 In a .csv file. You can thus use it for other purposes.

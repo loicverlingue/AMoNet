@@ -15,7 +15,7 @@
 #' }
 #' @export
 #' @import grDevices graphics stats utils
-AMoNet <- function(GENESman, treatm, ...) UseMethod("AMoNet")
+AMoNet <- function(GENESman, treatmt, ...) UseMethod("AMoNet")
 
 #' @export
 AMoNet.default<-function(GENESman=NULL,treatmt=""){
@@ -26,11 +26,14 @@ AMoNet.default<-function(GENESman=NULL,treatmt=""){
   } else {
     GENES<-GENESman
   }
-  net<-list(GENESman=GENES, treatmt=treatmt, Parameters=list(Default=AMoNet::Default, Boundaries=AMoNet::Boundaries))
-  class(net)<-"AMoNet"
 
   # load Default and Boundaries in .GlobalEnv to be writable and accessible in functions calls
   data("Default",package = "AMoNet", envir = .GlobalEnv)
+  data("Boundaries",package = "AMoNet", envir = .GlobalEnv)
+  data("CGS",package = "AMoNet", envir = .GlobalEnv)
+
+  net<-list(GENESman=GENES, treatmt=treatmt, Parameters=list(Default=AMoNet::Default, Boundaries=AMoNet::Boundaries))
+  class(net)<-"AMoNet"
 
   return(net)
 }

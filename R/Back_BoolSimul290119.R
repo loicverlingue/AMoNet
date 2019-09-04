@@ -1,6 +1,6 @@
 #' Back simulation, corresponds to the diffusion of the gradients
 #'
-#' \code{BackBoolSimul} is taking forward simulations to derivate loss, flip the net, and simulate the gradients
+#' @description \code{BackBoolSimul} is taking forward simulations to derivate loss, flip the net, and simulate the gradients
 #'
 #' @param NETall data frame. The network in format (similar to .sif with) columns "source", "interaction", "target", additionally storing the architecture (column "Layer"), the parameters and optionnaly Boolean logic.
 #' @param Logic character. The update function used for the simulations. Choices are: "Sigmoid" (default), "Boolean","tanh" or "ReLU".
@@ -23,7 +23,7 @@
 #'
 BackBoolSimul<-function(NETall=NETall, Logic=c("Sigmoid","tanh"), Mode=c("LAYER","ASYNC","SYNC"),
                     Y=Y, MinSteps=MinSteps, FixNodes=FixNodes, #learning_rate =learning_rate,
-                    Parallelize=Parallelize, TotiState=TotAttractors,gradClipping=F, LSTM=LSTM,
+                    Parallelize=Parallelize, TotiState=NULL,gradClipping=F, LSTM=LSTM,
                     alpha=0, lambda=0.1){
 
   # todo: parallellize
@@ -54,7 +54,7 @@ if("Sigmoid"%in%Logic){
   NETexplore$Output<-NETexplore$target_hgnc%in%InputsNETall
 
   # function to update gradients
-  UpdateLSTMgrad<-function(dX=dX, NAMESnode=NAMES, Layer=Layer, NETexplore=NETexplore,
+  UpdateLSTMgrad<-function(dX=dX, NAMESnode=NULL, Layer=Layer, NETexplore=NETexplore,
                            TotiState=TotiState, LSTM=LSTM){
 
     NAMESGates<-names(TotiState[1,,1,dim(TotiState)[4]])
@@ -203,7 +203,7 @@ if("Sigmoid"%in%Logic){
       #       print('2nd step')
       dW=t(dZ)%*%t(Xactivity[NETexplore[NETexplore$source_hgnc%in%NAMES,3]]) # Xactivity at stable state for target species!
 
-      dW<-melt(dW)
+      dW<-reshape2::melt(dW)
       Rnames<-paste(dW[,1],dW[,2],sep = ".")
       dW<-dW[!duplicated(Rnames),]
       rownames(dW)<-paste(dW[,1],dW[,2],sep = ".")
@@ -232,7 +232,7 @@ if("Sigmoid"%in%Logic){
       # reshape it
 #      dW<-dWshape(grads[grep(DW,names(grads),value = T)],NamesInteraction)
 
-      dW<-melt(grads[[DW]])
+      dW<-reshape2::melt(grads[[DW]])
       Rnames<-paste(dW[,1],dW[,2],sep = ".")
       dW<-dW[!duplicated(Rnames),]
       rownames(dW)<-paste(dW[,2],dW[,1],sep = ".")
@@ -556,7 +556,7 @@ if("Sigmoid"%in%Logic){
       #    dim(t(Xactivity[rownames(W)]))
           dW<-as.matrix(dZ)%*%t(Xactivity[rownames(W)]) # Xactivity at stable state for target species!
       #    dim(dW)
-          dW<-melt(dW)
+          dW<-reshape2::melt(dW)
           Rnames<-paste(dW[,2],dW[,1],sep = ".")
           # Rnames[Rnames%in%names(dWStates)]
           dW<-dW[!duplicated(Rnames),]
@@ -706,7 +706,7 @@ if("Sigmoid"%in%Logic){
               # dW
               #  rownames(dW)%in%NewSpecies
               #  colnames(dW)%in%NewSpecies
-              dW<-melt(dW)
+              dW<-reshape2::melt(dW)
               Rnames<-paste(dW[,2],dW[,1],sep = ".")
               # Rnames[Rnames%in%names(dWStates)]
               dW<-dW[!duplicated(Rnames),]
@@ -803,7 +803,7 @@ if("Sigmoid"%in%Logic){
             dim(t(Xactivity[rownames(W)]))
             dW<-as.matrix(dZ)%*%t(Xactivity[rownames(W)]) # Xactivity at stable state for target species!
             dim(dW)
-            dW<-melt(dW)
+            dW<-reshape2::melt(dW)
             Rnames<-paste(dW[,2],dW[,1],sep = ".")
             # Rnames[Rnames%in%names(dWStates)]
             dW<-dW[!duplicated(Rnames),]

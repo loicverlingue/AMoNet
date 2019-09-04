@@ -18,7 +18,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
 
   #### load cbioportal
   #library(cgdsr)
-  mycgds = CGDS("http://www.cbioportal.org/")
+  mycgds = cgdsr::CGDS("http://www.cbioportal.org/")
   if(Tests){
     test(mycgds)
   }
@@ -41,7 +41,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
     print("Organ = NULL --> load all data")
     ANS <- readline("do you want to continue - it maybe long and heavy [Y/N]?")
     if("y"%in%ANS){
-      NUMstudy<-unique(getCancerStudies(mycgds)$cancer_study_id)
+      NUMstudy<-unique(cgdsr::getCancerStudies(mycgds)$cancer_study_id)
     } else {
       print(paste("You should choose organ within:",paste(OfficialNamesTCGA,collapse = ", ") ))
       stop()
@@ -51,7 +51,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
 
   # OS_TCGA = studies with RNAseq and OS
   OS_TCGA<-scan(text = "laml_tcga_pub	laml_tcga	acyc_mskcc_2013	acbc_mskcc_2015	acc_tcga	ampca_bcm_2016	blca_mskcc_solit_2014	blca_mskcc_solit_2012	blca_tcga_pub_2017	blca_plasmacytoid_mskcc_2016	blca_tcga_pub	blca_tcga	lgg_tcga	brca_metabric	brca_tcga_pub2015	brca_tcga_pub	brca_tcga	cesc_tcga	chol_nus_2012	chol_tcga	coadread_tcga_pub	coadread_tcga	coadread_mskcc	cscc_hgsc_bcm_2014	cscc_dfarber_2015	esca_tcga	escc_icgc	es_iocurie_2014	gbc_shanghai_2014	egc_tmucih_2015	prad_cpcg_2017	gct_msk_2016	mixed_allen_2018	gbm_tcga_pub2013	gbm_tcga_pub	gbm_tcga	hnsc_tcga_pub	hnsc_tcga	kich_tcga_pub	kich_tcga	kirc_tcga_pub	kirc_tcga	kirp_tcga	lihc_amc_prv	lihc_tcga	lgg_ucsf_2014	luad_tcga_pub	luad_tcga	lusc_tcga	dlbc_tcga	plmeso_nyu_2015	mbl_icgc	mbl_pcgp	mbl_sickkids_2016	skcm_broad_dfarber	lgggbm_tcga_pub	meso_tcga	egc_msk_2017	prad_mich	mixed_pipseq_2017	odg_msk_2017	npc_nusingapore	nbl_amc_2012	nbl_broad_2013	skcm_vanderbilt_mskcc_2015	nhl_bcgsc_2011	hnsc_mdanderson_2013	ov_tcga_pub	ov_tcga	mel_tsam_liang_2017	paad_tcga	thca_tcga_pub	all_phase2_target_2018_pub	es_dfarber_broad_2014	nbl_target_2018_pub	rt_target_2018_pub	wt_target_2018_pub	pcpg_tcga	thyroid_mskcc_2016	pcnsl_mayo_2015	prad_tcga	prad_mskcc_2014	hnc_mskcc_2016	sarc_tcga	skcm_tcga	sclc_ucologne_2015	stad_tcga_pub	stad_tcga	stad_uhongkong	stes_tcga_pub	urcc_mskcc_2016	crc_msk_2018	utuc_mskcc_2013	tgct_tcga	thym_tcga	thca_tcga	ucs_tcga	ucec_tcga_pub	ucec_tcga	uvm_tcga	panet_arcnet_2017	skcm_ucla_2016	past_dkfz_heidelberg_2013", what = "")
-  NUMstudybase<-unique(getCancerStudies(mycgds)$cancer_study_id)
+  NUMstudybase<-unique(cgdsr::getCancerStudies(mycgds)$cancer_study_id)
 
   if(ClinicNeeded){
 

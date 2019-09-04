@@ -1,0 +1,882 @@
+
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> devtools::load_all()
+Loading AMoNet
+> devtools::check()
+Updating AMoNet documentation
+Writing NAMESPACE
+Loading AMoNet
+Writing NAMESPACE
+-- Building ------------------------------------------------------------- AMoNet --
+Setting env vars:
+* CFLAGS    : -Wall -pedantic
+* CXXFLAGS  : -Wall -pedantic
+* CXX11FLAGS: -Wall -pedantic
+-----------------------------------------------------------------------------------
+v  checking for file 'C:\Users\L_VERLINGUE\Desktop\ModelK\Rpack\AMoNet/DESCRIPTION' (775ms)
+-  preparing 'AMoNet': (4.8s)
+v  checking DESCRIPTION meta-information ... 
+-  installing the package to build vignettes (440ms)
+v  creating vignettes (3m 2.4s)
+   Warning: 'inst/doc' file
+       'VignetteTCGA.R'
+     ignored as vignettes have been rebuilt.
+     Run R CMD build with --no-build-vignettes to prevent rebuilding.
+-  checking for LF line-endings in source and make files and shell scripts (714ms)
+-  checking for empty or unneeded directories
+   Removed empty directory 'AMoNet/tmp'
+-  looking to see if a 'data/datalist' file should be added
+-  building 'AMoNet_0.1.0.tar.gz'
+   
+-- Checking ------------------------------------------------------------- AMoNet --
+Setting env vars:
+* _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
+* _R_CHECK_CRAN_INCOMING_       : FALSE
+* _R_CHECK_FORCE_SUGGESTS_      : FALSE
+-- R CMD check --------------------------------------------------------------------
+-  using log directory 'C:/Users/L_VERLINGUE/AppData/Local/Temp/RtmpQVn0uk/AMoNet.Rcheck' (2.7s)
+-  using R version 3.4.4 (2018-03-15)
+-  using platform: x86_64-w64-mingw32 (64-bit)
+-  using session charset: ISO8859-1
+-  using options '--no-manual --as-cran'
+v  checking for file 'AMoNet/DESCRIPTION'
+-  checking extension type ... Package
+-  this is package 'AMoNet' version '0.1.0'
+-  package encoding: UTF-8
+v  checking package namespace information
+v  checking package dependencies (3.6s)
+v  checking if this is a source package ... 
+v  checking if there is a namespace
+v  checking for .dll and .exe files
+N  checking for hidden files and directories ...
+   Found the following hidden files and directories:
+     amonet/.Rbuildignore
+   These were most likely included in error. See section 'Package
+   structure' in the 'Writing R Extensions' manual.
+v  checking for portable file names ... 
+v  checking whether package 'AMoNet' can be installed (4.9s)
+v  checking package directory
+v  checking 'build' directory
+W  checking DESCRIPTION meta-information (575ms)
+   Non-standard license specification:
+     What license is it under?
+   Standardizable: FALSE
+N  checking top-level files
+   Non-standard files/directories found at top level:
+     'amonet' 'model' 'trash'
+v  checking for left-over files ... 
+v  checking index information (877ms)
+v  checking package subdirectories (1.1s)
+v  checking R files for non-ASCII characters (369ms)
+v  checking R files for syntax errors (465ms)
+v  checking whether the package can be loaded (597ms)
+v  checking whether the package can be loaded with stated dependencies (352ms)
+v  checking whether the package can be unloaded cleanly (462ms)
+v  checking whether the namespace can be loaded with stated dependencies (351ms)
+v  checking whether the namespace can be unloaded cleanly (465ms)
+v  checking loading without being on the library search path (769ms)
+W  checking dependencies in R code (985ms)
+   'library' or 'require' calls not declared from:
+     'MASS' 'circlize' 'rgl'
+   'library' or 'require' calls in package code:
+     'MASS' 'circlize' 'rgl'
+     Please use :: or requireNamespace() instead.
+     See section 'Suggested packages' in the 'Writing R Extensions' manual.
+W  checking S3 generic/method consistency (1.9s)
+   AMoNet:
+     function(GENESman, treatm, ...)
+   AMoNet.default:
+     function(GENESman, treatmt)
+   
+   split:
+     function(x, f, drop, ...)
+   split.AMoNet:
+     function(x, f, drop, RETURN)
+   
+   predict:
+     function(object, ...)
+   predict.AMoNet:
+     function(object, newy, newInit, newiStates, newMUT, newtreatmt,
+              Logic, Mode, MinSteps, LSTM, Parallelize, no_cores, ValMut)
+   
+   simulate:
+     function(object, nsim, seed, ...)
+   simulate.AMoNet:
+     function(object, nsim, seed, Init, iStates, MUT, treatmt, Logic,
+              Mode, ValMut, LSTM, Ct, Parallel, no_cores, Steepness)
+   
+   See section 'Generic functions and methods' in the 'Writing R
+   Extensions' manual.
+v  checking replacement functions (465ms)
+v  checking foreign function calls (1.7s)
+N  checking R code for possible problems (23.9s)
+   BackBoolSimul: no visible binding for global variable 'TotAttractors'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'NAMES'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'Ctl'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'OutputGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'Gt'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'ZInputGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'ZOutputGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'ZForgetGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'InputGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'ZGt'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'ForgetGate'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'Z'
+   BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+     'A'
+   BackBoolSimul : StoreLSTMgrad : <anonymous>: no visible global function
+     definition for 'melt'
+   BackBoolSimul : Simulation: no visible binding for global variable
+     'Zactivity'
+   BackBoolSimul : Simulation: no visible binding for global variable
+     'Xactivity'
+   BackBoolSimul : Simulation: no visible global function definition for
+     'melt'
+   BoolSimul : ModeUpdate: no visible global function definition for
+     'clusterExport'
+   BoolSimul : ModeUpdate: no visible global function definition for
+     'parLapply'
+   BoolSimul: no visible global function definition for 'detectCores'
+   BoolSimul: no visible global function definition for 'makeCluster'
+   BoolSimul: no visible global function definition for 'clusterExport'
+   BoolSimul: no visible global function definition for 'parLapply'
+   BoolSimul: no visible global function definition for 'stopCluster'
+   BoolSimul: multiple local function definitions for 'ModeUpdate' with
+     different formal arguments
+   BoolSimul: multiple local function definitions for 'Update' with
+     different formal arguments
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'kde2d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'open3d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'surface3d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'aspect3d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'decorate3d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'movie3d'
+   DissectPath : Plot3DAttract: no visible global function definition for
+     'spin3d'
+   DissectPath: no visible global function definition for 'chordDiagram'
+   LoadCleanTCGA: no visible binding for global variable 'CGS'
+   LoadCleanTCGA: no visible binding for '<<-' assignment to 'Boundaries'
+   LoadCleanTCGA: no visible binding for global variable 'Boundaries'
+   LoadCleanTCGA: no visible global function definition for 'HyperP'
+   LoadCleanTCGA: no visible binding for global variable 'Selec'
+   LoadcBioportal: no visible global function definition for 'CGDS'
+   LoadcBioportal: no visible global function definition for 'test'
+   LoadcBioportal: no visible global function definition for
+     'getCancerStudies'
+   LoadcBioportal: no visible global function definition for
+     'getCaseLists'
+   LoadcBioportal: no visible global function definition for
+     'getClinicalData'
+   LoadcBioportal: no visible global function definition for
+     'getGeneticProfiles'
+   LoadcBioportal: no visible global function definition for
+     'getProfileData'
+   LoadcBioportal: no visible global function definition for
+     'getMutationData'
+   LoadcBioportal: no visible global function definition for 'dcast'
+   MutMatToList : <anonymous>: no visible binding for global variable
+     'CGS'
+   NETforOpt: no visible binding for global variable 'OMNI'
+   NETforOpt: no visible binding for global variable 'Default'
+   NETforOpt: possible error in BoolSimul(NETall = NETall, Logic =
+     "Sigmoid", Mode = "LAYER", iStates = PossiStates, MinSteps = 4,
+     Inputs = NULL, LSTM = LSTM, Discretize = F, GOF = NULL, LOF = NULL,
+     Parallel = F): arguments inutilisés (Inputs = NULL, Discretize = F,
+     GOF = NULL, LOF = NULL)
+   NETforOpt: no visible binding for global variable 'SpeciesActivity'
+   NetBuilding: no visible global function definition for 'makeCluster'
+   NetBuilding: no visible global function definition for 'clusterExport'
+   NetBuilding: no visible global function definition for 'parLapply'
+   NetBuilding: no visible global function definition for 'stopCluster'
+   PlotAndPredict: no visible binding for global variable 'TCGAdata'
+   PlotAndPredict: no visible binding for global variable 'eSS'
+   PlotAndPredict: no visible binding for global variable 'Target'
+   PlotAndPredict: no visible binding for global variable 'Species'
+   PlotAndPredict: no visible binding for global variable 'Init'
+   PlotAndPredict: no visible binding for global variable 'NameProj'
+   PlotAndPredict: no visible binding for global variable 'Latt'
+   PlotAndPredict: no visible binding for global variable 'Perturb'
+   PlotAndPredict: no visible binding for global variable 'ORD1'
+   PlotAndPredict: no visible binding for global variable 'FreqAssoc'
+   PlotAndPredict: no visible binding for global variable 'Y_base_raw'
+   PlotAndPredict: no visible binding for global variable 'Train'
+   PlotAndPredict: no visible global function definition for
+     'survConcordance'
+   PlotAndPredict: no visible binding for global variable 'no_cores'
+   PlotAndPredict: no visible binding for global variable 'MUT'
+   PlotAndPredict: no visible binding for global variable 'Val'
+   PlotAndPredict: no visible binding for global variable 'DIRSave'
+   RunBackSimul: no visible binding for global variable 'Default'
+   RunBackSimul: no visible global function definition for 'image_graph'
+   RunBackSimul: no visible global function definition for 'image_animate'
+   RunBackSimul: no visible global function definition for 'image_write'
+   RunTCGAopt: no visible binding for global variable 'GenesSelecImmuno'
+   RunTCGAopt: no visible binding for global variable 'GenesSelecHall'
+   RunTCGAopt: possible error in SelectGTExOptNet(NameProjbase =
+     NameProjbase, NETall = NULL, DIR = DIR, Default = Default, Boundaries
+     = Boundaries, addOutputs = NULL, MiniBatch = Default$MiniBatch,
+     ValSelect = T): argument inutilisé (Boundaries = Boundaries)
+   RunTCGAopt: possible error in build.AMoNet(GENESman =
+     unique(NETall1$source_hgnc), treatmt = treatmt, InteractionBase =
+     NETall1, nblayers = Default$nblayers, MinConnect =
+     Default$MinConnect, RestrictedBuilding = T, RestrictedBase = F,
+     FilterCGS = F, MeanWinit = Default$MeanWinit, SdWinit =
+     Default$SdWinit, MECA = NULL, Phenotypes =
+     NETall1[NETall1$target_hgnc %in% NETall1$source_hgnc[NETall1$Output],
+     1:3], Interval = Default$Interval, LSTM = Default$LSTM, Optimizer =
+     Default$Optimizer, KeepPhenotypes = T, WRITE = F, no_cores =
+     no_cores, : arguments inutilisés (GENESman =
+     unique(NETall1$source_hgnc), treatmt = treatmt, WRITE = F)
+   RunTCGAopt: possible error in NameProj = NameProjbase): arguments
+     inutilisés (GENESman = unique(NETall1$source_hgnc), treatmt =
+     treatmt, WRITE = F)
+   RunTCGAopt: possible error in build.AMoNet(GENESman = GENESman, treatmt
+     = treatmt, InteractionBase = OMNI, nblayers = Default$nblayers,
+     MinConnect = Default$MinConnect, RestrictedBuilding = T,
+     RestrictedBase = T, FilterCGS = F, MeanWinit = Default$MeanWinit,
+     SdWinit = Default$SdWinit, Phenotypes = GenesSelec, MECA = MECA,
+     Interval = Default$Interval, LSTM = Default$LSTM, Optimizer =
+     Default$Optimizer, KeepPhenotypes = T, WRITE = F, no_cores =
+     no_cores, NameProj = NameProjbase): arguments inutilisés (GENESman =
+     GENESman, treatmt = treatmt, WRITE = F)
+   RunTCGAopt: no visible binding for global variable 'OMNI'
+   RunTCGAopt: possible error in LoadCleanTCGA(Species = Species, Default
+     = Default, Boundaries = Boundaries, Param = Param, RestrictUnique =
+     F): arguments inutilisés (Default = Default, Boundaries = Boundaries)
+   RunTCGAopt: no visible binding for global variable 'y'
+   RunTCGAopt: no visible binding for global variable 'Init'
+   RunTCGAopt: no visible binding for global variable 'MUT'
+   RunTCGAopt: no visible binding for global variable 'CGS'
+   SelectGTExOptNet : <anonymous>: no visible binding for global variable
+     'NETallProp'
+   SelectGTExOptNet: no visible binding for global variable 'NETallProp'
+   SelectGTExOptNet: no visible binding for global variable
+     'GenesSelecImmuno'
+   SelectGTExOptNet: no visible binding for global variable
+     'GenesSelecHall'
+   SelectGTExOptNet: no visible binding for global variable 'names_MECA'
+   Vizlearning: no visible binding for global variable 'epoch'
+   build.AMoNet: no visible binding for global variable 'Default'
+   build.AMoNet: no visible binding for global variable 'OMNI'
+   build.AMoNet: no visible binding for global variable 'names_MECA'
+   build.AMoNet: no visible binding for global variable 'GenesSelecImuno'
+   build.AMoNet: no visible binding for global variable 'GenesSelecHall'
+   build.AMoNet: no visible binding for global variable 'CGS'
+   ess: no visible global function definition for 'detectCores'
+   ess: no visible global function definition for 'makeCluster'
+   ess: no visible global function definition for 'clusterExport'
+   ess: no visible global function definition for 'parLapply'
+   ess : <anonymous>: possible error in BoolSimul(NETall = NETall1, Logic
+     = "Sigmoid", Mode = "LAYER", iStates = PossiStates, MinSteps = 8,
+     LSTM = F, GOF = NULL, LOF = NULL, Parallel = F, Inputs = NULL):
+     arguments inutilisés (GOF = NULL, LOF = NULL, Inputs = NULL)
+   ess : <anonymous>: possible error in BoolSimul(NETall = NETall1, Logic
+     = "Sigmoid", Mode = "LAYER", iStates = iStates, Steepness = 1,
+     MinSteps = 8, Inputs = NULL, LSTM = T, GOF = GOFl, LOF = LOFl,
+     Parallel = F): arguments inutilisés (Inputs = NULL, GOF = GOFl, LOF =
+     LOFl)
+   ess : <anonymous>: no visible global function definition for
+     'survConcordance'
+   ess: no visible global function definition for 'stopCluster'
+   plot.AMoNet: no visible binding for global variable 'net'
+   plot.AMoNet: no visible binding for '<<-' assignment to 'net'
+   plot.AMoNet: no visible binding for global variable 'TotAttractors'
+   plot.AMoNet.history: no visible binding for global variable 'Default'
+   plot.predict.AMoNet: no visible binding for global variable 'net'
+   prebuilt.AMoNet: no visible binding for global variable 'Default'
+   predict.AMoNet: no visible binding for global variable 'Default'
+   predict.AMoNet: no visible global function definition for
+     'survConcordance'
+   print.AMoNet.history: no visible binding for global variable 'net'
+   simulate.AMoNet: no visible binding for global variable 'Default'
+   simulate.AMoNet: no visible binding for global variable 'NETall'
+   train.AMoNet: no visible binding for global variable 'Default'
+   train.AMoNet: no visible binding for global variable 'net'
+   Undefined global functions or variables:
+     A Boundaries CGDS CGS Ctl DIRSave Default ForgetGate FreqAssoc
+     GenesSelecHall GenesSelecImmuno GenesSelecImuno Gt HyperP Init
+     InputGate Latt MUT NAMES NETall NETallProp NameProj OMNI ORD1
+     OutputGate Perturb Selec Species SpeciesActivity TCGAdata Target
+     TotAttractors Train Val Xactivity Y_base_raw Z ZForgetGate ZGt
+     ZInputGate ZOutputGate Zactivity aspect3d chordDiagram clusterExport
+     dcast decorate3d detectCores eSS epoch getCancerStudies getCaseLists
+     getClinicalData getGeneticProfiles getMutationData getProfileData
+     image_animate image_graph image_write kde2d makeCluster melt movie3d
+     names_MECA net no_cores open3d parLapply spin3d stopCluster surface3d
+     survConcordance test y
+   
+   Found the following assignments to the global environment:
+   File 'AMoNet/R/NETforOptS3.R':
+     assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+   File 'AMoNet/R/PreBuiltNetS3.R':
+     assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+   File 'AMoNet/R/S3functions.R':
+     assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+     assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+     assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+   
+   Found the following calls to data() loading into the global environment:
+   File 'AMoNet/R/S3functions.R':
+     data("Default", package = "AMoNet", envir = .GlobalEnv)
+   Voir section 'Good practice' dans '?data'.
+W  checking Rd files (946ms)
+   checkRd: (7) RandomiStates.Rd:17: Tag \dontrun not recognized
+   prepare_Rd: split.AMoNet.Rd:26-28: Dropping empty section \examples
+W  checking Rd metadata (344ms)
+   Rd files with duplicated alias 'plot':
+     'plot.AMoNet.history.Rd' 'plot.predict.AMoNet.Rd'
+N  checking Rd line widths (560ms)
+   Rd file 'predict.AMoNet.Rd':
+     \usage lines wider than 90 characters:
+        predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, Min ... [TRUNCATED]
+   
+   Rd file 'simulate.AMoNet.Rd':
+     \usage lines wider than 90 characters:
+        simulate(object, nsim=Default$MinStepsForward, seed=NULL, Init=NULL, iStates=NULL, MUT=NULL, treatmt=NULL, Logic=Default$Logic, Mode=De ... [TRUNCATED]
+   
+   Rd file 'train.AMoNet.Rd':
+     \usage lines wider than 90 characters:
+        train(object, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T, KeepData=T, Ct=NULL, MiniBatch=Default$MiniBatch, Opt ... [TRUNCATED]
+   
+   These lines will be truncated in the PDF manual.
+v  checking Rd cross-references (845ms)
+W  checking for missing documentation entries (614ms)
+   Undocumented code objects:
+     'GenesSelecHall'
+   Undocumented data sets:
+     'GenesSelecHall'
+   All user-level objects in a package should have documentation entries.
+   See chapter 'Writing R documentation files' in the 'Writing R
+   Extensions' manual.
+W  checking for code/documentation mismatches (692ms)
+   Functions or methods with usage in documentation object 'plot.AMoNet.history' but not in code:
+     plot
+   
+   Functions or methods with usage in documentation object 'plot.predict.AMoNet' but not in code:
+     plot
+   
+   Functions or methods with usage in documentation object 'predict.AMoNet' but not in code:
+     predict
+   
+   Functions or methods with usage in documentation object 'simulate.AMoNet' but not in code:
+     simulate
+   
+   Functions or methods with usage in documentation object 'split.AMoNet' but not in code:
+     split
+   
+   Functions or methods with usage in documentation object 'train.AMoNet' but not in code:
+     train
+   
+   Codoc mismatches from documentation object 'AMoNet':
+   AMoNet
+     Code: function(GENESman, treatm, ...)
+     Docs: function(GENESman = NULL, treatmt = "")
+     Argument names in code not in docs:
+       treatm ...
+     Argument names in docs not in code:
+       treatmt
+     Mismatches in argument names:
+       Position: 2 Code: treatm Docs: treatmt
+     Mismatches in argument default values:
+       Name: 'GENESman' Code:  Docs: NULL
+   
+W  checking Rd \usage sections (1.3s)
+   Undocumented arguments in documentation object 'NETforOpt'
+     'WRITE' 'NETall' 'GENESman' 'treatmt' 'InteractionBase' 'MeanWinit'
+     'SdWinit' 'RestrictedBuilding' 'nblayers' 'MinConnect' 'FilterCGS'
+     'LSTM' 'Adam' 'Activity' 'addOutputs' 'Phenotypes' 'KeepPhenotypes'
+     'RestrictedBase' 'NameProj' 'no_cores'
+   Documented arguments not in \usage in documentation object 'NETforOpt':
+     'NETall:' 'GENESman:' 'treatmt:' 'InteractionBase:' 'MeanWinit:'
+     'SdWinit:' 'RestrictedBuilding:' 'nblayers:' 'MinConnect:'
+     'FilterCGS:' 'LSTM:' 'Adam:' 'Activity:' 'addOutputs:' 'Phenotypes:'
+     'KeepPhenotypes:' 'RestrictedBase:' 'NameProj:'
+   
+   Undocumented arguments in documentation object 'RunBackSimul'
+     'Ct' 'learning_rate' 'adaptive_iStates' 'ModeBack'
+     'LearningRateDecay' 'PDF' 'GIF' 'NameProj'
+   
+   Undocumented arguments in documentation object 'RunTCGAopt'
+     'no_cores' 'KeepData' 'PartitionSplit'
+   
+   Undocumented arguments in documentation object 'build.AMoNet'
+     'no_cores'
+   
+   Undocumented arguments in documentation object 'plot.AMoNet'
+     'x' '...'
+   
+   Undocumented arguments in documentation object 'predict.AMoNet'
+     'Logic' 'Mode' 'MinSteps' 'LSTM' 'Parallelize'
+   Documented arguments not in \usage in documentation object 'predict.AMoNet':
+     'Parallel'
+   
+   Undocumented arguments in documentation object 'print.AMoNet.history'
+     '...'
+   
+   Undocumented arguments in documentation object 'split.AMoNet'
+     'drop'
+   
+   Functions with \usage entries need to have the appropriate \alias
+   entries, and all their arguments documented.
+   The \usage entries must correspond to syntactically valid R code.
+   See chapter 'Writing R documentation files' in the 'Writing R
+   Extensions' manual.
+v  checking Rd contents (1.6s)
+v  checking for unstated dependencies in examples ... 
+v  checking contents of 'data' directory
+v  checking data for non-ASCII characters (545ms)
+v  checking data for ASCII and uncompressed saves (2.4s)
+    WARNING
+   'qpdf' is needed for checks on size reduction of PDFs
+v  checking installed files from 'inst/doc' ... 
+v  checking files in 'vignettes' ...
+v  checking examples (995ms)
+v  checking for unstated dependencies in vignettes (1.1s)
+v  checking package vignettes in 'inst/doc' ... 
+W  checking re-building of vignette outputs (1m 41.6s)
+   Error in re-building vignettes:
+     ...
+   Quitting from lines 51-52 (VignetteTCGA.Rmd) 
+   Erreur : le traitement de la vignette 'VignetteTCGA.Rmd' a échoué avec le diagnostic :
+   3 simultaneous processes spawned
+   De plus : There were 42 warnings (use warnings() to see them)
+   Exécution arrêtée
+   
+   
+   See
+     'C:/Users/L_VERLINGUE/AppData/Local/Temp/RtmpQVn0uk/AMoNet.Rcheck/00check.log'
+   for details.
+   
+   
+-- R CMD check results ------------------------------------------ AMoNet 0.1.0 ----
+Duration: 2m 41.4s
+
+> checking DESCRIPTION meta-information ... WARNING
+  Non-standard license specification:
+    What license is it under?
+  Standardizable: FALSE
+
+> checking dependencies in R code ... WARNING
+  'library' or 'require' calls not declared from:
+    'MASS' 'circlize' 'rgl'
+  'library' or 'require' calls in package code:
+    'MASS' 'circlize' 'rgl'
+    Please use :: or requireNamespace() instead.
+    See section 'Suggested packages' in the 'Writing R Extensions' manual.
+
+> checking S3 generic/method consistency ... WARNING
+  AMoNet:
+    function(GENESman, treatm, ...)
+  AMoNet.default:
+    function(GENESman, treatmt)
+  
+  split:
+    function(x, f, drop, ...)
+  split.AMoNet:
+    function(x, f, drop, RETURN)
+  
+  predict:
+    function(object, ...)
+  predict.AMoNet:
+    function(object, newy, newInit, newiStates, newMUT, newtreatmt,
+             Logic, Mode, MinSteps, LSTM, Parallelize, no_cores, ValMut)
+  
+  simulate:
+    function(object, nsim, seed, ...)
+  simulate.AMoNet:
+    function(object, nsim, seed, Init, iStates, MUT, treatmt, Logic,
+             Mode, ValMut, LSTM, Ct, Parallel, no_cores, Steepness)
+  
+  See section 'Generic functions and methods' in the 'Writing R
+  Extensions' manual.
+
+> checking Rd files ... WARNING
+  checkRd: (7) RandomiStates.Rd:17: Tag \dontrun not recognized
+  prepare_Rd: split.AMoNet.Rd:26-28: Dropping empty section \examples
+
+> checking Rd metadata ... WARNING
+  Rd files with duplicated alias 'plot':
+    'plot.AMoNet.history.Rd' 'plot.predict.AMoNet.Rd'
+
+> checking for missing documentation entries ... WARNING
+  Undocumented code objects:
+    'GenesSelecHall'
+  Undocumented data sets:
+    'GenesSelecHall'
+  All user-level objects in a package should have documentation entries.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+
+> checking for code/documentation mismatches ... WARNING
+  Functions or methods with usage in documentation object 'plot.AMoNet.history' but not in code:
+    plot
+  
+  Functions or methods with usage in documentation object 'plot.predict.AMoNet' but not in code:
+    plot
+  
+  Functions or methods with usage in documentation object 'predict.AMoNet' but not in code:
+    predict
+  
+  Functions or methods with usage in documentation object 'simulate.AMoNet' but not in code:
+    simulate
+  
+  Functions or methods with usage in documentation object 'split.AMoNet' but not in code:
+    split
+  
+  Functions or methods with usage in documentation object 'train.AMoNet' but not in code:
+    train
+  
+  Codoc mismatches from documentation object 'AMoNet':
+  AMoNet
+    Code: function(GENESman, treatm, ...)
+    Docs: function(GENESman = NULL, treatmt = "")
+    Argument names in code not in docs:
+      treatm ...
+    Argument names in docs not in code:
+      treatmt
+    Mismatches in argument names:
+      Position: 2 Code: treatm Docs: treatmt
+    Mismatches in argument default values:
+      Name: 'GENESman' Code:  Docs: NULL
+
+> checking Rd \usage sections ... WARNING
+  Undocumented arguments in documentation object 'NETforOpt'
+    'WRITE' 'NETall' 'GENESman' 'treatmt' 'InteractionBase' 'MeanWinit'
+    'SdWinit' 'RestrictedBuilding' 'nblayers' 'MinConnect' 'FilterCGS'
+    'LSTM' 'Adam' 'Activity' 'addOutputs' 'Phenotypes' 'KeepPhenotypes'
+    'RestrictedBase' 'NameProj' 'no_cores'
+  Documented arguments not in \usage in documentation object 'NETforOpt':
+    'NETall:' 'GENESman:' 'treatmt:' 'InteractionBase:' 'MeanWinit:'
+    'SdWinit:' 'RestrictedBuilding:' 'nblayers:' 'MinConnect:'
+    'FilterCGS:' 'LSTM:' 'Adam:' 'Activity:' 'addOutputs:' 'Phenotypes:'
+    'KeepPhenotypes:' 'RestrictedBase:' 'NameProj:'
+  
+  Undocumented arguments in documentation object 'RunBackSimul'
+    'Ct' 'learning_rate' 'adaptive_iStates' 'ModeBack'
+    'LearningRateDecay' 'PDF' 'GIF' 'NameProj'
+  
+  Undocumented arguments in documentation object 'RunTCGAopt'
+    'no_cores' 'KeepData' 'PartitionSplit'
+  
+  Undocumented arguments in documentation object 'build.AMoNet'
+    'no_cores'
+  
+  Undocumented arguments in documentation object 'plot.AMoNet'
+    'x' '...'
+  
+  Undocumented arguments in documentation object 'predict.AMoNet'
+    'Logic' 'Mode' 'MinSteps' 'LSTM' 'Parallelize'
+  Documented arguments not in \usage in documentation object 'predict.AMoNet':
+    'Parallel'
+  
+  Undocumented arguments in documentation object 'print.AMoNet.history'
+    '...'
+  
+  Undocumented arguments in documentation object 'split.AMoNet'
+    'drop'
+  
+  Functions with \usage entries need to have the appropriate \alias
+  entries, and all their arguments documented.
+  The \usage entries must correspond to syntactically valid R code.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+
+> checking data for ASCII and uncompressed saves ... OK
+   WARNING
+  'qpdf' is needed for checks on size reduction of PDFs
+
+> checking re-building of vignette outputs ... WARNING
+  Error in re-building vignettes:
+    ...
+  Quitting from lines 51-52 (VignetteTCGA.Rmd) 
+  Erreur : le traitement de la vignette 'VignetteTCGA.Rmd' a échoué avec le diagnostic :
+  3 simultaneous processes spawned
+  De plus : There were 42 warnings (use warnings() to see them)
+  Exécution arrêtée
+
+> checking for hidden files and directories ... NOTE
+  Found the following hidden files and directories:
+    amonet/.Rbuildignore
+  These were most likely included in error. See section 'Package
+  structure' in the 'Writing R Extensions' manual.
+
+> checking top-level files ... NOTE
+  Non-standard files/directories found at top level:
+    'amonet' 'model' 'trash'
+
+> checking R code for possible problems ... NOTE
+  BackBoolSimul: no visible binding for global variable 'TotAttractors'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'NAMES'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'Ctl'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'OutputGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'Gt'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'ZInputGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'ZOutputGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'ZForgetGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'InputGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'ZGt'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'ForgetGate'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'Z'
+  BackBoolSimul : UpdateLSTMgrad: no visible binding for global variable
+    'A'
+  BackBoolSimul : StoreLSTMgrad : <anonymous>: no visible global function
+    definition for 'melt'
+  BackBoolSimul : Simulation: no visible binding for global variable
+    'Zactivity'
+  BackBoolSimul : Simulation: no visible binding for global variable
+    'Xactivity'
+  BackBoolSimul : Simulation: no visible global function definition for
+    'melt'
+  BoolSimul : ModeUpdate: no visible global function definition for
+    'clusterExport'
+  BoolSimul : ModeUpdate: no visible global function definition for
+    'parLapply'
+  BoolSimul: no visible global function definition for 'detectCores'
+  BoolSimul: no visible global function definition for 'makeCluster'
+  BoolSimul: no visible global function definition for 'clusterExport'
+  BoolSimul: no visible global function definition for 'parLapply'
+  BoolSimul: no visible global function definition for 'stopCluster'
+  BoolSimul: multiple local function definitions for 'ModeUpdate' with
+    different formal arguments
+  BoolSimul: multiple local function definitions for 'Update' with
+    different formal arguments
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'kde2d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'open3d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'surface3d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'aspect3d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'decorate3d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'movie3d'
+  DissectPath : Plot3DAttract: no visible global function definition for
+    'spin3d'
+  DissectPath: no visible global function definition for 'chordDiagram'
+  LoadCleanTCGA: no visible binding for global variable 'CGS'
+  LoadCleanTCGA: no visible binding for '<<-' assignment to 'Boundaries'
+  LoadCleanTCGA: no visible binding for global variable 'Boundaries'
+  LoadCleanTCGA: no visible global function definition for 'HyperP'
+  LoadCleanTCGA: no visible binding for global variable 'Selec'
+  LoadcBioportal: no visible global function definition for 'CGDS'
+  LoadcBioportal: no visible global function definition for 'test'
+  LoadcBioportal: no visible global function definition for
+    'getCancerStudies'
+  LoadcBioportal: no visible global function definition for
+    'getCaseLists'
+  LoadcBioportal: no visible global function definition for
+    'getClinicalData'
+  LoadcBioportal: no visible global function definition for
+    'getGeneticProfiles'
+  LoadcBioportal: no visible global function definition for
+    'getProfileData'
+  LoadcBioportal: no visible global function definition for
+    'getMutationData'
+  LoadcBioportal: no visible global function definition for 'dcast'
+  MutMatToList : <anonymous>: no visible binding for global variable
+    'CGS'
+  NETforOpt: no visible binding for global variable 'OMNI'
+  NETforOpt: no visible binding for global variable 'Default'
+  NETforOpt: possible error in BoolSimul(NETall = NETall, Logic =
+    "Sigmoid", Mode = "LAYER", iStates = PossiStates, MinSteps = 4,
+    Inputs = NULL, LSTM = LSTM, Discretize = F, GOF = NULL, LOF = NULL,
+    Parallel = F): arguments inutilisés (Inputs = NULL, Discretize = F,
+    GOF = NULL, LOF = NULL)
+  NETforOpt: no visible binding for global variable 'SpeciesActivity'
+  NetBuilding: no visible global function definition for 'makeCluster'
+  NetBuilding: no visible global function definition for 'clusterExport'
+  NetBuilding: no visible global function definition for 'parLapply'
+  NetBuilding: no visible global function definition for 'stopCluster'
+  PlotAndPredict: no visible binding for global variable 'TCGAdata'
+  PlotAndPredict: no visible binding for global variable 'eSS'
+  PlotAndPredict: no visible binding for global variable 'Target'
+  PlotAndPredict: no visible binding for global variable 'Species'
+  PlotAndPredict: no visible binding for global variable 'Init'
+  PlotAndPredict: no visible binding for global variable 'NameProj'
+  PlotAndPredict: no visible binding for global variable 'Latt'
+  PlotAndPredict: no visible binding for global variable 'Perturb'
+  PlotAndPredict: no visible binding for global variable 'ORD1'
+  PlotAndPredict: no visible binding for global variable 'FreqAssoc'
+  PlotAndPredict: no visible binding for global variable 'Y_base_raw'
+  PlotAndPredict: no visible binding for global variable 'Train'
+  PlotAndPredict: no visible global function definition for
+    'survConcordance'
+  PlotAndPredict: no visible binding for global variable 'no_cores'
+  PlotAndPredict: no visible binding for global variable 'MUT'
+  PlotAndPredict: no visible binding for global variable 'Val'
+  PlotAndPredict: no visible binding for global variable 'DIRSave'
+  RunBackSimul: no visible binding for global variable 'Default'
+  RunBackSimul: no visible global function definition for 'image_graph'
+  RunBackSimul: no visible global function definition for 'image_animate'
+  RunBackSimul: no visible global function definition for 'image_write'
+  RunTCGAopt: no visible binding for global variable 'GenesSelecImmuno'
+  RunTCGAopt: no visible binding for global variable 'GenesSelecHall'
+  RunTCGAopt: possible error in SelectGTExOptNet(NameProjbase =
+    NameProjbase, NETall = NULL, DIR = DIR, Default = Default, Boundaries
+    = Boundaries, addOutputs = NULL, MiniBatch = Default$MiniBatch,
+    ValSelect = T): argument inutilisé (Boundaries = Boundaries)
+  RunTCGAopt: possible error in build.AMoNet(GENESman =
+    unique(NETall1$source_hgnc), treatmt = treatmt, InteractionBase =
+    NETall1, nblayers = Default$nblayers, MinConnect =
+    Default$MinConnect, RestrictedBuilding = T, RestrictedBase = F,
+    FilterCGS = F, MeanWinit = Default$MeanWinit, SdWinit =
+    Default$SdWinit, MECA = NULL, Phenotypes =
+    NETall1[NETall1$target_hgnc %in% NETall1$source_hgnc[NETall1$Output],
+    1:3], Interval = Default$Interval, LSTM = Default$LSTM, Optimizer =
+    Default$Optimizer, KeepPhenotypes = T, WRITE = F, no_cores =
+    no_cores, : arguments inutilisés (GENESman =
+    unique(NETall1$source_hgnc), treatmt = treatmt, WRITE = F)
+  RunTCGAopt: possible error in NameProj = NameProjbase): arguments
+    inutilisés (GENESman = unique(NETall1$source_hgnc), treatmt =
+    treatmt, WRITE = F)
+  RunTCGAopt: possible error in build.AMoNet(GENESman = GENESman, treatmt
+    = treatmt, InteractionBase = OMNI, nblayers = Default$nblayers,
+    MinConnect = Default$MinConnect, RestrictedBuilding = T,
+    RestrictedBase = T, FilterCGS = F, MeanWinit = Default$MeanWinit,
+    SdWinit = Default$SdWinit, Phenotypes = GenesSelec, MECA = MECA,
+    Interval = Default$Interval, LSTM = Default$LSTM, Optimizer =
+    Default$Optimizer, KeepPhenotypes = T, WRITE = F, no_cores =
+    no_cores, NameProj = NameProjbase): arguments inutilisés (GENESman =
+    GENESman, treatmt = treatmt, WRITE = F)
+  RunTCGAopt: no visible binding for global variable 'OMNI'
+  RunTCGAopt: possible error in LoadCleanTCGA(Species = Species, Default
+    = Default, Boundaries = Boundaries, Param = Param, RestrictUnique =
+    F): arguments inutilisés (Default = Default, Boundaries = Boundaries)
+  RunTCGAopt: no visible binding for global variable 'y'
+  RunTCGAopt: no visible binding for global variable 'Init'
+  RunTCGAopt: no visible binding for global variable 'MUT'
+  RunTCGAopt: no visible binding for global variable 'CGS'
+  SelectGTExOptNet : <anonymous>: no visible binding for global variable
+    'NETallProp'
+  SelectGTExOptNet: no visible binding for global variable 'NETallProp'
+  SelectGTExOptNet: no visible binding for global variable
+    'GenesSelecImmuno'
+  SelectGTExOptNet: no visible binding for global variable
+    'GenesSelecHall'
+  SelectGTExOptNet: no visible binding for global variable 'names_MECA'
+  Vizlearning: no visible binding for global variable 'epoch'
+  build.AMoNet: no visible binding for global variable 'Default'
+  build.AMoNet: no visible binding for global variable 'OMNI'
+  build.AMoNet: no visible binding for global variable 'names_MECA'
+  build.AMoNet: no visible binding for global variable 'GenesSelecImuno'
+  build.AMoNet: no visible binding for global variable 'GenesSelecHall'
+  build.AMoNet: no visible binding for global variable 'CGS'
+  ess: no visible global function definition for 'detectCores'
+  ess: no visible global function definition for 'makeCluster'
+  ess: no visible global function definition for 'clusterExport'
+  ess: no visible global function definition for 'parLapply'
+  ess : <anonymous>: possible error in BoolSimul(NETall = NETall1, Logic
+    = "Sigmoid", Mode = "LAYER", iStates = PossiStates, MinSteps = 8,
+    LSTM = F, GOF = NULL, LOF = NULL, Parallel = F, Inputs = NULL):
+    arguments inutilisés (GOF = NULL, LOF = NULL, Inputs = NULL)
+  ess : <anonymous>: possible error in BoolSimul(NETall = NETall1, Logic
+    = "Sigmoid", Mode = "LAYER", iStates = iStates, Steepness = 1,
+    MinSteps = 8, Inputs = NULL, LSTM = T, GOF = GOFl, LOF = LOFl,
+    Parallel = F): arguments inutilisés (Inputs = NULL, GOF = GOFl, LOF =
+    LOFl)
+  ess : <anonymous>: no visible global function definition for
+    'survConcordance'
+  ess: no visible global function definition for 'stopCluster'
+  plot.AMoNet: no visible binding for global variable 'net'
+  plot.AMoNet: no visible binding for '<<-' assignment to 'net'
+  plot.AMoNet: no visible binding for global variable 'TotAttractors'
+  plot.AMoNet.history: no visible binding for global variable 'Default'
+  plot.predict.AMoNet: no visible binding for global variable 'net'
+  prebuilt.AMoNet: no visible binding for global variable 'Default'
+  predict.AMoNet: no visible binding for global variable 'Default'
+  predict.AMoNet: no visible global function definition for
+    'survConcordance'
+  print.AMoNet.history: no visible binding for global variable 'net'
+  simulate.AMoNet: no visible binding for global variable 'Default'
+  simulate.AMoNet: no visible binding for global variable 'NETall'
+  train.AMoNet: no visible binding for global variable 'Default'
+  train.AMoNet: no visible binding for global variable 'net'
+  Undefined global functions or variables:
+    A Boundaries CGDS CGS Ctl DIRSave Default ForgetGate FreqAssoc
+    GenesSelecHall GenesSelecImmuno GenesSelecImuno Gt HyperP Init
+    InputGate Latt MUT NAMES NETall NETallProp NameProj OMNI ORD1
+    OutputGate Perturb Selec Species SpeciesActivity TCGAdata Target
+    TotAttractors Train Val Xactivity Y_base_raw Z ZForgetGate ZGt
+    ZInputGate ZOutputGate Zactivity aspect3d chordDiagram clusterExport
+    dcast decorate3d detectCores eSS epoch getCancerStudies getCaseLists
+    getClinicalData getGeneticProfiles getMutationData getProfileData
+    image_animate image_graph image_write kde2d makeCluster melt movie3d
+    names_MECA net no_cores open3d parLapply spin3d stopCluster surface3d
+    survConcordance test y
+  
+  Found the following assignments to the global environment:
+  File 'AMoNet/R/NETforOptS3.R':
+    assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+  File 'AMoNet/R/PreBuiltNetS3.R':
+    assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+  File 'AMoNet/R/S3functions.R':
+    assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+    assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+    assign("Default", object$Parameters$Default, envir = .GlobalEnv)
+  
+  Found the following calls to data() loading into the global environment:
+  File 'AMoNet/R/S3functions.R':
+    data("Default", package = "AMoNet", envir = .GlobalEnv)
+  Voir section 'Good practice' dans '?data'.
+
+> checking Rd line widths ... NOTE
+  Rd file 'predict.AMoNet.Rd':
+    \usage lines wider than 90 characters:
+       predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, Min ... [TRUNCATED]
+  
+  Rd file 'simulate.AMoNet.Rd':
+    \usage lines wider than 90 characters:
+       simulate(object, nsim=Default$MinStepsForward, seed=NULL, Init=NULL, iStates=NULL, MUT=NULL, treatmt=NULL, Logic=Default$Logic, Mode=De ... [TRUNCATED]
+  
+  Rd file 'train.AMoNet.Rd':
+    \usage lines wider than 90 characters:
+       train(object, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T, KeepData=T, Ct=NULL, MiniBatch=Default$MiniBatch, Opt ... [TRUNCATED]
+  
+  These lines will be truncated in the PDF manual.
+
+0 errors v | 10 warnings x | 4 notes x
