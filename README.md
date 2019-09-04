@@ -5,7 +5,7 @@ Author: Loic Verlingue
 
 You can install AMoNet R package directly from Rstudio with the following steps.
 
-To download repo from gitlab.curie.fr, be sure to have a Curie intranet connection.
+To download it from gitlab.curie.fr, be sure to have a Curie intranet connection.
 
 ### From gitlab
 
@@ -13,7 +13,7 @@ Within the ```install_git()``` function you can:
 
 * Change the ```user``` and ```password``` with your own.
 
-* Add the argument ```build_opts=c("--no-resave-data", "--no-manual")``` to ```install_git()``` and build vignettes before installation, but should take additional installation time.
+* Add the argument ```build_opts="-build-vignettes"``` to build vignettes before installation, but should take additional installation time.
 
 ```{r install}
 library(devtools)

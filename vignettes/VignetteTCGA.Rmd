@@ -132,6 +132,11 @@ Plot predictions
 plot(net$Predict)
 ```
 
+## write your optimized network 
+In a .csv file. You can thus use it for other purposes.
+```{r, eval = FALSE}
+write.AMoNet.network(object = net, file = getwd())
+```
 
 ```{r}
 print("end")
