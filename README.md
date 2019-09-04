@@ -5,7 +5,7 @@ Author: Loic Verlingue
 
 You can install AMoNet R package directly from Rstudio with the following steps.
 
-Be sure to have a Curie intranet connection to acess gitlab.curie.fr.
+To download repo from gitlab.curie.fr, be sure to have a Curie intranet connection.
 
 ### From gitlab
 
