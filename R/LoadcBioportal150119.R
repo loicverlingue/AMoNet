@@ -110,16 +110,16 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
     #############
     # get study
     # mycancerstudy = getCancerStudies(mycgds)[NUMstudy,1]
-    mycaselist = grep("complete|all", tolower(getCaseLists(mycgds,mycancerstudy)[,1]),value = T)
+    mycaselist = grep("complete|all", tolower(cgdsr::getCaseLists(mycgds,mycancerstudy)[,1]),value = T)
     if(length(mycaselist)>1){
-      mycaselist = grep("complete", tolower(getCaseLists(mycgds,mycancerstudy)[,1]),value = T)
+      mycaselist = grep("complete", tolower(cgdsr::getCaseLists(mycgds,mycancerstudy)[,1]),value = T)
     }
     #mycaselist="luad_tcga_pub_all"
 
     ################
     # clinic
     if(ClinicNeeded){
-      myclinicaldata = getClinicalData(mycgds,mycaselist)
+      myclinicaldata = cgdsr::getClinicalData(mycgds,mycaselist)
 
       #colnames(myclinicaldata)
       #ClinVar<-c("OS_MONTHS", "OS_STATUS", "PFS_MONTHS","PFS_STATUS","DFS_MONTHS","DFS_STATUS","CANCER_TYPE","AJCC_PATHOLOGIC_TUMOR_STAGE")
@@ -147,11 +147,11 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
     ###############
     # for expression
     if(RNANeeded){
-      mygeneticprofile = grep("mrna", getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
+      mygeneticprofile = grep("mrna", cgdsr::getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
       if(length(setdiff(grep("v2",mygeneticprofile),grep("Zscores",mygeneticprofile)))==1){
         mygeneticprofile =mygeneticprofile[setdiff(grep("v2",mygeneticprofile),grep("Zscores",mygeneticprofile))]
 
-        EXP1 <- getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
+        EXP1 <- cgdsr::getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
 
         # tag NAs
         NAS<-apply(EXP1,2,function(Exp)any(is.na(Exp)))
@@ -187,7 +187,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
       mygeneticprofile="luad_tcga_pub_methylation_hm450"
 
 
-        mETHYL <- getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
+        mETHYL <- cgdsr::getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
 
     }
 
@@ -197,7 +197,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
     # for mutations
     if(MutNeeded){
       mygeneticprofile = grep("mut", getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
-      MUT1 <- getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
+      MUT1 <- cgdsr::getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
 
       if(!FunctionalAnnot){
         if(nrow(MUT)>1){
@@ -213,7 +213,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
 
         #table(is.na(MUT1))
         # functional impact: from cgdsr, very strage...
-       MUTa<-getMutationData(mycgds,mycaselist,mygeneticprofile, genes = Genes )
+       MUTa<-cgdsr::getMutationData(mycgds,mycaselist,mygeneticprofile, genes = Genes )
        MUTa$case_id<-gsub("-",".",MUTa$case_id)
        #table(MUTa$mutation_type);table(MUTa$functional_impact_score)
        MUTa[grep("Not Available",MUTa$functional_impact_score),"functional_impact_score"]<-"N"
@@ -233,8 +233,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
       #MUT1[BIZ[,1],BIZ[,2]]
 
       for(GeNe in colnames(MUT1)[ colnames(MUT1)%in%MUTa$gene_symbol]){
-
-         MUTf<-dcast(data =  MUTa[MUTa$gene_symbol%in%GeNe,c("case_id","gene_symbol","functional_impact_score")],
+         MUTf<-reshape2::dcast(data =  MUTa[MUTa$gene_symbol%in%GeNe,c("case_id","gene_symbol","functional_impact_score")],
                      formula = case_id~functional_impact_score,
                      value.var = "functional_impact_score" )
 

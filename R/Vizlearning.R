@@ -91,7 +91,7 @@ Vizlearning<-function(GatesViz=T, OutputViz=T, NETall=NETall, Step=NULL, Epoch=4
 
         plot((NOW),(GT),pch=21,
              xlim=c(0,1), ylim=c(0,1), cex.main=0.8,
-             xlab="",ylab="True", main=paste( "Patients",range(epoch),"updates for :",VIZ), bg=adjustcolor(ifelse(DIFF,4,3), 0.3),
+             xlab="",ylab="True", main=paste( "Patients",range(Epoch),"updates for :",VIZ), bg=adjustcolor(ifelse(DIFF,4,3), 0.3),
              col=ifelse(DIFF,4,3))
         mtext(text = "Pred", side = 1, line = 0.3)
         legend("bottomright",legend = c("Updated",paste("Cost=", round(tail(COST,1),3))),

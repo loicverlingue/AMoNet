@@ -151,7 +151,7 @@ RunBackSimul<-function(NETall=NETall, y=y, MUT=NULL, treatmt=NULL,Init=NULL, iSt
 
   if(GIF){
     print("Run a gif on the type of vizualization selected")
-    img <- image_graph(600, 340, res = 60)
+    img <- magick::image_graph(600, 340, res = 60)
   }
 
   par(mar=c(5, 4, 4, 2) + 0.1)
@@ -528,7 +528,7 @@ RunBackSimul<-function(NETall=NETall, y=y, MUT=NULL, treatmt=NULL,Init=NULL, iSt
     # do gif
     if(iteration<30){FPS<-2}else if(iteration<100){FPS<-4}else{FPS<-10}
 
-    animation <- image_animate(img, fps = FPS)
+    animation <- magick::image_animate(img, fps = FPS)
 
     #### file names
     Latt<-length(list.files(paste(getwd(),"/tmp/",sep = ""),pattern =  NameProj))
@@ -538,7 +538,7 @@ RunBackSimul<-function(NETall=NETall, y=y, MUT=NULL, treatmt=NULL,Init=NULL, iSt
     Latt<-paste(paste(getwd(),"/tmp/",sep = ""),NameProj,Latt+1,".gif",sep = "")
 
     #print(animation)
-    image_write(animation, Latt)
+    magick::image_write(animation, Latt)
   }
 
   names(COST)<-"Cost"

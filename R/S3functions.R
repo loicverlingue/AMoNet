@@ -31,6 +31,7 @@ AMoNet.default<-function(GENESman=NULL,treatmt=""){
   data("Default",package = "AMoNet", envir = .GlobalEnv)
   data("Boundaries",package = "AMoNet", envir = .GlobalEnv)
   data("CGS",package = "AMoNet", envir = .GlobalEnv)
+  data("OMNI",package = "AMoNet", envir = .GlobalEnv)
 
   net<-list(GENESman=GENES, treatmt=treatmt, Parameters=list(Default=AMoNet::Default, Boundaries=AMoNet::Boundaries))
   class(net)<-"AMoNet"

@@ -30,7 +30,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
   NameProjbase<-NameProj
   # package should be loaded with AMoNet package
   # todo
-
+if(FALSE){
   HyperP<-function(C=Param, Default=Default, Boundaries=Boundaries){
 
     # define distribution you want
@@ -63,7 +63,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
     list2env(Default, envir = .GlobalEnv)
     return(Default)
   }
-
+}
   #### control optional arguments
   # totest
   #CLnames<-list(...)
@@ -77,7 +77,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
 
   ########
   #
-  GenesSelec<-rbind(GenesSelecImmuno,GenesSelecHall)
+  GenesSelec<-rbind(AMoNet::GenesSelecImmuno,AMoNet::GenesSelecHall)
   MECA<-unique(GenesSelec$target_hgnc) # do an interactcive function to choose MECA
   if(!is.null("SelectMECA")){
     MECA<-grep(SelectMECA,MECA,value = T)
@@ -105,7 +105,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
     # to change++++++
     # for first run of TCGA grid search when using pre-optimized nets from GTEx : match when includes "MeanWinit"
     NETdata<-SelectGTExOptNet(NameProjbase = NameProjbase, NETall = NULL,
-                              DIR=DIR, Default=Default, Boundaries=Boundaries,
+                              DIR=DIR, Default=Default,
                               addOutputs = NULL, MiniBatch=Default$MiniBatch,
                               ValSelect=T)
 
@@ -129,7 +129,8 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
       NETall1<-read.csv2(file = paste(DIR,FILES[1],sep = ""), row.names = 1, header = T,stringsAsFactors = F)
       NETall1$X<-NULL
 
-      net<-build.AMoNet(GENESman=unique(NETall1$source_hgnc),treatmt=treatmt,
+      net<-AMoNet(GENESman=unique(NETall1$source_hgnc),treatmt=treatmt)
+      net<-build.AMoNet(net,
                         InteractionBase = NETall1,
                         nblayers = Default$nblayers, MinConnect = Default$MinConnect,
                         RestrictedBuilding = T, RestrictedBase = F, FilterCGS = F,
@@ -177,7 +178,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
   print("load TCGA data")
   # run the function to load data
 
-  DATA<-LoadCleanTCGA(Species = Species, Default = Default, Boundaries = Boundaries,
+  DATA<-LoadCleanTCGA(net, Species = Species,
                       Param = Param, RestrictUnique = F)
 
   #DATA$Perturb<-MutMatToList(MUTa = DATA$Perturb) # to list
@@ -377,7 +378,14 @@ if(FALSE){
 #                       eSS=F, NewNet=T, MinConnect=1, nblayers=4, alpha=0)
 
 
-#####################
+#' Plots and predictions within AMoNet grid search pipeline
+#'
+#' @param net *AMoNet* object.
+#' @param DIR path to file to plot. Default in tmp/
+#'
+#' @return
+#' Metriccs for training and validation
+#'
 PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
 
   pdf(paste(DIR, NameProj,Latt+1,".pdf",sep = ""))
@@ -426,252 +434,4 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
   ###
 
   return(list(TrainMetrics=predsTrain$metrics,ValMetrics=predsVal$metrics))
-}
-
-
-PlotAndPredict<-function(NETallProp=NETallProp, Data=TCGAdata, DIR=file.path(getwd(),"tmp")){
-
-  MUTmat<-apply(Data$Perturb,1, function(x){
-    ifelse(!is.na(x)&!x%in%"NaN",1,0)
-  })
-
-if(!eSS){
-  print("do plots")
-
-  # retrieve data
-#  iStates<-NETallProp$NETallActivity[[length(NETallProp$NETallActivity)]]
-  Default<-NETallProp$Parameters$Default
-  list2env(NETallProp$TrainSplit,envir = globalenv())
-
-  # compute initial states
-  iStates<-matrix(0.5,nrow = ncol(Target), ncol = length(Species))
-  rownames(iStates)<-colnames(Target)
-  colnames(iStates)<-Species
-
-  ##### EXPi # to improve by using it as contrained activity value
-  if(Default$EXPinit){
-    for(i in colnames(Target)){
-      iStates[i,colnames(Init)]<-as.numeric(Init[i,]) # match the col order
-    }
-  }
-
-  if(Default$LSTM){ # to check if doesn impare LSTM
-    Ct<-t(replicate(ncol(Target), rep(1,length(Species)) , simplify = TRUE))
-    colnames(Ct)<-Species
-    rownames(Ct)<-colnames(Target)
-  } else{
-    Ct=NULL
-  }
-
-
-  # to change
- # DIR<-paste(getwd(),"/tmp/",sep = "")
-
-  pdf(paste(DIR, NameProj,Latt+1,".pdf",sep = ""))
-
-  # load new net
-  N<-length(NETallProp$NETallActivity)
-  NETall1<-NETallProp$NETallList[[N]]
-
-  PlotOptNet(NETall1,PDF = F,Optimized = T,PrintOptNET = F,LEGEND = F, NameProj = NameProj)
-
-  # mut
-  par(mfrow=c(2,1))
-  par(mar=c(4,4,2,2)+0.1)
-  image(t(MUTmat),col=c(0,1), xlab = "Patients", axes=F, main="Mutations")
-  mtext(colnames(Perturb)[ORD1],2,las=2,cex = 0.4, at =  normalized( seq(ncol(Perturb))) )
-  barplot(FreqAssoc*100/ncol(MUTmat),las=2,cex.names = 0.4,ylab = "Mutation associations %",space = 0)
-  if(length(table(FreqAssoc==1))==2){
-    legend("topright",legend = paste("Unique profiles =", round(table(FreqAssoc==1)["TRUE"]*100/ncol(MUTmat)),"%"),
-           bty = "n")
-  } else {
-    legend("topright",legend = "Unique profiles = 100%", bty = "n")
-  }
-
-  # learning
-  # plot cost
-  par(mfrow=c(1,1))
-  par(mar=c(5,4,4,2)+0.1)
-  matplot(NETallProp$Cost,type = "l", main='Cost')
-
-  # plot weights
-  # iStates<-NETallProp$NETallActivity[[11]]
-  LWeights<-lapply(NETallProp$NETallList,function(x){
-    x$Weights
-  })
-  LWeights<-(do.call('rbind',LWeights))
-  matplot(LWeights,type='l',add=F, main="Evolution of weights through learning")
-
-  VAR<-as.matrix(apply(LWeights[,],2,sd))
-  par(mar=c(3,13,4,2))
-  barplot(VAR[VAR>quantile(VAR,0.89,na.rm = T)],names.arg = apply(NETall1[VAR>quantile(VAR,0.89,na.rm = T),c(1,3)],1,function(x){
-    paste(x,collapse = "_")}), las=2, cex.names = 0.5, horiz = T,space = 0, cex.axis = 0.5,
-    main="Top weights' correction")
-
-  # variations (sd) in outputs across patients
-  if(Default$Interval>1){
-    OutputsEvol<-lapply(NETallProp$NETallActivity,function(x){
-      mean(apply(x[,grep("Output",colnames(x))],1,sd))
-      #sd(x[,grep("Output",colnames(x))])
-    })
-  } else{
-    OutputsEvol<-lapply(NETallProp$NETallActivity,function(x){
-      sd(x[,"Output"])
-    })
-  }
-  par(mfrow=c(1,1))
-  par(mar=c(5,4,4,2)+0.1)
-  matplot(unlist(OutputsEvol)[-1],type='l',add=F, main="Evolution of std deviations \n in outputs through learning")
-
-   if(Default$Interval==1){
-    Pred_train_mat<-NETallProp$NETallActivity[[N]][,"Output",drop=F]
-    Ytrain<-as.data.frame(t(Y_base_raw)) # do that for IPCW
-    plot(Pred_train_mat,Ytrain[Train,1],pch=ifelse(Ytrain[Train,2]==0,2,1),main="Train")
-    CindexTrain<-survConcordance(Surv(Ytrain[Train,1],Ytrain[Train,2])~Pred_train_mat)
-  } else {
-    #  N=1
-    par(mfrow=c(2,1))
-    par(mar=c(4,4,2,2)+0.1)
-    Pred_train_mat<-NETallProp$NETallActivity[[N]][,paste("Output",seq(Default$Interval),sep = "")]
-
-    Pred_train_mat<-Pred_train_mat[colnames(Target[,Train]),]
-
-    Target_train<-Target[,Train]
-    ORD<-colnames(Target_train)[order(colMeans(Target_train))]
-    image(t(Target_train[,ORD]),main="Train");image(Pred_train_mat[ORD,])
-
-    par(mfrow=c(1,1))
-    par(mar=c(4,4,2,2)+0.1)
-    Pred_train<-rowMeans(Pred_train_mat)
-
-    Ytrain<-as.data.frame(t(Y_base_raw)) # do that for IPCW
-
-    if(!all(names(Pred_train)==rownames(Ytrain[Train,]))){
-      Pred_train<-Pred_train[rownames(Ytrain[Train,])]
-    }
-
-    plot(Pred_train,Ytrain[Train,1],pch=ifelse(Ytrain[Train,2]==0,2,1),main="Train")
-    CindexTrain<-survConcordance(Surv(Ytrain[Train,1],Ytrain[Train,2])~Pred_train)
-    #  IPCW <- cindex(as.matrix(Pred_train), cens.model="marginal",
-    #                 formula = Surv(Output,Status)~., data = Ytrain[Train,])
-  }
-
-  legend("topleft",legend = c(paste("C-index =", 1-round(CindexTrain$concordance,3),
-                                    "; se =", round(CindexTrain$std.err,3)),
-                              paste("MSE =",round(median(tail(NETallProp$Cost[,1],Default$MiniBatch)),3))#,
-                              #paste("IPCW =",round(as.numeric(IPCW$AppCindex),3))
-  ),cex=0.5)
-
-
-  ### val
-  # compute list of mut per patient from mat
-  #MUTl<-MutMatToList(MUTa = Perturb)
-  #length(MUTl$GOFl)
-
-  ### simulate
-
-  # load new net
-  # NETall1<-NETallProp$NETallList[[N]]
-
-  # simulate for every one
-
-  TotAttractors<-BoolSimul(NETall=NETall1, Logic = Default$Logic, Mode = Default$Mode,
-                           iStates=iStates, #[Val,],
-                           Parallel = Default$Parallelize, no_cores=no_cores,
-                           MinSteps = Default$MinStepsForward,
-                           LSTM = Default$LSTM, Ct=Ct,#[Val,],
-                           MUT = MUT, treatmt=NULL,
-                           ValMut = Default$ValMut)
-
-  if(is.null(names(TotAttractors[,1,1,1]))){
-    names(TotAttractors[,1,1,1])<-rownames(iStates)
-  }
-  # sapply(1:15,function(x){
-  #    cor(TotAttractors[x,"A",,5],TotAttractors1[x,"A",,5])
-  #  })
-
-  matplot(rbind(t(TotAttractors[1,"iStates",,1]),t(TotAttractors[1,"A",,])),
-          type='l',main="1 patient", ylim=c(0,1),
-          ylab="Nodes' activities", xlab = "Simulation steps")
-
-  #TotAttractors[,"A",1:3,1]
-  if(Default$Interval>1){
-    Pred_val_mat<-TotAttractors[match(Val,rownames(iStates)),"A",paste("Output",seq(Default$Interval),sep = ""),dim(TotAttractors)[4]]
-    #rownames(iStates[match(Val,rownames(iStates)),])==Val
-    rownames(Pred_val_mat)<-Val
-  } else {
-    Pred_val_mat<-t(TotAttractors[rownames(iStates)%in%Val,"A","Output",dim(TotAttractors)[4]])
-    colnames(Pred_val_mat)<-Val
-  }
-
-
-  #colnames(Y_base[,Val])==rownames(Pred_val_mat)
-  #Pred_val_mat<-Pred_val_mat[colnames(Y_base[,Val]),]
-
-  Cost <- mean( (t(Target[,Val])-Pred_val_mat)^2 )
-  Cost
-
-  # save cost val to perform learning curve
-  NETallProp[["CostVal"]]<-Cost
-
-  # re-save
-  save(NETallProp, file = DIRSave )
-
-  if(Default$Interval>1){
-    #Pred_train_mat<-predict(base_model,as.array(as.matrix(XtrainN[Train,])) )
-    par(mfrow=c(2,1))
-
-    Target_val<-Target[,Val]
-    ORD<-colnames(Target_val)[order(colMeans(Target_val))]
-    image(t(Target_val[,ORD]),main="Val");image(Pred_val_mat[ORD,])
-
-    # image(t(Target[,Val]),main="Val");image(Pred_val_mat)
-
-    par(mfrow=c(1,1))
-    par(mar=c(4,4,2,2)+0.1)
-    Pred_val<-rowMeans(Pred_val_mat)
-
-    Yval<-as.data.frame(t(Y_base_raw)) # do that for IPCW
-
-    plot(Pred_val,Yval[Val,1],pch=ifelse(Yval[Val,2]==0,2,1),main="Val")
-    CindexVal<-survConcordance(Surv(Yval[Val,1],Yval[Val,2])~Pred_val)
-    # IPCW <- cindex(as.matrix(Pred_val), cens.model="marginal",
-    #                 formula = Surv(Output,Status)~., data = Yval[Val,])
-
-    legend("topleft",legend = c(paste("C-index =", 1-round(CindexVal$concordance,3),
-                                      "; se =", round(CindexVal$std.err,3)),
-                                paste("MSE =",round(as.numeric(Cost),3))#,
-                                #paste("IPCW =",round(as.numeric(IPCW$AppCindex),3))
-    ),cex=0.5)
-    #  TrainIPCW<-as.numeric(IPCW$AppCindex)
-    #  TrainIPCW;1-Cindex$concordance
-
-  } else {
-    plot(Pred_val_mat,Y_base_raw[1,Val],pch=ifelse(Y_base_raw[2,Val]==0,2,1),main="Val")
-    CindexVal<-survConcordance(Surv(Y_base_raw[1,Val],Y_base_raw[2,Val])~as.numeric(Pred_val_mat))
-    # IPCW <- cindex(as.matrix(Pred_val), cens.model="marginal",
-    #                 formula = Surv(Output,Status)~., data = Yval[Val,])
-
-    legend("topleft",legend = c(paste("C-index =", 1-round(CindexVal$concordance,3),
-                                      "; se =", round(CindexVal$std.err,3)),
-                                paste("MSE =",round(as.numeric(Cost),3))#,
-                                #paste("IPCW =",round(as.numeric(IPCW$AppCindex),3))
-    ),cex=0.5)
-    #  TrainIPCW<-as.numeric(IPCW$AppCindex)
-    #  TrainIPCW;1-Cindex$concordance
-  }
-
-  Cindex<-c(CindexTrain$concordance , CindexVal$concordance)
-  names(Cindex)<-c("Train","Val")
-  NETallProp[["Cindex"]]<-Cindex
-
-  # re-re-save
-  save(NETallProp, file = DIRSave )
-
-  dev.off()
-
-
-}
-
-print("end")
 }

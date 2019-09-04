@@ -12,7 +12,6 @@
 #' @param FilterCGS: Boolean. Do you want to keep cancer genes only
 #' @param LSTM: Boolean. Will you use LSTM unit update in the learning phase?
 #' @param Adam: Boolean. Will you use another optimizer than GD (ie Adam, Momentum, RMSprop), to initiate related weights.
-#' @param Activity:  Boolean. Run simulationn of the network to return activity values for each species.
 #' @param addOutputs: Integer or NULL. Do you need outputs to the net, for example to simulate survival per interval. Specify the number of outputs. Outputs will be connected to phenotypes.
 #' @param Phenotypes: data frame of the same format as InteractionBase but with species as source_hgnc and names of phenotypes as target_hgnc. Can be a table of gene sets for example. Default loaded are Hallmarks and immune gene sets.
 #' @param KeepPhenotypes: Boolean. Phenotypes are required to connect output(s)
@@ -23,7 +22,7 @@ NETforOpt<-function(WRITE=F, NETall=NULL, GENESman=c("PDCD1", "CD274", "CTLA4","
                     treatmt=c("PDCD1", "CD274", "CTLA4"), InteractionBase = OMNI,
                     MeanWinit=0, SdWinit=0.1, RestrictedBuilding=F,
                     nblayers = 1, MinConnect=1, FilterCGS=F, LSTM=F, Adam = F,
-                    Activity=T, addOutputs=NULL,
+                    addOutputs=NULL,
                     Phenotypes=NULL,  KeepPhenotypes=F, MECA=NULL,
                     RestrictedBase=F, NameProj="Model",no_cores=no_cores ){
 
@@ -199,50 +198,6 @@ NETforOpt<-function(WRITE=F, NETall=NULL, GENESman=c("PDCD1", "CD274", "CTLA4","
     }
   }
 
-  if(Activity){
-
-    # do a simulation
-    print("a simulation")
-
-    PossiStates<-InitStates(NETall = NETall, istates = NULL, Logic = "Sigmoid", NumiStates = 10)
-    if(dim(PossiStates)[1]!=10){
-      PossiStates = NULL
-    }
-
-    #    TotAttractors<-BoolSimul(NETall = NETall, Logic = "Sigmoid", Mode = "ASYNC", iStates = PossiStates,
-    #                             ComputeZ = T, MinSteps = 10, Discretize = F, LSTM = T, GOF = NULL, LOF = NULL,
-    #                             Inputs = NULL)
-    TotAttractors<-BoolSimul(NETall = NETall,
-                             Logic = "Sigmoid", Mode = "LAYER",
-                             iStates =PossiStates,
-                             MinSteps =4,
-                             Inputs=NULL, LSTM = LSTM, Discretize = F,
-                             GOF = NULL, LOF = NULL, Parallel = F)
-
-    # representation
-    #    SpeciesActivity<-plotProbaState(Species = union(NETall$source_hgnc,NETall$target_hgnc),
-    #                                    TotAttractors = TotAttractors, Level = "A", PDF = F, NameProj = NameProj)
-
-    #  SpeciesActivity<-plotProbaState(Level = "A",Species = union(NETall$source_hgnc,NETall$target_hgnc),
-    #                 TotAttractors = TotAttractors,Plot = T, PDF = F, Legend = F )
-
-    #matplot(rbind(t(TotAttractors[2,"iStates",,1]),t(TotAttractors[2,"A",,])),
-    #        type='l',main="1 Val patient",ylim=c(0,1))
-
-    iStates<-t(colMeans(TotAttractors[,"A",,dim(TotAttractors)[4]]))
-    if(LSTM){
-      Ct<-t(colMeans(TotAttractors[,"Ct",,dim(TotAttractors)[4]]))
-    }
-    # iStates<-SpeciesActivity[nrow(SpeciesActivity),] # compute initial states from attractors: speed up learning
-    #  iStates[which(iStates==0)]<-iStates[which(iStates==0)]+1e-8
-
-    # put activity corresponding to target sepcies
-    for(i in colnames(SpeciesActivity)){
-      NETall[NETall$target_hgnc%in%i,"Activity"]<-SpeciesActivity[nrow(SpeciesActivity),i]
-    }
-    NETall$Activity[which(NETall$Activity==0)]<-NETall$Activity[which(NETall$Activity==0)]+1e-8
-  }
-
   if(WRITE){
     Latt<-length(list.files(paste(getwd(),"/model/",sep = ""),pattern =  NameProj))
     if(Latt>0){
@@ -250,9 +205,9 @@ NETforOpt<-function(WRITE=F, NETall=NULL, GENESman=c("PDCD1", "CD274", "CTLA4","
     }
     write.csv2(NETall,paste(getwd(),"/model/",NameProj,Latt+1,".csv",sep = ""))
   }
-  if(Activity&LSTM){
+  if(LSTM){
     return(list(NETall=NETall,iStates=iStates,Ct=Ct))
-  }else if(Activity&!LSTM){
+  }else if(!LSTM){
     return(list(NETall=NETall,iStates=iStates))
   } else {
     return(list(NETall=NETall))

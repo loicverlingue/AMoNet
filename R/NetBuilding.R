@@ -60,7 +60,7 @@ NetBuilding <- function(GENESman=GENESman,treatmt=treatmt, OMNI=OMNI, nblayers=2
   #write.csv2(NETall,"C:/Users/L_VERLINGUE/Desktop/ModelK/Roma/networkexpansion3_PDL1_PD1_CTLA4_flash_restricted.csv")
 
   #no_core<-detectCores()
-  cl<-makeCluster(no_cores)
+  cl<-parallel::makeCluster(no_cores)
 
   Nspecies<-c(1,2)
   while( length(unique(tail(round(Nspecies),n = 2)))!=1 )  {
@@ -114,9 +114,9 @@ NetBuilding <- function(GENESman=GENESman,treatmt=treatmt, OMNI=OMNI, nblayers=2
   #  if(length(PASSENGERS)>10){
 
       EXPORT<-c("PASSENGERS","NETall")
-      clusterExport(cl,EXPORT, envir = environment())
+      parallel::clusterExport(cl,EXPORT, envir = environment())
 
-      PASSV<-parLapply(cl,PASSENGERS,function(PAS){
+      PASSV<-parallel::parLapply(cl,PASSENGERS,function(PAS){
         SOU<-NETall[NETall$target_hgnc%in%PAS,"source_hgnc"]
         ISOU<-NETall[NETall$target_hgnc%in%PAS,"interaction_directed_signed"]
         TAR<-NETall[NETall$source_hgnc%in%PAS,"target_hgnc"]
@@ -148,7 +148,6 @@ NetBuilding <- function(GENESman=GENESman,treatmt=treatmt, OMNI=OMNI, nblayers=2
             c(ISOU[V["SOU",NN]],ITAR[V["TAR",NN]])
           })
           names(Xlist)<-rep(PAS,length(Xlist))
-
         }
 
 
@@ -303,7 +302,7 @@ NetBuilding <- function(GENESman=GENESman,treatmt=treatmt, OMNI=OMNI, nblayers=2
       }
   }
 
-  stopCluster(cl)
+  parallel::stopCluster(cl)
 
   if(WRITE){
     colnames(NETall)
