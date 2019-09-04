@@ -1,7 +1,6 @@
 #' Build the AMoNet network
 #'
-#' @param object *AMoNet* object, S3 class. if NULL (default) \code{build.AMonet} function will create a new *AMoNet* object from scratch.
-#'   If you already have a AMoNet model, \code{build.AMoNet} can use it and run following argument on it (eg Activity, Interval, ...).
+#' @param object *AMoNet* object. Has to be intiated from queries with default \code{AMoNet()} function.
 #' @param InteractionBase data frame. The iteraction base used to build the network. Should be a data.frame in a sif-like format, with at least 3 colmuns: source_hgnc, interaction_directed_signed, target_hgnc
 #' @param MeanWinit numeric. The mean value of the normal distribution used to initiate the weights.
 #' @param SdWinit numeric. The standard deviation of the normal distribution used to initiate the weights.
@@ -17,15 +16,13 @@
 #' @param MECA character vector or NULL. the phenotypes you want to keep in the network.
 #' @param RestrictedBase boolean. Restrict the building of the nets to genes related to the phenotypes selected with MECA.
 #' @param NameProj character. The name of your project.
-#' @param WRITE boolean. Should the network be saved as csv?
 #'
 #' @details
 #' Run \code{print(Default)} to check and optionnaly set default values.
 #'
-#' @return An object of class *AMoNet*. Stores the name of the project, the network, the initial states and initial Ct if LSTM.
+#' @return An object of class *AMoNet*. Stores the name of the project, the network, the initial states \code{iStates=NULL} and \code{Ct=NULL} if LSTM.
 #' @export
-build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "EGFR","TP53"),
-                    #treatmt="",
+build.AMoNet<-function(object,
                     MeanWinit=Default$MeanWinit, SdWinit=Default$SdWinit,
                     RestrictedBuilding=F,
                     nblayers = Default$nblayers, MinConnect=Default$MinConnect,
@@ -33,7 +30,7 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
                     Interval=Default$Interval,  InteractionBase = OMNI,
                     Phenotypes=NULL,  KeepPhenotypes=F, MECA=names_MECA,
                     RestrictedBase=F, NameProj="My AMoNet",
-                    no_cores=Default$no_cores, WRITE=F ){
+                    no_cores=Default$no_cores){
 
   # update Default parameters
   CALL<-mget(names(formals()))
@@ -118,10 +115,10 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
     }
 
     NETall<-NetBuilding(GENESman=GENESman, treatmt=treatmt,
-                        OMNI = InteractionBase, MinConnect = MinConnect,
+                        OMNI = InteractionBase, MinConnect = object$Parameters$Default$MinConnect,
                         VeryRestricted = RestrictedBuilding,
-                        nblayers = nblayers,
-                        FamilyGene = GENES,no_cores=no_cores ) #
+                        nblayers = object$Parameters$Default$nblayers,
+                        FamilyGene = GENES,no_cores=object$Parameters$Default$no_cores ) #
 
     if(is.null(NETall)){
       return(list(NETall=NETall))
@@ -132,14 +129,15 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
     }
   }
 
+
   # but necessary to peform the layer based fonctions
-  if(!is.null(Interval)){
+  if(!is.null(object$Parameters$Default$Interval)){
     # addings to NETall
     # outputs
 
     # check if want to have only selected phenotypes or all
     NETall<-Outputs(NETall, FamilyGene = Phenotypes[Phenotypes$target_hgnc%in%MECA,],
-                    FinalOutput = Interval, FilterFamily = 0) # Interval=1 for adding a single output
+                    FinalOutput = object$Parameters$Default$Interval, FilterFamily = 0) # Interval=1 for adding a single output
 
 
     # how much species are connected to outputs
@@ -156,7 +154,7 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
     # add weigths to new nodes or remove new nodes
     NETall<-addWeights(NETall = NETall, SdWinit = object$Parameters$Default$SdWinit,
                        MeanWinit = object$Parameters$Default$MeanWinit , Scaling = T,
-                       Adam = !is.null(object$Parameters$Default$Optimizer), LSTM = LSTM)
+                       Adam = !is.null(object$Parameters$Default$Optimizer), LSTM = object$Parameters$Default$LSTM )
 
     #  PlotOptNet(NETall,PDF = F,Optimized = F,PrintOptNET = F,LEGEND = F)
 
@@ -173,8 +171,8 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
     NETall$Layer<-Analysis$Layers
 
     print("add weights")
-    NETall<-addWeights(NETall, MeanWinit = abs(MeanWinit), SdWinit = abs(SdWinit),
-                       Scaling=T, Adam = !is.null(object$Parameters$Default$Optimizer), LSTM = LSTM)
+    NETall<-addWeights(NETall, MeanWinit = abs(object$Parameters$Default$MeanWinit), SdWinit = abs(object$Parameters$Default$SdWinit),
+                       Scaling=T, Adam = !is.null(object$Parameters$Default$Optimizer), LSTM = object$Parameters$Default$LSTM)
 
     if(!KeepPhenotypes){
       print("removing phenotypes")
@@ -182,14 +180,6 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
     }
   }
 
-
-  if(WRITE){
-    Latt<-length(list.files(paste(getwd(),"/model/",sep = ""),pattern =  NameProj))
-    if(Latt>0){
-      Latt<-max(as.numeric(gsub(".csv","", gsub(NameProj,"", list.files(paste(getwd(),"/model/",sep = ""),pattern =  NameProj)))))
-    }
-    write.csv2(NETall,paste(getwd(),"/model/",NameProj,Latt+1,".csv",sep = ""))
-  }
 
   # output
   #object<<-list()
@@ -200,9 +190,7 @@ build.AMoNet<-function(object, # GENESman=c("PDCD1", "CD274", "CTLA4","KRAS", "E
   class(object)<-"AMoNet"
 
   # update Default in .GlobalEnv
-  #  Default<<-object$Parameters$Default
   assign("Default",object$Parameters$Default,envir = .GlobalEnv)
-  # net<<-net
- # class(net$NETall) <- "build.AMoNet"
+
   return(object)
 }

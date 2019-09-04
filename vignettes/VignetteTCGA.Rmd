@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, loadpack}
 library(AMoNet)
-if(FALSE){
+if(TRUE){
     print("Loading packages")
     library(reshape2)
     library(parallel)
@@ -48,10 +48,14 @@ net<-AMoNet(c("TP53","EGFR"))
 
 ## Build AMoNet 
 ```{r, build_AMoNet}
-net<-build.AMoNet(net, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.1, SdWinit = 0.1, Phenotypes=GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 10, Optimizer = "Adam", KeepPhenotypes=T, no_cores = 3, NameProj = "AMoNet TCGA")
+net<-build.AMoNet(net, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.1, SdWinit = 0.1, Phenotypes=GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 10, Optimizer = "Adam", KeepPhenotypes=T, no_cores = 3, NameProj = "AMoNet_TCGA")
 ```
 
-
+## Optionnaly use your own network in AMoNet
+See ?prebuilt.AMoNet for information on the format of your network data
+```{r, eval = FALSE}
+net<-prebuilt.AMoNet(net, NETall=NULL, MeanWinit = 0.1, SdWinit = 0.1, LSTM=F, Optimizer = Default$Optimizer, Outputs="Output", NameProj="AMoNet_TCGA") 
+```
 
 ## Plot your network
 ```{r}

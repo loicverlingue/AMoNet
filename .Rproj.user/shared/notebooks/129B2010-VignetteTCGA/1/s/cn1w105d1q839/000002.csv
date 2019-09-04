@@ -1,4 +1,3 @@
-"0","#install.packages(""AMoNet"", dependencies=T)"
 "0","library(AMoNet)"
 "0","if(TRUE){"
 "0","    print(""Loading packages"")"

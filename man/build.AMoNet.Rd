@@ -11,11 +11,10 @@ build.AMoNet(object, MeanWinit = Default$MeanWinit,
   Interval = Default$Interval, InteractionBase = OMNI,
   Phenotypes = NULL, KeepPhenotypes = F, MECA = names_MECA,
   RestrictedBase = F, NameProj = "My AMoNet",
-  no_cores = Default$no_cores, WRITE = F)
+  no_cores = Default$no_cores)
 }
 \arguments{
-\item{object}{*AMoNet* object, S3 class. if NULL (default) \code{build.AMonet} function will create a new *AMoNet* object from scratch.
-If you already have a AMoNet model, \code{build.AMoNet} can use it and run following argument on it (eg Activity, Interval, ...).}
+\item{object}{*AMoNet* object. Has to be intiated from queries with default \code{AMoNet()} function.}
 
 \item{MeanWinit}{numeric. The mean value of the normal distribution used to initiate the weights.}
 
@@ -46,11 +45,9 @@ If you already have a AMoNet model, \code{build.AMoNet} can use it and run follo
 \item{RestrictedBase}{boolean. Restrict the building of the nets to genes related to the phenotypes selected with MECA.}
 
 \item{NameProj}{character. The name of your project.}
-
-\item{WRITE}{boolean. Should the network be saved as csv?}
 }
 \value{
-An object of class *AMoNet*. Stores the name of the project, the network, the initial states and initial Ct if LSTM.
+An object of class *AMoNet*. Stores the name of the project, the network, the initial states \code{iStates=NULL} and \code{Ct=NULL} if LSTM.
 }
 \description{
 Build the AMoNet network
