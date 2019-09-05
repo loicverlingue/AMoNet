@@ -42,7 +42,8 @@ SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=file.path(getwd(),"/m
       # todo: add other metrics: accuracy, F1, etc...
 
       COST<-lapply(FILES,function(f){
-        load(file.path(DIR,f))
+        x<-load(file.path(DIR,f))
+        net<-get(x)
 
         if(ValSelect){
           if("Cindex"%in%names(NETallProp)){

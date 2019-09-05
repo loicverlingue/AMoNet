@@ -50,7 +50,7 @@ AMoNet.default<-function(GENESman=NULL,treatmt=""){
 #' @examples
 #'
 #' @export
-split.AMoNet<-function(x,f=0.7, drop=F, RETURN=F){
+split.AMoNet<-function(x,f=0.7, drop=F){
 
   sdtout<-try(x$Data$y,silent = T)
   if(class(sdtout)=="try-error" ){
@@ -65,23 +65,21 @@ split.AMoNet<-function(x,f=0.7, drop=F, RETURN=F){
   x$TrainSplit$Val<-Val
 
     return(x)
-
 }
 
 #' Generates random initial states
 #'
-#' Used prior to \code{simulate()} or \code{AMoNet()} with available \code{$Data$y} in the *AMoNet* object
+#' @description Used prior to \code{simulate()} or \code{AMoNet()} with available \code{$Data$y} in the *AMoNet* object
 #' @aliases RandomiStates
 #' @usage RandomiStates(object, RETURN=F)
 #'
 #' @param object *AMoNet* object, S3 class.
-#' @param RETURN boolean. Do the function returns values or just store it in the *AMoNet* object?
 #'
 #' @return iStates, a dataframe that contains initial states
-#' #' @examples
-#' \dontrun{RandomiStates(object) }
+#' @examples
+#' \dontrun{RandomiStates(object)}
 #' @export
-RandomiStates<-function(object, RETURN=F){
+RandomiStates<-function(object){
   Species<-union(object$NETall$source_hgnc,object$NETall$target_hgnc)
   iStates<-matrix(runif(ncol(object$Data$y)*length(Species)),nrow = ncol(object$Data$y), ncol = length(Species))
   rownames(iStates)<-colnames(object$Data$y)
@@ -273,7 +271,7 @@ print.summary.AMoNet<-function(x,...){
 #' @param ValMut numeric. Multicplicative factor for the effect of mutations. Default to 50.
 #'
 #' @details
-#' The \code{train()} function mainly calls \code{RunBackSimul()} function
+#' The \code{train.AMoNet()} function mainly calls \code{RunBackSimul()} function
 #'
 #' @return stores in *AMoNet* object a list with the network dataframe NETall, and for each epoch, if \code{KeepTraining=TRUE}:
 #' the training Cost, the network weights (NETallList) and the simulation activities (NETallActivity)
@@ -284,14 +282,15 @@ train.AMoNet <- function(object, y, MUT=NULL, treatmt=NULL,
                            KeepTraining=T, KeepData=T,
                          Ct=NULL, MiniBatch=Default$MiniBatch,
                          Optimizer=Default$Optimizer, beta1=Default$beta1, beta2=Default$beta2,
+                         alpha=Default$alpha, lambda=Default$lambda,
                          iteration=Default$iteration, learning_rate=Default$learningrate,
                          adaptive_iStates=Default$adaptive_iStates, FixNodes=NULL,
                          Parallelize=Default$Parallelize, no_cores=Default$no_cores,
                          Logic = Default$Logic, Mode = Default$Mode, ModeBack=Default$Mode,
                          MinStepsForward = Default$MinStepsForward,MinStepsBackward=Default$MinStepsBackward,
                          LSTM=Default$LSTM, gradClipping=Default$gradClipping, LearningRateDecay=Default$LearningRateDecay,
-                         ValMut=Default$ValMut, PDF=F, GIF=F, NameProj=net$call$build_call$NameProj,
-                         Visualize=Default$Visualize, alpha=Default$alpha, lambda=Default$lambda){
+                         ValMut=Default$ValMut, PDF=F, GIF=F, NameProj="My_AMoNet",
+                         Visualize=Default$Visualize){
 
   # update Default parameters
   CALL<-mget(names(formals()))
@@ -325,7 +324,7 @@ train.AMoNet <- function(object, y, MUT=NULL, treatmt=NULL,
                              NameProj = NameProj,
                              treatmt=treatmt,
                              Ct=Ct, MiniBatch = MiniBatch,
-                             Init=Init,Optimizer=Optimizer, beta1=beta1, beta2=beta2,
+                             Init=Init, Optimizer=Optimizer, beta1=beta1, beta2=beta2,
                              iteration=iteration, learning_rate=learning_rate,
                              adaptive_iStates=adaptive_iStates, FixNodes=FixNodes,
                              Parallelize=Parallelize, no_cores=no_cores,
@@ -524,7 +523,7 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
     # train metrics
     Pred<-rowMeans(Pred_mat)
 
-    Cindex<-survConcordance(Surv(newy[,1],newy[,2])~as.numeric(Pred))
+    Cindex<-survival::survConcordance(survival::Surv(newy[,1],newy[,2])~as.numeric(Pred))
 
     # store
     object$Predict$metrics$Cindex<-c(Cindex$concordance,Cindex$std.err)

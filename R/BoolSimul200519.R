@@ -525,7 +525,7 @@ BoolSimul<-function(NETall=NETall, Logic="Sigmoid", Mode="LAYER",
     #names(TotiState1[1,1,,dim(TotiState)[4]])
     #dim(TotiState)
 
-    stopCluster(cl)
+    parallel::stopCluster(cl)
 
   } else {
 

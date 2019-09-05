@@ -20,7 +20,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
   #library(cgdsr)
   mycgds = cgdsr::CGDS("http://www.cbioportal.org/")
   if(Tests){
-    test(mycgds)
+    cgdsr::test(mycgds)
   }
 
   # these are the tumor types in TCGA nomenclature, taken from NCI
@@ -36,7 +36,6 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
 
     GTExTCGAcode<-t(data.frame(Tissue=Tissue,TCGAcode=TCGAcode))
     colnames(GTExTCGAcode)<-Tissue
-
   } else {
     print("Organ = NULL --> load all data")
     ANS <- readline("do you want to continue - it maybe long and heavy [Y/N]?")

@@ -194,12 +194,12 @@ if(FALSE){
   print("load TCGA data")
   # run the function to load data
 
-  DATA<-LoadCleanTCGA(net, Species = Species,
-                      Param = Param, RestrictUnique = F)
+  net<-LoadCleanTCGA(net, Species = Species,
+                      Param = Param, RestrictUnique = T, organ = organ)
 
   #DATA$Perturb<-MutMatToList(MUTa = DATA$Perturb) # to list
   #lapply(DATA, dim)
-  list2env(DATA,envir = globalenv())
+  #list2env(DATA,envir = .GlobalEnv)
 
   # rename project
   QUANTS<-unlist(sapply(Param,function(PR){
@@ -213,20 +213,20 @@ if(FALSE){
 
   ###############
   # compute initial states
-  RandomiStates(net)
+  net<-RandomiStates(net)
 
   #iStates<-matrix(runif(ncol(y)*length(Species)),nrow = ncol(y), ncol = length(Species))
   #rownames(iStates)<-colnames(y)
   #colnames(iStates)<-Species
 
   ##### EXPi # to improve by using it as constrained activity value
-  if(Default$EXPinit){
+  if(net$Parameters$Default$EXPinit){
     for(i in colnames(y)){
-      iStates[i,colnames(Init)]<-as.numeric(Init[i,]) # match the col order
+      net$iStates[i,colnames(net$Data$Init)]<-as.numeric(net$Data$Init[i,]) # match the col order
     }
   }
 
-  if(Default$LSTM){ # to check if doesn impare LSTM
+  if(net$Parameters$Default$LSTM){ # to check if doesnt impare LSTM
     Ct<-t(replicate(ncol(y), rep(1,length(Species)) , simplify = TRUE))
     colnames(Ct)<-Species
     rownames(Ct)<-colnames(y)
@@ -237,7 +237,7 @@ if(FALSE){
   ####################
   print("run learning")
 
-  if(Default$FixWeights){
+  if(net$Parameters$Default$FixWeights){
     FixNodes<-Species[!Species%in%c(net$NETall$source_hgnc[net$NETall$target_hgnc%in%"Output"],"Output")]
   } else {
     FixNodes<-NULL
@@ -245,23 +245,23 @@ if(FALSE){
 
   if(!"TrainSplit"%in%names(net)){
     net<-split(net,PartitionSplit)
-    list2env(net$TrainSplit, envir = globalenv())
+    #list2env(net$TrainSplit, envir = globalenv())
   } else {
-    list2env(net$TrainSplit, envir = globalenv())
+    #list2env(net$TrainSplit, envir = globalenv())
 
-    Train<-Train[Train%in%colnames(y)]
-    Val<-Val[Val%in%colnames(y)]
+    net$TrainSplit$Train<-net$TrainSplit$Train[net$TrainSplit$Train%in%colnames(net$Data$y)]
+    net$TrainSplit$Val<-net$TrainSplit$Val[net$TrainSplit$Val%in%colnames(net$Data$y)]
 
-    MorePat<-colnames(y)[!colnames(y)%in%c(Train,Val)]
+    MorePat<-colnames(net$Data$y)[!colnames(net$Data$y)%in%c(net$TrainSplit$Train,net$TrainSplit$Val)]
     if(length(MorePat)>0){
 
-      MPTrain<-sample(MorePat,size = round(length(MorePat)*0.7) )
+      MPTrain<-sample(MorePat,size = round(length(MorePat)*PartitionSplit))
       MPVal<-MorePat[!MorePat%in%MPTrain]
 
-      Train<-c(Train,MPTrain)
-      Val<-c(Val,MPVal)
-      net$TrainSplit$Train<<-Train
-      net$TrainSplit$Val<<-Val
+      net$TrainSplit$Train<-c(net$TrainSplit$Train,MPTrain)
+      net$TrainSplit$Val<-c(net$TrainSplit$Val,MPVal)
+#      net$TrainSplit$Train<<-Train
+#      net$TrainSplit$Val<<-Val
     }
   }
 
@@ -292,63 +292,41 @@ if(FALSE){
     }
   }
 }
-  # cap minibatches
-  Default$MiniBatch<-min(Default$MiniBatch,length(Train))
-  if(Default$MiniBatch==length(Train)){Default$Optimizer=NULL}
 
-  print(paste("Training on",length(Train),"; validation on",length(Val), "patients"))
+  # cap minibatches
+  net$Parameters$Default$MiniBatch<-min(net$Parameters$Default$MiniBatch,length(net$TrainSplit$Train))
+
+  if(net$Parameters$Default$MiniBatch==length(net$TrainSplit$Train)){net$Parameters$Default$Optimizer=NULL}
+
+  print(paste("Training on", length(net$TrainSplit$Train),"; validation on",length(net$TrainSplit$Val), "patients"))
 
   if(!eSS){
 
     tic=Sys.time()
 
-    net<-train.AMoNet(net,y=y[,Train,drop=F],
-           MUT=MUT[Train], treatmt=NULL,
-           Init = Init,
-           ValMut = Default$ValMut,
-           iStates=iStates[Train,],
-           Ct=Ct[Train,],
-           MiniBatch=Default$MiniBatch,
-           alpha = Default$alpha, lambda = Default$lambda,
-           iteration=Default$iteration,
-           beta1=Default$beta1, beta2=Default$beta2,
-           Parallelize= Default$Parallelize, no_cores = no_cores,
-           learning_rate=Default$learningrate,
-           LearningRateDecay = Default$LearningRateDecay,
-           adaptive_iStates= Default$adaptive_iStates,
-           Optimizer=Default$Optimizer,
-           Logic = Default$Logic, Mode = Default$Mode, ModeBack = Default$Mode,
-           MinStepsForward = Default$MinStepsForward,
-           MinStepsBackward = Default$MinStepsBackward,
-           gradClipping=Default$gradClipping,
-           LSTM=Default$LSTM,
-           FixNodes = FixNodes, NameProj = net$call$NameProj,
+    net<-train.AMoNet(net, y= net$Data$y[,net$TrainSplit$Train,drop=F],
+           MUT= net$Data$MUT[net$TrainSplit$Train], treatmt=NULL,
+           Init = net$Data$Init[,net$TrainSplit$Train],
+           ValMut = net$Parameters$Default$ValMut,
+           iStates= net$iStates[net$TrainSplit$Train,],
+           Ct=Ct[net$TrainSplit$Train,],
+           MiniBatch= net$Parameters$Default$MiniBatch,
+           alpha = net$Parameters$Default$alpha, lambda = net$Parameters$Default$lambda,
+           iteration= net$Parameters$Default$iteration,
+           beta1= net$Parameters$Default$beta1, beta2= net$Parameters$Default$beta2,
+           Parallelize= net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
+           learning_rate= net$Parameters$Default$learningrate,
+           LearningRateDecay = net$Parameters$Default$LearningRateDecay,
+           adaptive_iStates= net$Parameters$Default$adaptive_iStates,
+           Optimizer= net$Parameters$Default$Optimizer,
+           Logic = net$Parameters$Default$Logic,
+           Mode = net$Parameters$Default$Mode, ModeBack = net$Parameters$Default$Mode,
+           MinStepsForward = net$Parameters$Default$MinStepsForward,
+           MinStepsBackward = net$Parameters$Default$MinStepsBackward,
+           gradClipping= net$Parameters$Default$gradClipping,
+           LSTM= net$Parameters$Default$LSTM,
+           FixNodes = FixNodes, NameProj = net$call$build_call$NameProj,
            PDF=F, GIF=F, Visualize=NULL, KeepData=F,  KeepTraining=T)
-
-    if(FALSE){
-      NETallProp<-RunBackSimul(NETall=NETall1, y=y[,Train,drop=F],
-                               MUT=MUT[Train], ValMut = Default$ValMut,
-                               Init=Init[Train,], treatmt = NULL,
-                               iStates=iStates[Train,],
-                               Ct=Ct[Train,],
-                               MiniBatch=Default$MiniBatch,
-                               iteration=round(Default$iteration),
-                               beta1=Default$beta1, beta2=Default$beta2,
-                               Parallelize= Default$Parallelize, no_cores=no_cores,
-                               learning_rate=Default$learningrate,
-                               LearningRateDecay = Default$LearningRateDecay,
-                               adaptive_iStates=Default$adaptive_iStates,
-                               Optimizer=Default$Optimizer,
-                               Logic = Default$Logic,
-                               Mode = Default$Mode, ModeBack = Default$Mode,
-                               MinStepsForward = Default$MinStepsForward,
-                               MinStepsBackward = Default$MinStepsBackward,
-                               gradClipping=Default$gradClipping,
-                               LSTM=Default$LSTM,
-                               FixNodes = FixNodes, NameProj = NameProj,
-                               PDF=F, GIF=F, Visualize="Output",
-                               alpha=Default$alpha, lambda=Default$lambda)
-    }
 
     toc=Sys.time()-tic
     print(toc)
@@ -367,12 +345,11 @@ if(FALSE){
   ############ save
   print("update parameters")
 
-  net[["Parameters"]]$Default<-Default
-  net[["Parameters"]]$Boundaries<-Boundaries
-  net[["TrainSplit"]]$Train<-Train
-  net[["TrainSplit"]]$Val<-Val
-  net$Data$Surv<-DATA$SurvData
-
+#  net[["Parameters"]]$Default<-Default
+#  net[["Parameters"]]$Boundaries<-Boundaries
+#  net[["TrainSplit"]]$Train<-Train
+#  net[["TrainSplit"]]$Val<-Val
+#  net$Data$Surv<-DATA$SurvData
 
   Latt<-length(list.files(DIR, pattern =  NameProj))
   if(Latt>0){
@@ -416,35 +393,51 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
   #par(mar=c(15, 4, 4, 2) + 0.1)
   barplot(NETall1[NETall1$Output,"Weights"],names.arg =NETall1[NETall1$Output,1], las=2, cex.names = 0.5)
 
-  # predict
+  # predict whole base
+  if(FALSE){
+    net<-predict(net,
+               Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
+               MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
+               Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
+               ValMut = net$Parameters$Default$ValMut)
 
-  #predict(net)
+  net<-predict(net, newiStates = net$iStates[net$TrainSplit$Val,],
+          newInit = NULL, newMUT = net$Data$MUT[net$TrainSplit$Val],
+          newtreatmt = NULL, newy = net$Data$y[,net$TrainSplit$Val],
+          Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
+          MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
+          Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
+          ValMut = net$Parameters$Default$ValMut)
+  plot(net$Predict, xlim=c(0,1))
 
-  net<-predict(net, newiStates = net$iStates,
-          newInit = NULL, newMUT = net$Data$MUT,
-          newtreatmt = NULL, newy = net$Data$y)
+  }
 
-  plot(predsAMoNet, xlim=c(0,1))
   #net$Predict$metrics$CindexTrain
   #plot(net,Npat = c(1,2),PDF = F,LEGEND = T, ylim=c(0,1), Species = "Output", col=c(2,3))
   if(is.null(names(net$TotAttractors[,1,1,1]))){
     names(net$TotAttractors[,1,1,1])<-rownames(net$iStates)
   }
 
+
   # Train & Val split
   Train<-net$TrainSplit$Train; Val<-net$TrainSplit$Val
 
-  predsTrain<-predict(net, newiStates = net$iStates[Train,],
-                       newInit = NULL, newMUT = net$Data$MUT[Train],
-                       newtreatmt = NULL, newy = net$Data$y[,Train],
-                       RETURN = T)
-
+  predsTrain<-predict(net, newiStates = net$iStates[net$TrainSplit$Train,],
+                       newInit = NULL, newMUT = net$Data$MUT[net$TrainSplit$Train],
+                       newtreatmt = NULL, newy = net$Data$y[,net$TrainSplit$Train],
+                      Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
+                      MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
+                      Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
+                      ValMut = net$Parameters$Default$ValMut)
   plot(predsTrain, xlim=c(0,1))
 
-  predsVal<-predict(net, newiStates = net$iStates[Val,],
-                      newInit = NULL, newMUT = net$Data$MUT[Val],
-                      newtreatmt = NULL, newy = net$Data$y[,Val],
-                      RETURN = T)
+  predsVal<-predict(net, newiStates = net$iStates[net$TrainSplit$Val,],
+                    newInit = NULL, newMUT = net$Data$MUT[net$TrainSplit$Val],
+                    newtreatmt = NULL, newy = net$Data$y[,net$TrainSplit$Val],
+                    Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
+                    MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
+                    Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
+                    ValMut = net$Parameters$Default$ValMut)
 
   plot(predsVal, xlim=c(0,1))
   ###

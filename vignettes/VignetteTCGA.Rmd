@@ -68,7 +68,7 @@ net<-LoadCleanTCGA(net, Species = Species, Param = "", RestrictUnique = T, organ
 
 ## Create random initial states
 ```{r}
-net<-RandomiStates(net, RETURN = T)
+net<-RandomiStates(net)
 iStates<-net$iStates
 ```
 
@@ -83,8 +83,8 @@ dim(net$Data$y);length(net$Data$MUT);dim(iStates); length(Species)
 The train() function takes as input the *AMoNet* object, and optionnaly perturbation data (MUT), treatments (treatm), initial states (iStates), forced initial states (Init) and the labels y. It takes several arguments as hyperparameters, that can be ignored and replaced by the defaults ones. For more details print(Default)
 
 ```{r, training}
-net<-train.AMoNet(net,y=net$Data$y,MUT=net$Data$MUT, treatmt=NULL,
-                         iStates=iStates, Init = NULL,
+net<-train.AMoNet(net, y=net$Data$y, MUT=net$Data$MUT, treatmt=NULL,
+                         iStates= net$iStates, Init = NULL,
                          ValMut = 100, Ct=NULL, 
                          MiniBatch=16, 
                          iteration=1, 
