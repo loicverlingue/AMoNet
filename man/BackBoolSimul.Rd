@@ -6,9 +6,8 @@
 \usage{
 BackBoolSimul(NETall = NETall, Logic = c("Sigmoid", "tanh"),
   Mode = c("LAYER", "ASYNC", "SYNC"), Y = Y, MinSteps = MinSteps,
-  FixNodes = FixNodes, Parallelize = Parallelize,
-  TotiState = TotAttractors, gradClipping = F, LSTM = LSTM,
-  alpha = 0, lambda = 0.1)
+  FixNodes = FixNodes, Parallelize = Parallelize, TotiState = NULL,
+  gradClipping = F, LSTM = LSTM, alpha = 0, lambda = 0.1)
 }
 \arguments{
 \item{NETall}{data frame. The network in format (similar to .sif with) columns "source", "interaction", "target", additionally storing the architecture (column "Layer"), the parameters and optionnaly Boolean logic.}

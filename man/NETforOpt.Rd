@@ -8,10 +8,9 @@ NETforOpt(WRITE = F, NETall = NULL, GENESman = c("PDCD1", "CD274",
   "CTLA4", "KRAS", "EGFR", "TP53"), treatmt = c("PDCD1", "CD274",
   "CTLA4"), InteractionBase = OMNI, MeanWinit = 0, SdWinit = 0.1,
   RestrictedBuilding = F, nblayers = 1, MinConnect = 1,
-  FilterCGS = F, LSTM = F, Adam = F, Activity = T,
-  addOutputs = NULL, Phenotypes = NULL, KeepPhenotypes = F,
-  MECA = NULL, RestrictedBase = F, NameProj = "Model",
-  no_cores = no_cores)
+  FilterCGS = F, LSTM = F, Adam = F, addOutputs = NULL,
+  Phenotypes = NULL, KeepPhenotypes = F, MECA = NULL,
+  RestrictedBase = F, NameProj = "Model", no_cores = no_cores)
 }
 \arguments{
 \item{MECA}{: Character vector or NULL. the phenotypes you want to keep in the network.}
@@ -39,8 +38,6 @@ NETforOpt(WRITE = F, NETall = NULL, GENESman = c("PDCD1", "CD274",
 \item{LSTM:}{Boolean. Will you use LSTM unit update in the learning phase?}
 
 \item{Adam:}{Boolean. Will you use another optimizer than GD (ie Adam, Momentum, RMSprop), to initiate related weights.}
-
-\item{Activity:}{Boolean. Run simulationn of the network to return activity values for each species.}
 
 \item{addOutputs:}{Integer or NULL. Do you need outputs to the net, for example to simulate survival per interval. Specify the number of outputs. Outputs will be connected to phenotypes.}
 

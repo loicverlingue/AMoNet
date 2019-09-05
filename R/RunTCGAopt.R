@@ -1,8 +1,8 @@
-#' Wrapper function to run the AMonet workflow, including grid search, on TCGA data
+#' Wrapper function to run the AMonet workflow, including hyper-parameters grid search, on TCGA data
 #'
 #' @description AMonet workflow comprises building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
 #'
-#' @param Param character vector: the hyperparameters to randomly test whithin this run.
+#' @param Param character vector: the hyper-parameter(s) to randomly test whithin this run.
 #' @param DIR directory: directory of the models storing
 #' @param NameProj character: name of your project. If at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it.
 #' @param NewNet boolean: when set to FALSE, if at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it. If set to TRUE, a new molecular network will be built using arguments GENESman and default parameters (Interval, MinConnect, nblayers).
@@ -10,13 +10,13 @@
 #' @param treatmt character vector: gene(s)' name(s) targeted by simulated treatment(s). Added to GENEman toused to build the AMoNET network.
 #' @param SelectMECA character in regexp format: selection of one or several gene sets related to biological mecanisms. Names gene sets are available with the command \code{print(names_MECA)}.
 #' @param organ character in regexp format: selection of one or several organs or cancer types. Names of organs are available with the command \code{print(names_MECA)}
-#' @param eSS boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyperparameter search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.
-#' @param ... any argument(s) present in Default can be set here. \code{print(Default)} for information on Default hyper-parameters
+#' @param eSS boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.
+#' @param ... any argument(s) present in Default can be set here by the user. \code{print(Default)} for information on Default hyper-parameters.
 #'
 #' @details
 #' This function can be run:
-#' 1) Alone to train an AMoNet model with fixed hyperparameters. Hyperparameters are either user-defined or the default one are used. For default hyperparameters values call \code{print(Default)}.
-#' 2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyperparameter search. Hyperparameter selected in the \code{Param} argument are thus randomly selected in batches and best results selected.
+#' 1) Alone to train an AMoNet model with fixed hyper-parameters are either user-defined or the default one are used. For default hyper-parameters values call \code{print(Default)}.
+#' 2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyper-parameters search. Hyperparameter selected in the \code{Param} argument are thus randomly selected in batches and best results selected.
 #'
 #' Requirements:
 #' Uses the pre-configured /model and /tmp paths in AMoNet package directories (checks todo)
@@ -32,6 +32,16 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
   set.seed(NULL)
 
   NameProjbase<-NameProj
+
+  ###############
+  # initiate AMoNet
+  if(is.null(GENESman)&is.null(treatmt)){
+    print("You should select a list of genes in initial function to build the net")
+    stop()
+  }
+
+  net<-AMoNet(GENESman = GENESman, treatmt = treatmt)
+
   # package should be loaded with AMoNet package
   # todo
 if(FALSE){
@@ -68,6 +78,13 @@ if(FALSE){
     return(Default)
   }
 }
+
+  # update Default parameters
+  CALL<-mget(names(formals()))
+  CNames<-intersect(names(Default),names(CALL))
+  Default[CNames] <- CALL[CNames]
+
+  if(FALSE){
   #### control optional arguments
   # totest
   #CLnames<-list(...)
@@ -78,10 +95,11 @@ if(FALSE){
     print("updated:")
     print(Default[names(CLnames)])
   }
+  }
 
   ########
-  #
-  GenesSelec<-rbind(AMoNet::GenesSelecImmuno,AMoNet::GenesSelecHall)
+  # Genes sets for phenotypes: take all here
+  GenesSelec<-rbind(AMoNet::GenesSelectImmuno, AMoNet::GenesSelecHall)
   MECA<-unique(GenesSelec$target_hgnc) # do an interactcive function to choose MECA
   if(!is.null("SelectMECA")){
     MECA<-grep(SelectMECA,MECA,value = T)
@@ -92,8 +110,7 @@ if(FALSE){
 
 
   ###############
-  # load networks
-
+  # load networks or build
   if(!dir.exists(DIR)){
     dir.create(DIR,showWarnings = T)
     print("New direction -> new nets")
@@ -125,6 +142,7 @@ if(FALSE){
 
 
   } else if(length(FILES)==1){
+ # change with preBuild function
 
     # update Hyperparameters with new ones
     Default<-HyperP(C=Param,Default = Default,Boundaries = Boundaries)
@@ -157,26 +175,20 @@ if(FALSE){
 
   } else { # this is used for the first net building
 
-    if(is.null(GENESman)&is.null(treatmt)){
-      print("You should select a list of genes in initial function to build the net")
-      stop()
-    }
-
     # update Hyperparameters with new ones
-    Default<-HyperP(C=Param,Default = Default,Boundaries = Boundaries)
+    Default<-HyperP(C=Param,Default = Default, Boundaries = Boundaries)
 
-    net<-build.AMoNet(GENESman=GENESman,treatmt=treatmt,
+    net<-build.AMoNet(object = net,
                       InteractionBase = OMNI,
                       nblayers = Default$nblayers, MinConnect = Default$MinConnect,
                       RestrictedBuilding = T, RestrictedBase = T, FilterCGS = F,
                       MeanWinit = Default$MeanWinit, SdWinit = Default$SdWinit,
                       Phenotypes=GenesSelec, MECA=MECA,
                       Interval = Default$Interval, LSTM = Default$LSTM, Optimizer = Default$Optimizer,
-                     KeepPhenotypes=T, WRITE = F, no_cores = no_cores, NameProj = NameProjbase)
+                     KeepPhenotypes=T,no_cores = no_cores, NameProj = NameProjbase)
   }
 
   Species<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)
-
 
   ###############
   print("load TCGA data")

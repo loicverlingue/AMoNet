@@ -7,10 +7,28 @@
 #DIR<-"C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/ArtMolNet/results/Hallmarks/"
 #NameProjbase="Hallmarks"
 
-SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=getwd(), NETall=NETall,
-                           Default=Default,Adam=F,LSTM=T,
+#' Title
+#'
+#' @param NameProjbase
+#' @param DIR
+#' @param NETall
+#' @param Default
+#' @param Adam
+#' @param LSTM
+#' @param Bondaries
+#' @param addOutputs
+#' @param MiniBatch
+#' @param ValSelect boolean. Whether the metrics for validation should be used for model selection. Default is \code{TRUE}
+#'
+#' @return
+#' @export
+#'
+#' @examples
+SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=file.path(getwd(),"/model"), NETall=NETall,
+                           Default=Default,Adam=!is.null(Default$Optimizer),LSTM=Default$LSTM,
                            Bondaries=Bondaries,
-                           addOutputs=1,MiniBatch=2, ValSelect=T){
+#                           addOutputs=Default$Interval,MiniBatch=Default$MiniBatch,
+                           ValSelect=T){
   if(is.null(NETall)){
     COSTS<-list()
     FILES<-list.files(DIR, pattern = NameProjbase)
@@ -24,7 +42,7 @@ SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=getwd(), NETall=NETal
       # todo: add other metrics: accuracy, F1, etc...
 
       COST<-lapply(FILES,function(f){
-        load(paste(DIR,f,sep = ""))
+        load(file.path(DIR,f))
 
         if(ValSelect){
           if("Cindex"%in%names(NETallProp)){
@@ -44,14 +62,14 @@ SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=getwd(), NETall=NETal
             #    COSTsim<-median(as.numeric(tail(unlist(NETallProp$Cost),MNB)))
           } else {
             print("Select on training Cost")
-            if(!is.null(MiniBatch)){
+          #  if(!is.null(Default$MiniBatch)){
                  MNB<-round(length(unlist(NETallProp$TrainSplit$Train))/NETallProp$Parameters$Default$MiniBatch)
                   if(MNB==0){MNB=1}
                   COSTsim<-median(as.numeric(tail(unlist(NETallProp$Cost),MNB)))
-            } else {
+          #  } else {
               # last train cost
-              COSTsim<-tail(as.numeric(unlist(NETallProp$Cost)),1)
-            }
+          #    COSTsim<-tail(as.numeric(unlist(NETallProp$Cost)),1)
+          #  }
           }
         }
         return(COSTsim)
@@ -64,7 +82,8 @@ SelectGTExOptNet<-function(NameProjbase="LungRegular", DIR=getwd(), NETall=NETal
 
       print(paste("Best AMoNet is :", gsub(".Rdata","",BESTone) ))
 
-      load(paste(DIR,BESTone,sep = ""))
+      load(file.path(DIR,BESTone))
+#  net<-prebuilt.AMoNet(net, NETall=NULL, MeanWinit = 0.1, SdWinit = 0.1, LSTM=F, Optimizer = Default$Optimizer, Outputs="Output", NameProj="AMoNet_TCGA")
 
       # plot it
       NETallpre<-NETallProp$NETallList[[length(NETallProp$NETallList)]]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RunTCGAopt.R
 \name{RunTCGAopt}
 \alias{RunTCGAopt}
-\title{Wrapper function to run the AMonet workflow on TCGA data}
+\title{Wrapper function to run the AMonet workflow, including hyper-parameters grid search, on TCGA data}
 \usage{
 RunTCGAopt(Param = c("nblayers", "MinConnect"),
   DIR = file.path(getwd(), "model"), NameProj = "HallmarksLungHN",
@@ -11,7 +11,7 @@ RunTCGAopt(Param = c("nblayers", "MinConnect"),
   no_cores = 3, KeepData = T, PartitionSplit = 0.7, ...)
 }
 \arguments{
-\item{Param}{character vector: the hyperparameters to randomly test whithin this run.}
+\item{Param}{character vector: the hyper-parameter(s) to randomly test whithin this run.}
 
 \item{DIR}{directory: directory of the models storing}
 
@@ -25,20 +25,23 @@ RunTCGAopt(Param = c("nblayers", "MinConnect"),
 
 \item{organ}{character in regexp format: selection of one or several organs or cancer types. Names of organs are available with the command \code{print(names_MECA)}}
 
-\item{eSS}{boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyperparameter search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.}
+\item{eSS}{boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.}
 
 \item{NewNet}{boolean: when set to FALSE, if at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it. If set to TRUE, a new molecular network will be built using arguments GENESman and default parameters (Interval, MinConnect, nblayers).}
 
-\item{...}{any argument(s) present in Default can be set here. \code{print(Default)} for information on Default hyper-parameters}
+\item{...}{any argument(s) present in Default can be set here by the user. \code{print(Default)} for information on Default hyper-parameters.}
 }
 \value{
 todo AMoNet object
 }
 \description{
-AMonet workflow comprise building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
+AMonet workflow comprises building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
 }
 \details{
 This function can be run:
-1) Alone to train an AMoNet model with fixed hyperparameters. Hyperparameters are either user-defined or the default one are used. For default hyperparameters values call \code{print(Default)}.
-2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyperparameter search.
+1) Alone to train an AMoNet model with fixed hyper-parameters are either user-defined or the default one are used. For default hyper-parameters values call \code{print(Default)}.
+2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyper-parameters search. Hyperparameter selected in the \code{Param} argument are thus randomly selected in batches and best results selected.
+
+Requirements:
+Uses the pre-configured /model and /tmp paths in AMoNet package directories (checks todo)
 }
