@@ -1,6 +1,6 @@
-#' Wrapper function to run the AMonet workflow on TCGA data
+#' Wrapper function to run the AMonet workflow, including grid search, on TCGA data
 #'
-#' AMonet workflow comprise building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
+#' @description AMonet workflow comprises building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
 #'
 #' @param Param character vector: the hyperparameters to randomly test whithin this run.
 #' @param DIR directory: directory of the models storing
@@ -16,7 +16,11 @@
 #' @details
 #' This function can be run:
 #' 1) Alone to train an AMoNet model with fixed hyperparameters. Hyperparameters are either user-defined or the default one are used. For default hyperparameters values call \code{print(Default)}.
-#' 2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyperparameter search.
+#' 2) In array and iteratively from command line together with the \code{PlotAndPredict} function to perform hyperparameter search. Hyperparameter selected in the \code{Param} argument are thus randomly selected in batches and best results selected.
+#'
+#' Requirements:
+#' Uses the pre-configured /model and /tmp paths in AMoNet package directories (checks todo)
+#'
 #'
 #' @return todo AMoNet object
 #'
