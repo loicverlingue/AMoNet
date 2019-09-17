@@ -8,7 +8,7 @@
 predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, MinSteps = Default$MinStepsForward, LSTM = Default$LSTM, Parallelize = Default$Parallelize, no_cores = Default$no_cores, ValMut = Default$ValMut)
 }
 \arguments{
-\item{object}{*AMoNet* object, S3 class.}
+\item{object}{*AMoNet* object}
 
 \item{newy}{numeric or matrix. new labels used to compute metrics}
 
@@ -20,14 +20,12 @@ predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatm
 
 \item{newtreatmt}{list. In the same for than newMUT, with treatments' targets and corresponding values (list of vectors).}
 
-\item{no_cores}{numeric. If Parallel=TRUE, set the number of cores to parallelize on. Default is 4. Can detect and set to available no_cores if inferior to user defined no_cores.}
+\item{SplitType}{character. With split set to use between: "Train", "Val" or NULL}
 
 \item{ValMut}{numeric. Multicplicative factor for the effect of mutations. Default to 50.}
-
-\item{Parallel}{boolean. Should the simulation run in parallel (TRUE by default)? Not recommended for simulations of less than 10 examples.}
 }
 \value{
-*AMoNet* object with \code{$Predict} of class *predict.AMoNet*
+*AMoNet* object with \code{$Predict} of class *predict.AMoNet* and results of simulations in \code{$TotAttractors}
 }
 \description{
 Perform predictions from a trained *AMoNet* object

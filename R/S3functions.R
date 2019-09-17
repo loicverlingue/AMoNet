@@ -18,7 +18,7 @@
 AMoNet <- function(GENESman, treatmt, ...) UseMethod("AMoNet")
 
 #' @export
-AMoNet.default<-function(GENESman=NULL,treatmt=""){
+AMoNet.default<-function(GENESman=NULL,treatmt=NULL){
   if(is.null(GENESman)){
     GENES <- readline("Select a list of genes to build AMoNet (Hugo symbols separated with comma):\n")
     GENES <- unlist(strsplit(GENES, " |,|, | ,"))
@@ -28,12 +28,12 @@ AMoNet.default<-function(GENESman=NULL,treatmt=""){
   }
 
   # load Default and Boundaries in .GlobalEnv to be writable and accessible in functions calls
-  data("Default",package = "AMoNet", envir = .GlobalEnv)
-  data("Boundaries",package = "AMoNet", envir = .GlobalEnv)
+ # data("Default",package = "AMoNet", envir = .GlobalEnv)
+ #  data("Boundaries",package = "AMoNet", envir = .GlobalEnv)
   data("CGS",package = "AMoNet", envir = .GlobalEnv)
   data("OMNI",package = "AMoNet", envir = .GlobalEnv)
 
-  net<-list(GENESman=GENES, treatmt=treatmt, Parameters=list(Default=AMoNet::Default, Boundaries=AMoNet::Boundaries))
+  net<-list(GENESman=GENES, treatmt=treatmt, Parameters=list(Default=Default, Boundaries=Boundaries))
   class(net)<-"AMoNet"
 
   return(net)
@@ -141,14 +141,14 @@ simulate.AMoNet<-function(object, nsim=Default$MinStepsForward,
     MUT<-MutMatToList(MUTa = MUT)
   }
 
-  if(!is.null(iStates)){
-    object$iStates<-iStates
-  }
+ # if(!is.null(iStates)){
+ #   object$iStates<-iStates
+#  }
 
   # is it ok in .GlobalEnv?
-  list2env(object, envir = .GlobalEnv)
+#  list2env(object, envir = .GlobalEnv)
 
-  Species<-union(NETall[,1],NETall[,3])
+  Species<-union(object$NETall[,1],object$NETall[,3])
   if(is.null(Init)&is.null(MUT)&is.null(treatmt)&is.null(iStates)){
     print("As no Init, iStates, Mut or treatm defined, simulation will take 10 random initial states")
     MUT<-as.list(rep("",10))
@@ -158,21 +158,21 @@ simulate.AMoNet<-function(object, nsim=Default$MinStepsForward,
     Nb<-max(length(MUT),length(treatmt))
     iStates<-matrix(runif(Nb*length(Species)),nrow = Nb, ncol = length(Species))
     colnames(iStates)<-Species
-    object$iStates<-iStates
+   # object$iStates<-iStates
   }
 
   if(!is.null(Init)) {
     for(i in seq(nrow(Init))){
       iStates[i,colnames(Init)]<-as.numeric(Init[i,]) # match the col order
     }
-    object$iStates<-iStates
+   # object$iStates<-iStates
   }
 
   if(is.null(Ct)&object$Parameters$Default$LSTM) {
     Ct<-iStates
   }
 
-  TotAttractors<-BoolSimul(NETall=NETall, Logic=Logic, Mode=Mode,
+  TotAttractors<-BoolSimul(NETall=object$NETall, Logic=Logic, Mode=Mode,
                            iStates=iStates, MUT=MUT, treatmt=treatmt,
                            ValMut=ValMut, MinSteps=nsim,
                            LSTM=LSTM, Ct=Ct, Parallel=Parallel,
@@ -426,38 +426,36 @@ plot.AMoNet.history<-function(x, Interval=Default$Interval, ...){
 #' @usage
 #' predict(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL, newtreatmt=NULL, Logic = Default$Logic, Mode = Default$Mode, MinSteps = Default$MinStepsForward, LSTM = Default$LSTM, Parallelize = Default$Parallelize, no_cores = Default$no_cores, ValMut = Default$ValMut)
 #'
-#' @param object *AMoNet* object, S3 class.
+#' @param object *AMoNet* object
 #' @param newy numeric or matrix. new labels used to compute metrics
 #' @param newInit matrix. Used to set some of the initial states (iStates). Init=NULL otherwise.
 #' @param newiStates matrix. Initial states of the simulations.
 #' @param newMUT list. Corresponds to mutations with names and corresponding values (list of vectors). If MUT=NULL, wild type *AMoNet* is simulated. Patients ordered the same as newy.
 #' @param newtreatmt list. In the same for than newMUT, with treatments' targets and corresponding values (list of vectors).
 #' @param ValMut numeric. Multicplicative factor for the effect of mutations. Default to 50.
-#' @param Parallel boolean. Should the simulation run in parallel (TRUE by default)? Not recommended for simulations of less than 10 examples.
-#' @param no_cores numeric. If Parallel=TRUE, set the number of cores to parallelize on. Default is 4. Can detect and set to available no_cores if inferior to user defined no_cores.
+#' @param SplitType character. With split set to use between: "Train", "Val" or NULL
 #'
 #' @details
 #' The \code{predict()} runs new simulations of the *AMoNet* object with new data.
 #' Can be used to evaluate the performance of the model on a validation set.
 #'
-#' @return *AMoNet* object with \code{$Predict} of class *predict.AMoNet*
+#' @return *AMoNet* object with \code{$Predict} of class *predict.AMoNet* and results of simulations in \code{$TotAttractors}
 #'
 #' @export
 predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMUT=NULL,
-                         newtreatmt=NULL, Logic = Default$Logic,
-                         Mode = Default$Mode, MinSteps = Default$MinStepsForward,
-                         LSTM = Default$LSTM,
-                         Parallelize = Default$Parallelize, no_cores = Default$no_cores,
-                         ValMut = Default$ValMut){
+                         newtreatmt=NULL, SplitType=NULL){
 
+  # todo/tocheck #  not feasible to retrieve ... arguments I think
   # update Default parameters
-  CALL<-mget(names(formals()))
-  CNames<-intersect(names(object$Parameters$Default),names(CALL))
-  object$Parameters$Default[CNames] <- CALL[CNames]
+ # CALL<-mget(names(formals()))
+ # CNames<-intersect(names(object$Parameters$Default),names(CALL))
+#  object$Parameters$Default[CNames] <- CALL[CNames]
 
   if(is.null(newInit)&is.null(newiStates)&is.null(newMUT)&is.null(newtreatmt)){
-    print("Use training data to perform predictions")
+    #print("Use load data to perform predictions")
     list2env(object$Data,envir = .GlobalEnv)
+
+    newtreatmt=NULL
     #list2env(Default,envir = globalenv())
     #print(dim(iStates))
     iStates<-object$iStates
@@ -465,9 +463,14 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
     Init=newInit; iStates=newiStates; MUT=newMUT;treatmt=newtreatmt
   }
 
+  if(!is.null(newtreatmt)){
+    treatmt=list(rep(newtreatmt,length(MUT)))
+  }
+
+
   if(is.null(iStates)){
     print("Genrate random initial states as newiStates is NULL")
-    RandomiStates(object)
+    object<-RandomiStates(object)
     iStates<-object$iStates
   }
 
@@ -477,11 +480,20 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
     y<-newy
   }
 
-  object<-simulate(object, nsim = MinSteps, Logic = Logic, Mode = Mode,
-           Init = Init, iStates = iStates, MUT=MUT,treatmt = treatmt,
-           Parallel = Parallelize, no_cores = no_cores,
-           LSTM = LSTM, ValMut = ValMut)
+  if(!is.null(SplitType)){
+    Init = Init[net$TrainSplit[[SplitType]]]
+    iStates = iStates[net$TrainSplit[[SplitType]],]
+    MUT=MUT[net$TrainSplit[[SplitType]]]
+    treatmt = treatmt[net$TrainSplit[[SplitType]]]
+    y=y[,net$TrainSplit[[SplitType]]]
 
+  }
+
+  object<-simulate(object, nsim = object$Parameters$Default$MinStepsForward,
+                   Init = Init, iStates = iStates, MUT=MUT, treatmt = treatmt,
+                   Logic = object$Parameters$Default$Logic, Mode = object$Parameters$Default$Mode,
+                   Parallel = object$Parameters$Default$Parallelize, no_cores = object$Parameters$Default$no_cores,
+                   LSTM = object$Parameters$Default$LSTM, ValMut = object$Parameters$Default$ValMut)
 
   ###
   # Predictions
@@ -489,7 +501,6 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
 
     Pred_mat<-object$TotAttractors[,"A",paste("Output",seq(object$Parameters$Default$Interval),sep = ""),dim(object$TotAttractors)[4]]
     rownames(Pred_mat)<-rownames(iStates)
-
 
   } else {
 
@@ -534,9 +545,12 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
 
   class(object$Predict)<-"predict.AMoNet"
 
+  #
+  names(object)[names(object)=="Predict"]<-paste("Predict",SplitType,sep="_")
+
   # update Default in globalenv()
   #  Default<<-object$Parameters$Default
-  assign("Default",object$Parameters$Default,envir = .GlobalEnv)
+  assign("Default",object$Parameters$Default, envir = .GlobalEnv)
 
   return(object)
 

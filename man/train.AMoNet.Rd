@@ -34,6 +34,10 @@ train(object, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T
 
 \item{beta2}{numeric. RMSprop term. Adam is defined by Momentum / RMSprop.}
 
+\item{alpha}{numeric. Regularization term. Set to 1 for L1N (Lasso) regularization, set to 2 for L2N (Ridge) regularization, between 1 and 2 with lambda 1 for L1N + L2N (Elastic Net) regularization (penalization parameter is alpha).}
+
+\item{lambda}{numeric. the lambda value for Lasso, Ridge or Elastic Net regularization. Set to 0 corresponds to no regularization. When alpha between 1 and 2 (Elastic Net regularization), lambda should be set to 1 and penalization parameter is alpha.}
+
 \item{iteration}{integer. Number of iterations, corresponding to epochs, i.e. one path through the full data.}
 
 \item{learning_rate}{numeric. Learning rate value.}
@@ -71,10 +75,6 @@ train(object, y, MUT=NULL, treatmt=NULL, Init=NULL, iStates=NULL, KeepTraining=T
 \item{NameProj}{character. Name of the project.}
 
 \item{Visualize}{character or integer. Options : \code{c(1,"Gates","Output")} Real time visualization of learning, requires selecting the visualization target: "Gates","Output", or all nodes activities of a patients by selecting an integer (a patient's number) or an ID. Default is no visualization: set to \code{NULL}, .}
-
-\item{alpha}{numeric. Regularization term. Set to 1 for L1N (Lasso) regularization, set to 2 for L2N (Ridge) regularization, between 1 and 2 with lambda 1 for L1N + L2N (Elastic Net) regularization (penalization parameter is alpha).}
-
-\item{lambda}{numeric. the lambda value for Lasso, Ridge or Elastic Net regularization. Set to 0 corresponds to no regularization. When alpha between 1 and 2 (Elastic Net regularization), lambda should be set to 1 and penalization parameter is alpha.}
 }
 \value{
 stores in *AMoNet* object a list with the network dataframe NETall, and for each epoch, if \code{KeepTraining=TRUE}:
@@ -84,5 +84,5 @@ the training Cost, the network weights (NETallList) and the simulation activitie
 Runs the \code{RunBackSimul} function (see \code{?RunBackSimul} for detailed description)
 }
 \details{
-The \code{train()} function mainly calls \code{RunBackSimul()} function
+The \code{train.AMoNet()} function mainly calls \code{RunBackSimul()} function
 }

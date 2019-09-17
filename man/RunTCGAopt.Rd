@@ -6,14 +6,15 @@
 \usage{
 RunTCGAopt(Param = c("nblayers", "MinConnect"),
   DIR = file.path(getwd(), "model"), NameProj = "HallmarksLungHN",
-  GENESman = c("EGFR", "KRAS", "TP53", "MTOR"), treatmt = "",
+  GENESman = c("EGFR", "KRAS", "TP53", "MTOR"), treatmt = NULL,
   SelectMECA = "HALLMARK", organ = "luad", eSS = F, NewNet = T,
-  no_cores = 3, KeepData = T, PartitionSplit = 0.7, ...)
+  no_cores = 3, KeepData = T, PartitionSplit = 0.7,
+  Default = Default, Boundaries = Boundaries)
 }
 \arguments{
 \item{Param}{character vector: the hyper-parameter(s) to randomly test whithin this run.}
 
-\item{DIR}{directory: directory of the models storing}
+\item{DIR}{directory: directory where the models are stored}
 
 \item{NameProj}{character: name of your project. If at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it.}
 
@@ -28,8 +29,6 @@ RunTCGAopt(Param = c("nblayers", "MinConnect"),
 \item{eSS}{boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.}
 
 \item{NewNet}{boolean: when set to FALSE, if at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it. If set to TRUE, a new molecular network will be built using arguments GENESman and default parameters (Interval, MinConnect, nblayers).}
-
-\item{...}{any argument(s) present in Default can be set here by the user. \code{print(Default)} for information on Default hyper-parameters.}
 }
 \value{
 todo AMoNet object
@@ -44,4 +43,6 @@ This function can be run:
 
 Requirements:
 Uses the pre-configured /model and /tmp paths in AMoNet package directories (checks todo)
+
+To set manually any hyper-paramters, change it into the \code{print(Default)} object.
 }

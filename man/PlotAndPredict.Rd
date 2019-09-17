@@ -4,15 +4,15 @@
 \alias{PlotAndPredict}
 \title{Plots and predictions within AMoNet grid search pipeline}
 \usage{
-PlotAndPredict(net, DIR = file.path(getwd(), "tmp"))
+PlotAndPredict(net, DIR = file.path(getwd(), "tmp/new.pdf"))
 }
 \arguments{
 \item{net}{*AMoNet* object.}
 
-\item{DIR}{path to file to plot. Default in tmp/}
+\item{DIR}{path and name to plot pdf.}
 }
 \value{
-Metriccs for training and validation
+Metrics for training and validation in \code{$predict_[]} from *AMoNet* object
 }
 \description{
 Plots and predictions within AMoNet grid search pipeline

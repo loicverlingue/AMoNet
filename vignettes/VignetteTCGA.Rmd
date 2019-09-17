@@ -39,7 +39,7 @@ Remember to set the number of output values (addOutputs) > 1 to learn on surviva
 
 ## Gene(s) query
 ```{r, Gene query}
-net<-AMoNet(c("TP53","EGFR"))
+net<-AMoNet(GENESman = c("TP53","EGFR"))
 ```
 
 ## Build AMoNet 
@@ -50,6 +50,7 @@ net<-build.AMoNet(net, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, Mea
 ## Optionnaly use your own network in AMoNet
 See ?prebuilt.AMoNet for information on the format of your network data
 ```{r, eval = FALSE}
+#Don't Run
 net<-prebuilt.AMoNet(net, NETall=NULL, MeanWinit = 0.1, SdWinit = 0.1, LSTM=F, Optimizer = Default$Optimizer, Outputs="Output", NameProj="AMoNet_TCGA") 
 ```
 
@@ -69,12 +70,12 @@ net<-LoadCleanTCGA(net, Species = Species, Param = "", RestrictUnique = T, organ
 ## Create random initial states
 ```{r}
 net<-RandomiStates(net)
-iStates<-net$iStates
+#iStates<-net$iStates
 ```
 
 # Check data dimensions
 ```{r}
-dim(net$Data$y);length(net$Data$MUT);dim(iStates); length(Species)
+dim(net$Data$y);length(net$Data$MUT);dim(net$iStates); length(Species)
 
 ```
 

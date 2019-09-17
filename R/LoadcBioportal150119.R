@@ -182,7 +182,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
 
     #### for methylation
     if(FALSE){
-      mygeneticprofile = grep("methylation", getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
+      mygeneticprofile = grep("methylation", cgdsr::getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
       mygeneticprofile="luad_tcga_pub_methylation_hm450"
 
 
@@ -195,7 +195,7 @@ LoadcBioportal<-function(Genes=c("TP53","KRAS"), ClinicNeeded=T,
     ###############
     # for mutations
     if(MutNeeded){
-      mygeneticprofile = grep("mut", getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
+      mygeneticprofile = grep("mut", cgdsr::getGeneticProfiles(mycgds,mycancerstudy)[,1],value = T)
       MUT1 <- cgdsr::getProfileData(mycgds, genes = Genes ,mygeneticprofile,mycaselist)
 
       if(!FunctionalAnnot){

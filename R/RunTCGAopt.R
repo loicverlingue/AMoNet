@@ -3,7 +3,7 @@
 #' @description AMonet workflow comprises building, training and simulating a network model to predict survival of patients from TCGA genomics WES data.
 #'
 #' @param Param character vector: the hyper-parameter(s) to randomly test whithin this run.
-#' @param DIR directory: directory of the models storing
+#' @param DIR directory: directory where the models are stored
 #' @param NameProj character: name of your project. If at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it.
 #' @param NewNet boolean: when set to FALSE, if at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it. If set to TRUE, a new molecular network will be built using arguments GENESman and default parameters (Interval, MinConnect, nblayers).
 #' @param GENESman character vector: gene(s)' name(s) (in Hugo nomenclature) used to build the AMoNET network. If "all", all genes related to SelectMECA (gene sets) will be selected. If "frequent", 95\% most frequently altered genes from the cancer gene census (CGS) list in the cohort will be selected.
@@ -11,8 +11,6 @@
 #' @param SelectMECA character in regexp format: selection of one or several gene sets related to biological mecanisms. Names gene sets are available with the command \code{print(names_MECA)}.
 #' @param organ character in regexp format: selection of one or several organs or cancer types. Names of organs are available with the command \code{print(names_MECA)}
 #' @param eSS boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.
-#' @param ... any argument(s) present in Default can be set here by the user. \code{print(Default)} for information on Default hyper-parameters.
-#'
 #' @details
 #' This function can be run:
 #' 1) Alone to train an AMoNet model with fixed hyper-parameters are either user-defined or the default one are used. For default hyper-parameters values call \code{print(Default)}.
@@ -21,13 +19,15 @@
 #' Requirements:
 #' Uses the pre-configured /model and /tmp paths in AMoNet package directories (checks todo)
 #'
+#' To set manually any hyper-paramters, change it into the \code{print(Default)} object.
 #'
 #' @return todo AMoNet object
-#'
+#' @export
 RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"model"),
                      NameProj="HallmarksLungHN", GENESman=c("EGFR", "KRAS", "TP53", "MTOR"),
-                     treatmt="", SelectMECA="HALLMARK", organ="luad",
-                     eSS=F, NewNet=T, no_cores=3, KeepData=T, PartitionSplit=0.7, ...){
+                     treatmt=NULL, SelectMECA="HALLMARK", organ="luad",
+                     eSS=F, NewNet=T, no_cores=3, KeepData=T, PartitionSplit=0.7,
+                     Default=Default, Boundaries=Boundaries){
 
   set.seed(NULL)
 
@@ -39,8 +39,6 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
     print("You should select a list of genes in initial function to build the net")
     stop()
   }
-
-  net<-AMoNet(GENESman = GENESman, treatmt = treatmt)
 
   # package should be loaded with AMoNet package
   # todo
@@ -98,6 +96,12 @@ if(FALSE){
   }
 
   ########
+  # initialize the net
+  net<-AMoNet(GENESman = GENESman, treatmt = treatmt)
+  net$Parameters$Default<-Default
+  net$Parameters$Boundaries<-Boundaries
+
+  ########
   # Genes sets for phenotypes: take all here
   GenesSelec<-rbind(AMoNet::GenesSelectImmuno, AMoNet::GenesSelecHall)
   MECA<-unique(GenesSelec$target_hgnc) # do an interactcive function to choose MECA
@@ -108,12 +112,11 @@ if(FALSE){
     GENESman<-unique(GenesSelec$source_hgnc[GenesSelec$target_hgnc%in%MECA])
   }
 
-
   ###############
   # load networks or build
   if(!dir.exists(DIR)){
     dir.create(DIR,showWarnings = T)
-    print("New direction -> new nets")
+    print(paste("New direction to store networks :", DIR))
   }
 
   FILES<-list.files(DIR,pattern = NameProjbase)
@@ -123,69 +126,44 @@ if(FALSE){
   }
 
   if(length(FILES)>1){
-    # to change++++++
-    # for first run of TCGA grid search when using pre-optimized nets from GTEx : match when includes "MeanWinit"
-    NETdata<-SelectGTExOptNet(NameProjbase = NameProjbase, NETall = NULL,
-                              DIR=DIR, Default=Default,
-                              addOutputs = NULL, MiniBatch=Default$MiniBatch,
+    # ok
+
+    net<-SelectGridSearch(NameProjbase = NameProjbase,
+                              DIR=DIR, Default=net$Parameters$Default,
                               ValSelect=T)
 
-    NETall1<-NETdata$NETall # the best net
-    Default<-NETdata$Default # the best default parameters from previous optimisations
-    Boundaries<-NETdata$Boundaries
-    Train<-NETdata$NETallProp$TrainSplit$Train
-    Val<-NETdata$NETallProp$TrainSplit$Val
-    organ<-NETdata$NETallProp$organ
-
     # update Hyperparameters with new ones
-    Default<-HyperP(C=Param, Default = Default, Boundaries = Boundaries)
+    net$Parameters$Default<-HyperP(C=Param, Default = net$Parameters$Default,
+                                   Boundaries = net$Parameters$Boundaries)
 
 
   } else if(length(FILES)==1){
- # change with preBuild function
-
+    # change with preBuild function
     # update Hyperparameters with new ones
-    Default<-HyperP(C=Param,Default = Default,Boundaries = Boundaries)
-
-    if(length(grep("csv",FILES))>0){
-      NETall1<-read.csv2(file = paste(DIR,FILES[1],sep = ""), row.names = 1, header = T,stringsAsFactors = F)
-      NETall1$X<-NULL
-
-      net<-AMoNet(GENESman=unique(NETall1$source_hgnc),treatmt=treatmt)
-      net<-build.AMoNet(net,
-                        InteractionBase = NETall1,
-                        nblayers = Default$nblayers, MinConnect = Default$MinConnect,
-                        RestrictedBuilding = T, RestrictedBase = F, FilterCGS = F,
-                        MeanWinit = Default$MeanWinit, SdWinit = Default$SdWinit,
-                        MECA=NULL, Phenotypes=NETall1[NETall1$target_hgnc%in%NETall1$source_hgnc[NETall1$Output],1:3],
-                        Interval = Default$Interval, LSTM = Default$LSTM, Optimizer = Default$Optimizer,
-                        KeepPhenotypes=T, WRITE = F, no_cores = no_cores, NameProj = NameProjbase)
-
-    } else {
-      # to check
-      x<-load(file.path(DIR,FILES))
-      net<-get(x)
-      #    NETall1<-NETallProp$NETallList[[length(NETallProp$NETallList)]]
-      #    Default<-NETallProp$Parameters$Default # the best default parameters from previous optimisations
-      #    Boundaries<-NETallProp$Parameters$Boundaries
-      #    Train<-NETallProp$TrainSplit$Train
-      #    Val<-NETallProp$TrainSplit$Val
-      #    organ<-NETallProp$organ
-    }
+    x<-load(file.path(DIR,FILES))
+    net<-get(x)
+    net$Parameters$Default<-HyperP(C=Param, Default = net$Parameters$Default,
+                                   Boundaries = net$Parameters$Boundaries)
 
   } else { # this is used for the first net building
 
     # update Hyperparameters with new ones
-    Default<-HyperP(C=Param,Default = Default, Boundaries = Boundaries)
+    net$Parameters$Default<-HyperP(C=Param,Default = net$Parameters$Default,
+                                   Boundaries = net$Parameters$Boundaries)
 
     net<-build.AMoNet(object = net,
                       InteractionBase = OMNI,
-                      nblayers = Default$nblayers, MinConnect = Default$MinConnect,
+                      nblayers = net$Parameters$Default$nblayers,
+                      MinConnect = net$Parameters$Default$MinConnect,
                       RestrictedBuilding = T, RestrictedBase = T, FilterCGS = F,
-                      MeanWinit = Default$MeanWinit, SdWinit = Default$SdWinit,
+                      MeanWinit = net$Parameters$Default$MeanWinit,
+                      SdWinit = net$Parameters$Default$SdWinit,
                       Phenotypes=GenesSelec, MECA=MECA,
-                      Interval = Default$Interval, LSTM = Default$LSTM, Optimizer = Default$Optimizer,
-                     KeepPhenotypes=T,no_cores = no_cores, NameProj = NameProjbase)
+                      Interval = net$Parameters$Default$Interval,
+                      LSTM = net$Parameters$Default$LSTM,
+                      Optimizer = net$Parameters$Default$Optimizer,
+                     KeepPhenotypes=T, no_cores = net$Parameters$Default$no_cores,
+                     NameProj = NameProjbase)
   }
 
   Species<-union(net$NETall$source_hgnc,net$NETall$target_hgnc)
@@ -195,7 +173,7 @@ if(FALSE){
   # run the function to load data
 
   net<-LoadCleanTCGA(net, Species = Species,
-                      Param = Param, RestrictUnique = T, organ = organ)
+                      Param = Param, RestrictUnique = F, organ = organ)
 
   #DATA$Perturb<-MutMatToList(MUTa = DATA$Perturb) # to list
   #lapply(DATA, dim)
@@ -265,34 +243,6 @@ if(FALSE){
     }
   }
 
-if(FALSE){
-  if(!exists("Train")|!exists("Val")){
-
-    Train<-sample(colnames(y),ncol(y)*0.7)
-    Val<-colnames(y)[!colnames(y)%in%Train]
-
-  } else if(is.null(Train)|is.null(Val)){
-    Train<-sample(colnames(y),ncol(y)*0.7)
-    Val<-colnames(y)[!colnames(y)%in%Train]
-
-  } else {
-
-    Train<-Train[Train%in%colnames(y)]
-    Val<-Val[Val%in%colnames(y)]
-
-    MorePat<-colnames(y)[!colnames(y)%in%c(Train,Val)]
-    if(length(MorePat)>0){
-
-      MPTrain<-sample(MorePat,size = round(length(MorePat)*0.7) )
-      MPVal<-MorePat[!MorePat%in%MPTrain]
-
-      Train<-c(Train,MPTrain)
-      Val<-c(Val,MPVal)
-
-    }
-  }
-}
-
   # cap minibatches
   net$Parameters$Default$MiniBatch<-min(net$Parameters$Default$MiniBatch,length(net$TrainSplit$Train))
 
@@ -333,12 +283,17 @@ if(FALSE){
 
   } else {
     # to check in to S3
-    ResEss<-ess(Quant=3, Init, MUT, y, CGS, NETall1, Default, FixNodes, Plot=T)
+    net<-ess(net = net, Quant=3, y= net$Data$y[,net$TrainSplit$Train,drop=F],
+                MUT= net$Data$MUT[net$TrainSplit$Train],
+                Init = net$Data$Init[,net$TrainSplit$Train],
+                iStates= net$iStates[net$TrainSplit$Train,],
+                treatmt=NULL,
+                no_cores=net$Parameters$Default$no_cores) # CGS, NETall1, Default,ValMut = net$Parameters$Default$ValMut,FixNodes=FixNodes, Plot=F
 
-    net[["NETall"]]<-ResEss$Best
-    net$history[["NETallList"]]<-list(ResEss$Best)
-    net$history[["NETallActivity"]]<-NULL # to check
-    net$history[["Cost"]]<-ResEss$Cost
+   # net[["NETall"]]<-ResEss$Best
+   # net$history[["NETallList"]]<-list(ResEss$Best)
+  #  net$history[["NETallActivity"]]<-NULL # to check
+  #  net$history[["Cost"]]<-ResEss$Cost
 
   }
 
@@ -360,29 +315,33 @@ if(FALSE){
   print("save")
 
   DIRSave<-paste(DIR,"/", NameProj, Latt+1,".Rdata",sep = "") # keep it for saving validation
+  net$DIRSave<-DIRSave
   save(net, file = DIRSave)
 
   return(net)
 }
 
+#Default$iteration=3
+#Default$MinConnect=1; Default$nblayers=4; Default$alpha=0
+#Default$no_cores=3
 #net<-RunTCGAopt(Param="", DIR=file.path(getwd(),"model"),
-#                       NameProj="HNSCC_AMoNet", GENESman="MTOR",
-#                       treatmt="", SelectMECA="HALLMARK", organ="hnsc",KeepData = T,
-#                       eSS=F, NewNet=T, MinConnect=1, nblayers=4, alpha=0)
-
+#                       NameProj="LUNG_AMoNet", GENESman=c("KRAS","MTOR"),
+#                       treatmt=NULL, SelectMECA="HALLMARK", organ="lung",KeepData = T,
+#                       eSS=F, NewNet=T, Default=Default, Boundaries = Boundaries)
 
 #' Plots and predictions within AMoNet grid search pipeline
 #'
 #' @param net *AMoNet* object.
-#' @param DIR path to file to plot. Default in tmp/
+#' @param DIR path and name to plot pdf.
 #'
 #' @return
-#' Metriccs for training and validation
-#'
-PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
+#' Metrics for training and validation in \code{$predict_[]} from *AMoNet* object
+#' @export
+PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp/new.pdf")){
 
-  pdf(paste(DIR, NameProj,Latt+1,".pdf",sep = ""))
-
+  if(!is.null(DIR)){
+    pdf(DIR)
+  }
   ## visualize learning phase
   plot(net$history)
 
@@ -393,31 +352,29 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
   #par(mar=c(15, 4, 4, 2) + 0.1)
   barplot(NETall1[NETall1$Output,"Weights"],names.arg =NETall1[NETall1$Output,1], las=2, cex.names = 0.5)
 
-  # predict whole base
-  if(FALSE){
-    net<-predict(net,
-               Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
-               MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
-               Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
-               ValMut = net$Parameters$Default$ValMut)
+  # predict whole base with split
+    net<-predict(net, SplitType = "Train")
 
-  net<-predict(net, newiStates = net$iStates[net$TrainSplit$Val,],
-          newInit = NULL, newMUT = net$Data$MUT[net$TrainSplit$Val],
-          newtreatmt = NULL, newy = net$Data$y[,net$TrainSplit$Val],
-          Logic = net$Parameters$Default$Logic, Mode = net$Parameters$Default$Mode,
-          MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
-          Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
-          ValMut = net$Parameters$Default$ValMut)
-  plot(net$Predict, xlim=c(0,1))
+    plot(net$Predict_Train, xlim=c(0,1))
 
-  }
+    net<-predict(net, SplitType = "Val")
+
+    plot(net$Predict_Val, xlim=c(0,1))
+
+    if(!is.null(DIR)){
+      dev.off()
+    }
+
+    if(FALSE){
+
+    if(is.null(names(predsAll$TotAttractors[,1,1,1]))){
+      names(predsAll$TotAttractors[,1,1,1])<-rownames(predsAll$iStates)
+    }
+    predsAll$Predict_Train$metrics$Cindex
+
 
   #net$Predict$metrics$CindexTrain
   #plot(net,Npat = c(1,2),PDF = F,LEGEND = T, ylim=c(0,1), Species = "Output", col=c(2,3))
-  if(is.null(names(net$TotAttractors[,1,1,1]))){
-    names(net$TotAttractors[,1,1,1])<-rownames(net$iStates)
-  }
-
 
   # Train & Val split
   Train<-net$TrainSplit$Train; Val<-net$TrainSplit$Val
@@ -429,7 +386,7 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
                       MinSteps = net$Parameters$Default$MinStepsForward,LSTM = net$Parameters$Default$LSTM,
                       Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
                       ValMut = net$Parameters$Default$ValMut)
-  plot(predsTrain, xlim=c(0,1))
+  plot(predsTrain$Predict)
 
   predsVal<-predict(net, newiStates = net$iStates[net$TrainSplit$Val,],
                     newInit = NULL, newMUT = net$Data$MUT[net$TrainSplit$Val],
@@ -439,8 +396,12 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp")){
                     Parallelize = net$Parameters$Default$Parallelize, no_cores = net$Parameters$Default$no_cores,
                     ValMut = net$Parameters$Default$ValMut)
 
-  plot(predsVal, xlim=c(0,1))
+  plot(predsVal$Predict, xlim=c(0,1))
+  predsVal$Predict$metrics
   ###
 
   return(list(TrainMetrics=predsTrain$metrics,ValMetrics=predsVal$metrics))
+    }
+
+  return(net)
 }
