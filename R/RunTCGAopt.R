@@ -23,11 +23,11 @@
 #'
 #' @return todo AMoNet object
 #' @export
-RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"model"),
-                     NameProj="HallmarksLungHN", GENESman=c("EGFR", "KRAS", "TP53", "MTOR"),
-                     treatmt=NULL, SelectMECA="HALLMARK", organ="luad",
-                     eSS=F, NewNet=T, no_cores=3, KeepData=T, PartitionSplit=0.7,
-                     Default=Default, Boundaries=Boundaries){
+RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
+                     NameProj="LUNG_AMoNet", GENESman=c("EGFR","MTOR"),
+                     treatmt=NULL, SelectMECA="HALLMARK", organ="lung",
+                     eSS=F, NewNet=T, KeepData=T, PartitionSplit=0.7,
+                     Default=AMoNet::Default, Boundaries=AMoNet::Boundaries){
 
   set.seed(NULL)
 
@@ -39,43 +39,6 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=file.path(getwd(),"m
     print("You should select a list of genes in initial function to build the net")
     stop()
   }
-
-  # package should be loaded with AMoNet package
-  # todo
-if(FALSE){
-  HyperP<-function(C=Param, Default=Default, Boundaries=Boundaries){
-
-    # define distribution you want
-    LogDistrib<-function(min,max,N){
-      sample(exp(seq(log(abs(min)),log(abs(max)),length.out = 100)),N)
-    }
-
-    NormDistrib<-function(min,max,N){
-      sample(seq(min,max,length.out = 100),N)
-    }
-
-    for(Cp in C){
-      if(is.numeric(Boundaries[[Cp]])){
-        if(is.integer(Boundaries[[Cp]])){
-          Default[[Cp]]<- sample(seq(Boundaries[[Cp]][1],Boundaries[[Cp]][2]),1)
-        } else if(all(Boundaries[[Cp]]>=0.1)){
-          Default[[Cp]]<- NormDistrib(min = Boundaries[[Cp]][1],max = Boundaries[[Cp]][2], N = 1)
-        }else{
-          Default[[Cp]]<- LogDistrib(min = Boundaries[[Cp]][1],max = Boundaries[[Cp]][2], N = 1)
-        }
-      } else if(is.character(Boundaries[[Cp]])|is.logical(Boundaries[[Cp]])){
-        Default[[Cp]]<- sample(Boundaries[[Cp]],1)
-      }
-    }
-
-    if("MiniBatch"%in%C){
-      Default$MiniBatch<-sample(2^seq(Boundaries$MiniBatch[1],Boundaries$MiniBatch[2]),1)
-    }
-
-    list2env(Default, envir = .GlobalEnv)
-    return(Default)
-  }
-}
 
   # update Default parameters
   CALL<-mget(names(formals()))
@@ -112,12 +75,20 @@ if(FALSE){
     GENESman<-unique(GenesSelec$source_hgnc[GenesSelec$target_hgnc%in%MECA])
   }
 
-  ###############
-  # load networks or build
+  # check and set directories
+  if(length(grep("/model",DIR))==0){
+    DIR<-file.path(DIR,"model/")
+  }
+
   if(!dir.exists(DIR)){
     dir.create(DIR,showWarnings = T)
     print(paste("New direction to store networks :", DIR))
   }
+
+
+
+  ###############
+  # load networks or build
 
   FILES<-list.files(DIR,pattern = NameProjbase)
 
@@ -155,7 +126,7 @@ if(FALSE){
                       InteractionBase = OMNI,
                       nblayers = net$Parameters$Default$nblayers,
                       MinConnect = net$Parameters$Default$MinConnect,
-                      RestrictedBuilding = T, RestrictedBase = T, FilterCGS = F,
+                      RestrictedBuilding = T, RestrictedBase = T, FilterCGS = T,
                       MeanWinit = net$Parameters$Default$MeanWinit,
                       SdWinit = net$Parameters$Default$SdWinit,
                       Phenotypes=GenesSelec, MECA=MECA,
@@ -321,27 +292,36 @@ if(FALSE){
   return(net)
 }
 
-#Default$iteration=3
-#Default$MinConnect=1; Default$nblayers=4; Default$alpha=0
-#Default$no_cores=3
-#net<-RunTCGAopt(Param="", DIR=file.path(getwd(),"model"),
-#                       NameProj="LUNG_AMoNet", GENESman=c("KRAS","MTOR"),
-#                       treatmt=NULL, SelectMECA="HALLMARK", organ="lung",KeepData = T,
-#                       eSS=F, NewNet=T, Default=Default, Boundaries = Boundaries)
 
 #' Plots and predictions within AMoNet grid search pipeline
 #'
-#' @param net *AMoNet* object.
-#' @param DIR path and name to plot pdf.
+#' @param net *AMoNet* object, after training and with split defined (net$TrainSplit)
 #'
 #' @return
 #' Metrics for training and validation in \code{$predict_[]} from *AMoNet* object
+#' Plots of training procedures and predictions in the tmp/ directory
 #' @export
-PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp/new.pdf")){
+PlotAndPredict<-function(net){
 
-  if(!is.null(DIR)){
-    pdf(DIR)
+  DIR<-gsub("Rdata","pdf", gsub("/model/","/tmp/", net$DIRSave))
+  if(!dir.exists(gsub("tmp/.*","tmp/", DIR))){
+    dir.create(gsub("tmp/.*","tmp/", DIR),showWarnings = T)
+    print(paste("Learning plots are in",DIR))
   }
+
+#  if( dir.exists(gsub("tmp/.*","tmp/", DIR)) ){
+
+
+#    Latt<-length(list.files(DIR,pattern = net$call$NameProj))
+#    if(Latt>0){
+#      Latt<-max(as.numeric(gsub(".pdf","", gsub(net$call$NameProj,"", list.files(DIR,pattern = net$call$NameProj)))))
+#    }
+
+#    NAME<-paste(DIR,net$call$NameProj, Latt+1,".pdf",sep = "") #ifelse(Optimized,"Opt","Init"),
+#    pdf(NAME)
+
+    pdf(DIR)
+#    }
   ## visualize learning phase
   plot(net$history)
 
@@ -402,6 +382,9 @@ PlotAndPredict<-function(net, DIR=file.path(getwd(),"tmp/new.pdf")){
 
   return(list(TrainMetrics=predsTrain$metrics,ValMetrics=predsVal$metrics))
     }
+
+    print("save")
+    save(net, file = net$DIRSave)
 
   return(net)
 }

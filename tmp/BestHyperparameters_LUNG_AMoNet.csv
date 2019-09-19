@@ -1,0 +1,2 @@
+"learningrate";"MeanWinit";"SdWinit";"MiniBatch";"SimAnnealMaxSd";"beta1";"beta2";"iteration";"Parallelize";"MinStepsBackward";"MinStepsForward";"adaptive_iStates";"MUTinit";"EXPinit";"ValMut";"Logic";"Mode";"FixWeights";"Interval";"Npat";"Optimizer";"MinConnect";"nblayers";"alpha";"lambda";"LSTM";"no_cores";"organ";"Visualize"
+"0.003";"0.001";"0.5";"2048";"0.001";"0.9";"0.999";"5";"TRUE";"1";"5";"TRUE";"TRUE";"FALSE";"50";"Sigmoid";"LAYER";"FALSE";"10";"10000";"Momentum";"144.731666313304";"1016.79464107805";"1";"0.01";"FALSE";"4";"lung";"Output"

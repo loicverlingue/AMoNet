@@ -4,15 +4,14 @@
 \alias{PlotAndPredict}
 \title{Plots and predictions within AMoNet grid search pipeline}
 \usage{
-PlotAndPredict(net, DIR = file.path(getwd(), "tmp/new.pdf"))
+PlotAndPredict(net)
 }
 \arguments{
-\item{net}{*AMoNet* object.}
-
-\item{DIR}{path and name to plot pdf.}
+\item{net}{*AMoNet* object, after training and with split defined (net$TrainSplit)}
 }
 \value{
 Metrics for training and validation in \code{$predict_[]} from *AMoNet* object
+Plots of training procedures and predictions in the tmp/ directory
 }
 \description{
 Plots and predictions within AMoNet grid search pipeline

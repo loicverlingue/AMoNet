@@ -226,10 +226,10 @@ RunBackSimul<-function(NETall=NETall, y=y, MUT=NULL, treatmt=NULL,Init=NULL, iSt
         (2-alpha)*lambda*norm(W,"1") +
         (alpha-1)*lambda*norm(W,"f")
 
-      RealCost <- mean( (t(Y_epoch)-TotAttractors[,"A",rownames(Y_epoch),dim(TotAttractors)[4]])^2 )
+ #   RealCost <- mean( (t(Y_epoch)-TotAttractors[,"A",rownames(Y_epoch),dim(TotAttractors)[4]])^2 )
 
       ### cost storing
-      COST<-rbind(COST,RealCost)
+      COST<-rbind(COST,Cost)
 
       # manage gradient clipping # to improve
       if(nrow(COST)>2&!is.null(gradClipping)){

@@ -44,15 +44,15 @@ build.AMoNet<-function(object,
   if("NETall"%in%names(object)){
     NETall<-object$NETall
   } else if("GENESman"%in%names(object)){
-    GENESman<-object$GENESman
     NETall<-NULL
-    treatmt<-object$treatmt
   } else {
+    print("Write your query")
     object<-AMoNet()
-    GENESman<-object$GENESman
-    treatmt<-object$treatmt
     NETall<-NULL
   }
+
+  GENESman<-object$GENESman
+  treatmt<-object$treatmt
   #
 #  if(!is.null(object)){
 #    NETall<-object$NETall
@@ -99,6 +99,10 @@ build.AMoNet<-function(object,
       LENG<-length(intersect(Phenotypes$source_hgnc, Species))
     }
     print(paste("Building for",paste(head(GENESman),collapse = ","),"..., from",length(Species),"species, from which" , LENG, "are connected to", length(unique(MECA)), "biological functions"))
+
+    if(length(setdiff(GENESman,Species))>0){
+      print(paste(paste(setdiff(GENESman,Species), collapse = ", "),"not in the InteractionBase provided"  ))
+    }
     #print("remenber, the size of the final network depend on the nb of species and sometimes the nb of layers (nblayers) you allow between species")
   }
 

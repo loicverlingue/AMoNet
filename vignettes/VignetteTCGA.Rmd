@@ -12,7 +12,7 @@ vignette: >
 
 ```{r, loadpack}
 library(AMoNet)
-if(TRUE){
+if(FALSE){
     print("Loading packages")
     library(reshape2)
     library(parallel)
@@ -29,17 +29,12 @@ if(TRUE){
 set.seed(1234)
 ```
 
-
-```{r, import Default in global.env()}
-#data("Default");data("Boundaries")
-```
-
 Build AMoNet focused on oncogenic relation between *TP53* and *MTOR* within hallmarks of cancer cells.
 Remember to set the number of output values (addOutputs) > 1 to learn on survival data.
 
 ## Gene(s) query
 ```{r, Gene query}
-net<-AMoNet(GENESman = c("TP53","EGFR"))
+net<-AMoNet(GENESman = c("MTOR","EGFR"))
 ```
 
 ## Build AMoNet 
@@ -88,7 +83,7 @@ net<-train.AMoNet(net, y=net$Data$y, MUT=net$Data$MUT, treatmt=NULL,
                          iStates= net$iStates, Init = NULL,
                          ValMut = 100, Ct=NULL, 
                          MiniBatch=16, 
-                         iteration=1, 
+                         iteration=3, 
                          Optimizer="Momentum", 
                          beta1=0.9, beta2=0.999,
                          alpha = 0, lambda = 0,

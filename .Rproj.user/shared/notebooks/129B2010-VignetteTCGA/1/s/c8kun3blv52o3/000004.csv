@@ -1,2 +1,2 @@
 "0","net<-RandomiStates(net)"
-"0","iStates<-net$iStates"
+"0","#iStates<-net$iStates"

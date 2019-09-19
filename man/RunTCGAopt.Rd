@@ -4,12 +4,11 @@
 \alias{RunTCGAopt}
 \title{Wrapper function to run the AMonet workflow, including hyper-parameters grid search, on TCGA data}
 \usage{
-RunTCGAopt(Param = c("nblayers", "MinConnect"),
-  DIR = file.path(getwd(), "model"), NameProj = "HallmarksLungHN",
-  GENESman = c("EGFR", "KRAS", "TP53", "MTOR"), treatmt = NULL,
-  SelectMECA = "HALLMARK", organ = "luad", eSS = F, NewNet = T,
-  no_cores = 3, KeepData = T, PartitionSplit = 0.7,
-  Default = Default, Boundaries = Boundaries)
+RunTCGAopt(Param = c("nblayers", "MinConnect"), DIR = getwd(),
+  NameProj = "LUNG_AMoNet", GENESman = c("EGFR", "MTOR"),
+  treatmt = NULL, SelectMECA = "HALLMARK", organ = "lung", eSS = F,
+  NewNet = T, KeepData = T, PartitionSplit = 0.7,
+  Default = AMoNet::Default, Boundaries = AMoNet::Boundaries)
 }
 \arguments{
 \item{Param}{character vector: the hyper-parameter(s) to randomly test whithin this run.}

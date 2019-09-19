@@ -455,7 +455,7 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
     #print("Use load data to perform predictions")
     list2env(object$Data,envir = .GlobalEnv)
 
-    newtreatmt=NULL
+    treatmt=newtreatmt=NULL
     #list2env(Default,envir = globalenv())
     #print(dim(iStates))
     iStates<-object$iStates
