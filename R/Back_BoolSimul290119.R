@@ -386,18 +386,18 @@ if("Sigmoid"%in%Logic){
       if(1==alpha){
         Wcost<-BuildNetMat(NETall = NETexplore, Layer = 1, Type = "Weights")
 
-      #  dX<-2*(t(Y)-TotiState[,"A",NAMES,dim(TotiState)[4]]) +
-      #    lambda*diag(sign(Wcost))/dim(TotiState)[1]
+      #  dX<-2*(TotiState[,"A",NAMES,dim(TotiState)[4]]-t(Y)) +
+      #    lambda*diag(sign(Wcost)) #/dim(TotiState)[1]
         #table(diag(sign(Wcost)))
           dX<-2*(TotiState[,"A",NAMES,dim(TotiState)[4]]-t(Y)) +
-            lambda*diag(sign(Wcost)%*%t(Wcost))/dim(TotiState)[1]
+            lambda*diag(sign(Wcost)%*%t(Wcost)) #/dim(TotiState)[1]
       } else if (2==alpha){
         Wcost<-BuildNetMat(NETall = NETexplore, Layer = 1, Type = "Weights")
         # pb of dimensions if mat mul between 2Z(A-y), so picewise mult choosen, to check
-        dX<-2*(TotiState[,"Z",NAMES,dim(TotiState)[4]])*(t(Y)-TotiState[,"A",NAMES,dim(TotiState)[4]])+
-          2*lambda*diag(Wcost)/dim(TotiState)[1]
-  #        dX<-2*(TotiState[,"A",NAMES,dim(TotiState)[4]]-t(Y)) +
-  #          lambda*diag(Wcost)*2/dim(TotiState)[1]
+        #dX<-2*(TotiState[,"Z",NAMES,dim(TotiState)[4]])*(TotiState[,"A",NAMES,dim(TotiState)[4]]-t(Y))+
+        #  2*lambda*diag(Wcost) #/dim(TotiState)[1]
+          dX<-2*(TotiState[,"A",NAMES,dim(TotiState)[4]]-t(Y)) +
+            lambda*diag(Wcost)*2 #/dim(TotiState)[1]
       }
 
       if("LAYER"%in%Mode){

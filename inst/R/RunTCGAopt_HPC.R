@@ -4,7 +4,8 @@ XV<-try(library(AMoNet),silent = T)
 
 if("try-error"%in%class(XV)){
   print("Installing AMoNet from gitlab.")
-  devtools::install_git("https://lverling:Lololo.1@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE)
+  devtools::install_git("https://user:password@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE,
+                        destdir="~/R/x86_64-redhat-linux-gnu-library/3.4")
   library(AMoNet)
 }
 
@@ -14,6 +15,10 @@ if("try-error"%in%class(XV)){
 #Default$MinConnect=6
 #Default$MiniBatch=64
 #Default$lambda
+
+########
+# remove global environment variables that may interfere with cmd and generation of new arguments
+rm(list = intersect(ls(), names(Default)))
 
 set.seed(NULL)
 ######################
@@ -41,7 +46,7 @@ options.names <- sapply(listoptions,function(x){
   option <-  unlist(strsplit(x, ' '))[1]
 })
 names(options.args) <- unlist(options.names)
-
+#Correct<-options.args[[1]]
 options.args<-lapply(options.args,function(Correct){
   if(length(Correct)==0){
     return("")
@@ -57,16 +62,20 @@ options.args<-lapply(options.args,function(Correct){
 print("options are:")
 print(options.args)
 
-#
-args.needed<-setdiff(names(formals(RunTCGAopt)),c("Default","Boundaries"))
-InterArg<-intersect(names(options.args),args.needed)
-
 # update default values
 InterDef<-intersect(names(Default), names(options.args))
 Default[InterDef]<-options.args[InterDef]
 
+#print("Arguments are:")
+#print(options.args[InterArg])
+
+#
+args.needed<-setdiff(names(formals(RunTCGAopt)),c("Default","Boundaries"))
+InterArg<-intersect(names(options.args),args.needed)
+
 # run workflow
-net<-do.call(RunTCGAopt, options.args[InterArg])
+net<-do.call(RunTCGAopt, c(options.args[InterArg],
+                           list(Default=Default,Boundaries=Boundaries)))
 
 #x<-load(file.path(getwd(),"model", list.files(file.path(getwd(),"model"))[1]))
 #net<-get(x)

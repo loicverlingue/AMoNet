@@ -183,7 +183,7 @@ simulate.AMoNet<-function(object, nsim=Default$MinStepsForward,
 
   # update Default in .GlobalEnv
 #  Default<<-object$Parameters$Default
-  assign("Default",object$Parameters$Default,envir = .GlobalEnv)
+  assign("Default",object$Parameters$Default, envir = .GlobalEnv)
 
  return(object)
 }

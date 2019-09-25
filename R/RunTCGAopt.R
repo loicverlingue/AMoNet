@@ -85,12 +85,10 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
     print(paste("New direction to store networks :", DIR))
   }
 
-
-
   ###############
   # load networks or build
 
-  FILES<-list.files(DIR,pattern = NameProjbase)
+  FILES<-list.files(DIR, pattern = NameProjbase)
 
   if(NewNet){
     FILES<-NULL
@@ -157,7 +155,8 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
     return(NAME)
   }))
 
-  NameProj<-net$call$NameProj<-paste(NameProjbase, paste(QUANTS,collapse = "_"),"_", sep = "")
+  net$call$NameProj<-paste(NameProjbase, paste(QUANTS,collapse = "_"),"_", sep = "")
+  NameProj<-net$call$NameProj
   print(paste("Welcome to project", NameProj))
 
   ###############
@@ -246,7 +245,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
            MinStepsBackward = net$Parameters$Default$MinStepsBackward,
            gradClipping= net$Parameters$Default$gradClipping,
            LSTM= net$Parameters$Default$LSTM,
-           FixNodes = FixNodes, NameProj = net$call$build_call$NameProj,
+           FixNodes = FixNodes, NameProj = net$call$NameProj,
            PDF=F, GIF=F, Visualize=NULL, KeepData=F,  KeepTraining=T)
 
     toc=Sys.time()-tic

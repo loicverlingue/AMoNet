@@ -12,20 +12,6 @@ vignette: >
 ---
 ```{r}
 library(AMoNet)
-if(TRUE){
-    print("Loading packages")
-    library(reshape2)
-    library(parallel)
-    library(stringr)
-    library(splines)
-    library(cgdsr)
-    library(survival)
-    library(magick)
-    library(matrixStats)
-    library(survivalROC)
-    library(pec)
-  }
-
 set.seed(1234)
 
 ```
@@ -58,18 +44,20 @@ length(Default)
 # Network buiding
 ## Initiate AMoNet from simple gene(s) query
 
+You can initiate with empty AMoNet and you'll have to enter your gene names in the console.
 ```{r, eval = FALSE}
 net<-AMoNet() # and check in you console to enter the names of your genes
 ```
 
-Or
+Or you can provide your gene names in the AMoNet initiation function.
 ```{r}
-net<-AMoNet(c("TP53","EGFR"))
-#print(names(net))
+net<-AMoNet(GENESman = c("MTOR","EGFR"))
 ```
 
 
 ## Build AMoNet network from OMNI molecular interaction database
+
+This function runs the building of AMoNet network. It takes 2 databases as inputs: 
 ```{r}
 net<-build.AMoNet(net, InteractionBase = OMNI, nblayers = 2, MinConnect = 4, RestrictedBuilding = T, MeanWinit = 0.01, SdWinit = 0.01, Phenotypes = GenesSelecHall, MECA=names_MECA, RestrictedBase = T, Interval = 1, Optimizer = "Adam", KeepPhenotypes=T, no_cores = 1, NameProj = "MyAMoNet")
 ```

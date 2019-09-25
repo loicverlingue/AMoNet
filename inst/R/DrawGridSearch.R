@@ -3,7 +3,7 @@
 # wrapper function to run from command line
 # dont run draw if nets of various sizes
 
-#args="--NameProj LUNG_AMoNet --Validation T"
+#args="--NameProj LUNG_AMoNet_new --Validation T"
 # retrieve arguments eithers form command lines or from environments
 XV<-try(args)
 if("try-error"%in%class(XV)){
@@ -44,7 +44,7 @@ if(exists("options.args")){
 NameProjbase<-NameProj
 
 # set directories - to check
-if(is.null(DIR)){
+if(!exists("DIR")){
   DIR<-getwd()
 }
 # check and set directories
@@ -142,12 +142,12 @@ if(TRUE){
           ylab="Training Costs",xlab="iterations*epochs", col=RAIN, lty=1) # , ylim=c(0,0.01)
   legend("topright", legend = names(table(Group2)), lty=1,col=unique(RAIN),cex=0.5)
 
-  # selecting
-  BESTone<-names(MedianLast[MedianLast==min(MedianLast)])
-  print(paste("Best training model is:",BESTone))
-
   dev.off()
 }
+
+# selecting
+BESTone<-names(MedianLast[MedianLast==min(MedianLast)])
+print(paste("Best training model is:",BESTone))
 
 ######################
 # predict the good hyperparameters

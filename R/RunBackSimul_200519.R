@@ -220,7 +220,8 @@ RunBackSimul<-function(NETall=NETall, y=y, MUT=NULL, treatmt=NULL,Init=NULL, iSt
       ######
       # compute cost with penalization
 
-      W<-BuildNetMat(NETall = NETall[NETall$Output,],Layer = NULL, Type = "Weights")
+#      W<-BuildNetMat(NETall = NETall[NETall$Output,],Layer = NULL, Type = "Weights")
+      W<-BuildNetMat(NETall = NETall[NETall$Output,],Layer = max(NETall$Layer), Type = "Weights")
 
       Cost <- mean( (t(Y_epoch)-TotAttractors[,"A",rownames(Y_epoch),dim(TotAttractors)[4]])^2 ) +
         (2-alpha)*lambda*norm(W,"1") +

@@ -13,7 +13,14 @@ vignette: >
 Where to store the models and do the plotting
 
 ```{r setup}
-knitr::opts_knit$set(root.dir = ".")#C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet
+knitr::opts_knit$set(root.dir = "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet")#
+
+```
+
+
+```{r}
+# check you directory
+print(getwd())
 ```
 
 
@@ -24,9 +31,11 @@ knitr::opts_knit$set(root.dir = ".")#C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/A
 XV<-try(library(AMoNet),silent = T)
 
 if("try-error"%in%class(XV)){
-  print("Installing AMoNet from gitlab.")
+  print("Installing AMoNet from gitlab. Check your ID and pwd")
   devtools::install_git("https://user:password@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE)
   library(AMoNet)
+} else {
+  print("AMoNet loaded")
 }
 
 
@@ -48,7 +57,7 @@ print(DirWrapperDraw)
 
 ```{r}
 # set arguments
-args<-"--Param nblayers MinConnect --NameProj LUNG_AMoNet --GENESman EGFR MTOR --treatmt --Interval 10 --SelectMECA HALLMARK --organ luad --lambda 0"
+args<-"--Param nblayers MinConnect --NameProj LUNG_AMoNet_new --GENESman EGFR MTOR --treatmt --Interval 10 --SelectMECA HALLMARK --organ luad --lambda 0.01 --alpha 1 --learningrate 0.001 --iteration 20"
 
 # set the number of training trials
 Ntrials<-3
@@ -63,7 +72,7 @@ for( i in seq(Ntrials)){
 # Draw grid search results
 
 ```{r}
-args<-"--NameProj LUNG_AMoNet --Validation T"
+args<-"--NameProj LUNG_AMoNet_new --Validation T"
 
 source(DirWrapperDraw)
 
@@ -94,13 +103,31 @@ out<-ssh::ssh_exec_wait(session,command = paste("chmod 777 ",DirHPC,"/*",sep = "
 # run workflow
 ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow1.sh"))
 
-ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC), paste("sh",file.path(DirHPC, "workflow.sh"))))
+outrun<-ssh::ssh_exec_internal(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow.sh"))
 
-out<-ssh::ssh_exec_wait(session,command = file.path(DirHPC, "workflow.sh"))
-
-ssh::ssh_exec_wait(session,command = 'sh /data/tmp/lverling/workflow1.sh')
+#ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC), paste("sh",file.path(DirHPC, "workflow.sh"))))
+#out<-ssh::ssh_exec_wait(session,command = file.path(DirHPC, "workflow.sh"))
+#ssh::ssh_exec_wait(session,command = 'sh /data/tmp/lverling/workflow1.sh')
 
 ```
+
+```{r}
+out<-gsub(".torque6.curie.fr","", unlist(strsplit(rawToChar(outrun$stdout),"\n")))
+
+for(i in seq(10)){
+  out[length(out)+1]<-paste("TCGATrain.o", gsub("\\[\\]",paste("-",i,sep = ""),out[2]), sep = "")
+  
+  ssh::scp_download(session, files = file.path(DirHPC, out[length(out)]),to = file.path(getwd(),"tmp"))
+
+}
+
+#ssh::ssh_tunnel(session,port = 22,target = "calcsub.curie.fr:22")
+
+#LF<-ssh::ssh_exec_internal(session,command = c(paste("cd",DirHPC),"ls -l"))
+
+
+```
+
 
 
 #
