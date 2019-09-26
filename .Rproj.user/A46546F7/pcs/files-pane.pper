@@ -1,13 +1,13 @@
 {
-    "path" : "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet/tmp",
+    "path" : "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet/R",
     "sortOrder" : [
-        {
-            "ascending" : true,
-            "columnIndex" : 2
-        },
         {
             "ascending" : false,
             "columnIndex" : 4
+        },
+        {
+            "ascending" : true,
+            "columnIndex" : 2
         }
     ]
 }

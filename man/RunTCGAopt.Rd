@@ -25,9 +25,13 @@ RunTCGAopt(Param = c("nblayers", "MinConnect"), DIR = getwd(),
 
 \item{organ}{character in regexp format: selection of one or several organs or cancer types. Names of organs are available with the command \code{print(names_MECA)}}
 
-\item{eSS}{boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.}
+\item{eSS}{boolean. If \code{TRUE}, performs multistart without training. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"}.}
 
 \item{NewNet}{boolean: when set to FALSE, if at least one model with the name of your project NameProj is in the DIR directory, the script will load it and use it. If set to TRUE, a new molecular network will be built using arguments GENESman and default parameters (Interval, MinConnect, nblayers).}
+
+\item{Default}{list. Default hyper-parameters used for the workflow (building and training).}
+
+\item{Boundaries}{list. Boundaries for Default hyper-parameters for random selection.}
 }
 \value{
 todo AMoNet object

@@ -10,7 +10,10 @@
 #' @param treatmt character vector: gene(s)' name(s) targeted by simulated treatment(s). Added to GENEman toused to build the AMoNET network.
 #' @param SelectMECA character in regexp format: selection of one or several gene sets related to biological mecanisms. Names gene sets are available with the command \code{print(names_MECA)}.
 #' @param organ character in regexp format: selection of one or several organs or cancer types. Names of organs are available with the command \code{print(names_MECA)}
-#' @param eSS boolean to perform multistart or not. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of \code{Param = "MeanWinit"} and/or \code{Param = "SdWinit"} eSS \code{TRUE}.
+#' @param eSS boolean. If \code{TRUE}, performs multistart without training. Default is set to \code{FALSE}. Recommandation is to use \code{eSS=TRUE} within a hyper-parameters search and in case of hyper-parameters for building the net such as: \code{Param = "MeanWinit"}, \code{Param = "SdWinit"}, \code{Param = "nblayers"} or \code{Param = "MinConnect"}.
+#' @param Default list. Default hyper-parameters used for the workflow (building and training).
+#' @param Boundaries list. Boundaries for Default hyper-parameters for random selection.
+#'
 #' @details
 #' This function can be run:
 #' 1) Alone to train an AMoNet model with fixed hyper-parameters are either user-defined or the default one are used. For default hyper-parameters values call \code{print(Default)}.
@@ -21,10 +24,12 @@
 #'
 #' To set manually any hyper-paramters, change it into the \code{print(Default)} object.
 #'
+#' Setting \code{eSS=TRUE} is a convinient way to select best networks initialisations parameters. It is not recommended for learning parameters.
+#'
 #' @return todo AMoNet object
 #' @export
 RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
-                     NameProj="LUNG_AMoNet", GENESman=c("EGFR","MTOR"),
+                     NameProj="LUNG_AMoNet_ess", GENESman=c("EGFR","MTOR"),
                      treatmt=NULL, SelectMECA="HALLMARK", organ="lung",
                      eSS=F, NewNet=T, KeepData=T, PartitionSplit=0.7,
                      Default=AMoNet::Default, Boundaries=AMoNet::Boundaries){
@@ -253,28 +258,16 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
 
   } else {
     # to check in to S3
-    net<-ess(net = net, Quant=3, y= net$Data$y[,net$TrainSplit$Train,drop=F],
+    net<-ess(net, y= net$Data$y[,net$TrainSplit$Train,drop=F],
                 MUT= net$Data$MUT[net$TrainSplit$Train],
                 Init = net$Data$Init[,net$TrainSplit$Train],
                 iStates= net$iStates[net$TrainSplit$Train,],
-                treatmt=NULL,
-                no_cores=net$Parameters$Default$no_cores) # CGS, NETall1, Default,ValMut = net$Parameters$Default$ValMut,FixNodes=FixNodes, Plot=F
-
-   # net[["NETall"]]<-ResEss$Best
-   # net$history[["NETallList"]]<-list(ResEss$Best)
-  #  net$history[["NETallActivity"]]<-NULL # to check
-  #  net$history[["Cost"]]<-ResEss$Cost
-
+                treatmt=NULL) # CGS, NETall1, Default,ValMut = net$Parameters$Default$ValMut,FixNodes=FixNodes, Plot=F
+      # Quant=3, no_cores=net$Parameters$Default$no_cores
   }
 
   ############ save
   print("update parameters")
-
-#  net[["Parameters"]]$Default<-Default
-#  net[["Parameters"]]$Boundaries<-Boundaries
-#  net[["TrainSplit"]]$Train<-Train
-#  net[["TrainSplit"]]$Val<-Val
-#  net$Data$Surv<-DATA$SurvData
 
   Latt<-length(list.files(DIR, pattern =  NameProj))
   if(Latt>0){
@@ -290,7 +283,6 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
 
   return(net)
 }
-
 
 #' Plots and predictions within AMoNet grid search pipeline
 #'
@@ -322,23 +314,26 @@ PlotAndPredict<-function(net){
     pdf(DIR)
 #    }
   ## visualize learning phase
-  plot(net$history)
+    if(net$call$train_call$iteration>1){
+      plot(net$history)
+    }
 
   ## relation of phenotype weights to outputs
 
   NETall1<-net$history$NETallList[[length(net$history$NETallList)]]
   par(mar=c(5, 4, 4, 2) + 0.1)
   #par(mar=c(15, 4, 4, 2) + 0.1)
-  barplot(NETall1[NETall1$Output,"Weights"],names.arg =NETall1[NETall1$Output,1], las=2, cex.names = 0.5)
+  barplot(NETall1[NETall1$Output,"Weights"],names.arg =NETall1[NETall1$Output,1], las=2, cex.names = 0.5,
+          main="Relation of the phenotype layer with outputs")
 
   # predict whole base with split
     net<-predict(net, SplitType = "Train")
 
-    plot(net$Predict_Train, xlim=c(0,1))
+    plot(net$Predict_Train, xlim=c(0,1), main = paste("Training predictions for \n",net$call$NameProj))
 
     net<-predict(net, SplitType = "Val")
 
-    plot(net$Predict_Val, xlim=c(0,1))
+    plot(net$Predict_Val, xlim=c(0,1), main = paste("Validation predictions for \n",net$call$NameProj))
 
     if(!is.null(DIR)){
       dev.off()

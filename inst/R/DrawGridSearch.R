@@ -5,6 +5,7 @@
 
 #args="--NameProj LUNG_AMoNet_new --Validation T"
 # retrieve arguments eithers form command lines or from environments
+
 XV<-try(args)
 if("try-error"%in%class(XV)){
   print("Arguments retreived from command line")
@@ -36,7 +37,6 @@ options.args<-lapply(options.args,function(Correct){
 
 print("options are:")
 print(options.args)
-
 
 if(exists("options.args")){
   list2env(options.args,globalenv())
@@ -80,7 +80,16 @@ if(TRUE){
     COSTmedian<-median(as.numeric(tail(unlist(net$history$Cost),MNB)))
 
     if("Predict_Val"%in%names(net)){
-      CostVal<-net$Predict_Val$metrics$Cost
+      #CostVal<-net$Predict_Val$metrics$Cost
+
+      if("Cindex"%in%names(net$Predict_Val$metrics)){
+        print("Select on validation 1 - C-index")
+        CostVal<-as.numeric(1-net$Predict_Val$metrics$Cindex[1])
+      } else {
+        print("Select on validation Cost")
+        CostVal<-net$Predict_Val$metrics$Cost
+      }
+
     } else {
       CostVal<-0.4
       print(paste("lacks validation cost for", f))
@@ -111,9 +120,6 @@ if(length(unique(unlist(lapply(COST,length))))>1){
 COST<-do.call("rbind",COST)
 dim(COST)
 
-if(ncol(COST)==1){
-  hist(COST,breaks = 100)
-}
 # if length not the same:
 MINMAX<-apply(COST,1,function(x){max(which(!is.na(x)))})
 MIN<-min(MINMAX);MAX<-max(MINMAX)
@@ -121,9 +127,12 @@ MIN<-min(MINMAX);MAX<-max(MINMAX)
 #Last<-apply(COST,1,function(x){x[max(which(!is.na(x)))]})
 #sort(Last,decreasing = T)
 
-
 ### visualization
-if(TRUE){
+pdf(paste(dirPlot,"/learningCurves_", NameProjbase, ".pdf",sep = ""))
+
+if(ncol(COST)==1){
+  hist(COST,breaks = 100, main="Training cost")
+} else {
 
   # grouping
   Group<-gsub("GridSearch","",gsub(".Rdata","",FILES))
@@ -135,19 +144,26 @@ if(TRUE){
   RAIN<-unlist(sapply(seq(length(table(Group2))),function(x){rep(RAIN[x],table(Group2)[x])}))
 
   # plotting
-  pdf(paste(dirPlot,"/learningCurves_", NameProjbase, ".pdf",sep = ""))
   par(mfrow=c(1,1))
   par(mar=c(5,4,4,2)+0.1)
   matplot(t(COST),type = 'l',xlim = c(0,MAX), main="Learning curves\n for multiple runs",
           ylab="Training Costs",xlab="iterations*epochs", col=RAIN, lty=1) # , ylim=c(0,0.01)
   legend("topright", legend = names(table(Group2)), lty=1,col=unique(RAIN),cex=0.5)
 
-  dev.off()
 }
 
+dev.off()
+
+if(FALSE){
 # selecting
-BESTone<-names(MedianLast[MedianLast==min(MedianLast)])
-print(paste("Best training model is:",BESTone))
+if(Validation){
+  BESTone<-names(CostVal[CostVal==max(CostVal)])
+  print(paste("Best training model is:",BESTone))
+}else{
+  BESTone<-names(MedianLast[MedianLast==min(MedianLast)])
+  print(paste("Best training model is:",BESTone))
+}
+}
 
 ######################
 # predict the good hyperparameters
@@ -158,7 +174,6 @@ par(mfrow=c(1,1))
 # store good hyperparameters for next steps
 #Default<-list(learningrate=0.05,MeanWinit=0.1, SdWinit = 1, MiniBatch=8,SimAnnealMaxSd=0.1,
 #              beta1=0.91,beta2=0.91,gradClipping=3,iteration=1,LearningRateDecay="linear")
-
 
 Default<-AMoNet::Default
 Boundaries<-AMoNet::Boundaries
@@ -197,7 +212,7 @@ if(TRUE){ # PDF
     if(is.numeric(RES[[i]])){
       plot(CO,if(all(VAR<1)){log2(VAR)}else{VAR},
            main=i,ylab=if(all(VAR<1)){paste("log",i)}else{i},
-           xlab=if(Validation){"Validation Cost"}else{"Training Cost"} )
+           xlab=if(Validation){"Validation"}else{"Training Cost"} )
       #plot(CO, VAR, main=i,ylab=i,xlab="Validation Cost")
       VARmod<-if(all(VAR<1)){log2(VAR)}else{VAR}
       MODEL<-lm(VARmod~CO) # bof
@@ -215,7 +230,7 @@ if(TRUE){ # PDF
       }
       if((PVALUE<0.05|abs(COR)>0.5)&PRED>0){
         Default[[i]]<-as.numeric(PRED)
-        Bondaries[[i]]<-as.numeric(confint(MODEL,level = 0.2)[1,])
+        Boundaries[[i]]<-as.numeric(confint(MODEL,level = 0.2)[1,])
 
       } else{
         # select first one to debug when all values are the same, eg beta with minibatch all > than batch size
@@ -223,8 +238,8 @@ if(TRUE){ # PDF
 
         MedianBest<-median(VAR[tail(order(CO,decreasing = T), 3)])-VAR[CO==min(CO)]
         MedianBest<-MedianBest[1]
-        Bondaries[[i]]<-sort(VAR[CO==min(CO)]+c(MedianBest,-MedianBest))
-        Bondaries[[i]]<-Bondaries[[i]][1:2]
+        Boundaries[[i]]<-sort(VAR[CO==min(CO)]+c(MedianBest,-MedianBest))
+        Boundaries[[i]]<-Boundaries[[i]][1:2]
       }
 
     } else {
@@ -266,9 +281,10 @@ if(TRUE){ # PDF
   #dev.off()
   write.csv2(t(as.data.frame(unlist(Default))),paste(dirPlot,"/BestHyperparameters_",NameProjbase,".csv",sep = ""), row.names = F)
 
-  Bbond<-t(as.data.frame(unlist(Bondaries)))
-  colnames(Bbond)<-unlist(lapply(names(Bondaries),function(R)rep(R,2)))
-  write.csv2(Bbond,paste(dirPlot,"/BestBondaries_",NameProjbase,".csv",sep = ""), row.names = F)
+  Bbond<-t(as.data.frame(unlist(Boundaries)))
+  colnames(Bbond)<-reshape2::melt(Boundaries)[,2]
+#  colnames(Bbond)<-unlist(lapply(names(Boundaries),function(R)rep(R,2)))
+  write.csv2(Bbond,paste(dirPlot,"/BestBoundaries_",NameProjbase,".csv",sep = ""), row.names = F)
 
 }
 
@@ -303,13 +319,18 @@ dev.off()
 # if needed discard worst
 
 #UnWanted<-c("nblayers","MinConnect")
-FILES<-FILES[-grep("nblayers|MinConnect", FILES)]
-MedianLast<-MedianLast[-grep("nblayers|MinConnect", names(MedianLast))]
+if(any(c("nblayers","MinConnect")%in%VARname)){
+  FILES<-FILES[-grep("nblayers|MinConnect", FILES)]
+  MedianLast<-MedianLast[-grep("nblayers|MinConnect", names(MedianLast))]
 
+}
+
+if(length(FILES)==0){
 #if(FALSE){
 #any(c("nblayers","MinConnect")%in%VARname)){
-#print("Different network structures: ends here")
-#} else {
+print("Ends before plotting PCA")
+
+} else {
 
 #MAX<-(length(NETallProp$NETallList))
 i=1
@@ -625,7 +646,7 @@ Yselect<-CLUSTCUT(DENY,Cutoffdens = 0.8)
 
 #unique(c(unique(Group1[Xselect[1]:Xselect[2]]),unique(Group1[Yselect[1]:Yselect[2]])))
 if(TRUE){
-  pdf(paste(dirPlot,"/PCAweightsBest_",NameProjbase,".pdf",sep = ""))
+  pdf(paste(dirPlot,"/PCAweights_BestTrain_",NameProjbase,".pdf",sep = ""))
 
   plot(ORDPCBcoord[,1],ORDPCBcoord[,2],col=RAIN[Group],pch=16,
        main='PCA Weights to select best & clustered nets', type='n',
@@ -678,7 +699,7 @@ if(TRUE){
   for(f in FILES[gsub(".Rdata","",FILES)%in%SELEC]){
     rm(NETallList)
     load(file.path(dirData,f))
-    NETallList<-NETallProp$NETallList
+    NETallList<-net$history$NETallList
 
     NETall<-NETallList[[length(NETallList)]]
     NETallopt<-PlotOptNet(NETall,PDF = F,Optimized = T,NameProj = gsub(".Rdata" ,"",f),PrintOptNET = T,LEGEND = F)
@@ -694,6 +715,7 @@ if(TRUE){
 
 
   dev.off()
+}
 }
 
 print("end")

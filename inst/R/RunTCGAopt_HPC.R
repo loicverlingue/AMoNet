@@ -4,7 +4,7 @@ XV<-try(library(AMoNet),silent = T)
 
 if("try-error"%in%class(XV)){
   print("Installing AMoNet from gitlab.")
-  devtools::install_git("https://user:password@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE,
+  devtools::install_git("https://lverling:Lololo.1@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE,
                         destdir="~/R/x86_64-redhat-linux-gnu-library/3.4")
   library(AMoNet)
 }
@@ -66,7 +66,7 @@ print(options.args)
 InterDef<-intersect(names(Default), names(options.args))
 Default[InterDef]<-options.args[InterDef]
 
-#print("Arguments are:")
+#print("Arguments with no match:")
 #print(options.args[InterArg])
 
 #
@@ -76,7 +76,6 @@ InterArg<-intersect(names(options.args),args.needed)
 # run workflow
 net<-do.call(RunTCGAopt, c(options.args[InterArg],
                            list(Default=Default,Boundaries=Boundaries)))
-
 #x<-load(file.path(getwd(),"model", list.files(file.path(getwd(),"model"))[1]))
 #net<-get(x)
 
