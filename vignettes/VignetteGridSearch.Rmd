@@ -39,7 +39,6 @@ if("try-error"%in%class(XV)){
 # Locate your wrapper scripts
 
 ```{r}
-
 DirWrapperGS<-system.file('R/RunTCGAopt_HPC.R', package='AMoNet')
 print(DirWrapperGS)
 
@@ -138,7 +137,11 @@ DirHPC<-"/data/tmp/lverling/AMoNet"
 ssh::scp_upload(session, files = c(DirWorkflow, DirWrapperGS, DirWrapperDraw), to = DirHPC,verbose = T)
 
 # run permission
+
 #out<-ssh::ssh_exec_wait(session,command = paste("dos2unix ",DirHPC,"/*",sep = "") )
+
+#out<-ssh::ssh_exec_wait(session,command = paste("sed -i -e 's/\r\n//g'",DirHPC,"/*",sep = "") )
+
 ssh::ssh_exec_wait(session,command = paste("chmod 777 ",DirHPC,"/*",sep = "") )
 
 # run workflow
