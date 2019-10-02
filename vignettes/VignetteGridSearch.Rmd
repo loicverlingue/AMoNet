@@ -45,7 +45,7 @@ print(DirWrapperGS)
 
 DirWrapperDraw<-system.file('R/DrawGridSearch.R', package='AMoNet')
 print(DirWrapperDraw)
-
+#file.info(DirWrapperDraw)
 ```
 
 # On local computer
@@ -57,13 +57,15 @@ The functions is RunTCGAopt(), and the learning hyper-parameters are stored in D
 # Print RunTCGAopt() arguments or check documentation
 print("RunTCGAopt function arguments:")
 print(names(formals(RunTCGAopt)))
-?RunTCGAopt
+#?RunTCGAopt
 # Print names of hyper-parameters
 print("Names of hyper-parameters :")
 print(names(Default))
-?Default
+#?Default
 ```
 
+
+# Run on local computer
 Select hyper-parameters to search, set hyper-parameters you want fix, provide gene queries and other arguments for the building.
 Format : --Name_of_argument [space] value 
 ```{r}
@@ -90,16 +92,16 @@ source(DirWrapperDraw)
 
 ```
 
-It is possible to add the search of new parameters on the best model from previous search
-For that simply keep same NameProj, change Param and st NewNet=F.
+It is possible to continue with the search of new parameters on the best model from previous search
+For that simply keep same NameProj, change Param and NewNet=F.
 ```{r}
-args<-"--Param learningrate lambda --NameProj LUNG_AMoNet_ess --GENESman EGFR MTOR --treatmt --Interval 10 --SelectMECA HALLMARK --organ luad --alpha 1 --iteration 10 --NewNet F --eSS F"
+args<-"--Param learningrate lambda --NameProj LUNG_AMoNet_ess --organ luad --alpha 1 --iteration 10 --NewNet F --eSS F"
 ```
 
 Again, run the worflow iteratively.
 ```{r, eval=FALSE}
 # set the number of training trials
-Ntrials<-3
+Ntrials<-2
 
 # run with arguments in a loop
 for( i in seq(Ntrials)){
@@ -117,7 +119,8 @@ source(DirWrapperDraw)
 ```
 
 
-# Locate HPC
+# Run on HPC
+## Connect HPC with ssh
 
 ```{r, eval=FALSE}
 
@@ -130,7 +133,7 @@ DirWorkflow<-file.path(DirWorkflow, list.files(DirWorkflow))
 
 #DirPack<-gsub("AMoNet.*","AMoNet", DirWorkflow)
 
-DirHPC<-"/data/tmp/lverling"
+DirHPC<-"/data/tmp/lverling/AMoNet"
 
 ssh::scp_upload(session, files = c(DirWorkflow, DirWrapperGS, DirWrapperDraw), to = DirHPC,verbose = T)
 
@@ -142,7 +145,8 @@ ssh::ssh_exec_wait(session,command = paste("chmod 777 ",DirHPC,"/*",sep = "") )
 #ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow1.sh"))
 
 outrun<-ssh::ssh_exec_internal(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow.sh"))
-rawToChar(outrun)
+rawToChar(outrun$stdout)
+rawToChar(outrun$stderr)
 
 ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC), "sh workflow.sh"))
 #out<-ssh::ssh_exec_wait(session,command = file.path(DirHPC, "workflow.sh"))

@@ -6,9 +6,6 @@
 #PBS -l mem=5gb
 #PBS -l nodes=1:ppn=1
 #PBS -j oe
-#PBS -o /data/tmp/lverling
 #PBS -m ae
 
-cd /data/tmp/lverling
-
-/bioinfo/local/build/Centos/R/R-3.4.0/bin/Rscript /data/tmp/lverling/R/PossiLandscape.R $CLASS
+/bioinfo/local/build/Centos/R/R-3.4.0/bin/Rscript DrawGridSearch.R $CLASS

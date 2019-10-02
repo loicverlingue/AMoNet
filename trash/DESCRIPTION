@@ -5,23 +5,30 @@ Version: 0.1.0
 Author: Loic Verlingue
 Maintainer: Loic Verlingue <loic.verlingue@curie.fr> <loic.verlingue@gustaveroussy.fr>
 Description: AMoNet is a R package that provides a standardized workflow to build, train and simulate Artificial Molecular Networks.
-  AMoNet implements state of the art Deep Learning methods for training deep networks. 
-  Molecular networks are homeostatic biological systems (sparse, reccurent and directed graphical network). Fast Systems Biology methods are implemented to simulate molecular networks with several formalisms. 
+  AMoNet implements state of the art Deep Learning methods for training deep networks.
+  Molecular networks are homeostatic biological systems (sparse, reccurent and directed graphical network). Fast Systems Biology methods are implemented to simulate molecular networks with several formalisms.
   AMoNet combines Deep Learning and Systems Biology methods in a easy to use R framework with statdard function names (S3 functions build(), simulate(), predict(), plot()) and wraper functions for efficient hyper-parameter search.
   Visualizations are provided to faciliate the interpretation of molecular networks' training and simulations.
   AMoNet installation comes with a molecular interaction data base to build the molecular networks and a function to load TCGA data from cBioPortal for training.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends: 
+Depends:
   R (>= 3.4.4)
-Imports: 
+Imports:
   cgdsr (>= 1.2.10),
+  magick (>= 1.8),
   matrixStats (>= 0.53.1),
   parallel (>= 3.4.4),
-  reshape2 (>= 1.4.3), 
-  stringr (>= 1.4.0), 
+  pec (>= 2018.7.26),
+  reshape2 (>= 1.4.3),
+  stringr (>= 1.4.0),
+  splines (>= 3.4.4),
   survival (>= 2.41.3),
+  survivalROC (>= 1.0.3),
+  MASS (>= 7.3.49),
+  circlize (>= 0.4.3),
+  rgl (>= 0.99.16)
 Suggests:
   rmarkdown (>= 1.9),
   knitr (>= 1.20)
