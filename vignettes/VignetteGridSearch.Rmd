@@ -12,11 +12,15 @@ vignette: >
 # Set working directory
 Where to store the models and do the plotting.
 ```{r setup}
-knitr::opts_knit$set(root.dir = "C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet") #C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet
+DIR<-"C:/Users/L_VERLINGUE/Desktop/ModelK/Rpack/AMoNet/"
+knitr::opts_knit$set(root.dir = DIR) 
+#setwd(DIR)
+```
+
+```{r}
 # check your directory
 print(getwd())
 ```
-
 
 
 # Load (and optionally install) AMoNet package
@@ -24,6 +28,7 @@ print(getwd())
 ```{r}
 
 XV<-try(library(AMoNet),silent = T)
+#library(AMoNet, lib.loc = "C:/Users/L_VERLINGUE/Documents/R/win-library/3.4/")
 
 if("try-error"%in%class(XV)){
   print("Installing AMoNet from gitlab. Check your ID and pwd")
@@ -68,7 +73,7 @@ print(names(Default))
 Select hyper-parameters to search, set hyper-parameters you want fix, provide gene queries and other arguments for the building.
 Format : --Name_of_argument [space] value 
 ```{r}
-args<-"--Param MeanWinit SdWinit --NameProj LUNG_AMoNet_ess --GENESman EGFR MTOR --treatmt --Interval 10 --SelectMECA HALLMARK --organ luad --MinConnect 4 --nblayers 4 --NewNet T --eSS T"
+arguments<-"--Param MeanWinit SdWinit --NameProj LUNG_AMoNet_ess --GENESman EGFR MTOR --treatmt --Interval 10 --SelectMECA HALLMARK --organ luad --MinConnect 4 --nblayers 4 --NewNet T --eSS T"
 ```
 
 Run the worflow iteratively by selecting the number of trials (i.e iteration).
@@ -85,7 +90,7 @@ for( i in seq(Ntrials)){
 
 Draw grid search results (will be stored in tmp/).
 ```{r, eval=FALSE}
-args<-"--NameProj LUNG_AMoNet_ess --Validation T"
+arguments<-"--NameProj LUNG_AMoNet_ess --Validation T"
 
 source(DirWrapperDraw)
 
@@ -94,7 +99,7 @@ source(DirWrapperDraw)
 It is possible to continue with the search of new parameters on the best model from previous search
 For that simply keep same NameProj, change Param and NewNet=F.
 ```{r}
-args<-"--Param learningrate lambda --NameProj LUNG_AMoNet_ess --organ luad --alpha 1 --iteration 10 --NewNet F --eSS F"
+arguments<-"--Param learningrate lambda --NameProj LUNG_AMoNet_ess --organ luad --alpha 1 --iteration 10 --NewNet F --eSS F"
 ```
 
 Again, run the worflow iteratively.
@@ -111,7 +116,7 @@ for( i in seq(Ntrials)){
 
 Draw grid search results.
 ```{r, eval=FALSE}
-args<-"--NameProj LUNG_AMoNet_ess --Validation T"
+arguments<-"--NameProj LUNG_AMoNet_ess --Validation T"
 
 source(DirWrapperDraw)
 
@@ -120,6 +125,13 @@ source(DirWrapperDraw)
 
 # Run on HPC
 ## Connect HPC with ssh
+
+You should adapt:
+
+- the files inst/bash/workflow.sh to set the grid search hyper-parameters and directory
+- the firsts lines of inst/R/RunTCGAopt_HPC.R to set the local directory where AMoNet package is installed.
+- the variable DirHPC in the following chuck with your HPC directory
+*toimprove
 
 ```{r, eval=FALSE}
 
@@ -136,10 +148,10 @@ DirHPC<-"/data/tmp/lverling/AMoNet"
 
 ssh::scp_upload(session, files = c(DirWorkflow, DirWrapperGS, DirWrapperDraw), to = DirHPC,verbose = T)
 
-# run permission
+# set to unix file format - to debug
+out<-ssh::ssh_exec_wait(session,command = paste("vi +':w ++ff=unix' +':q' ", DirHPC, gsub(".*bash/","/", DirWorkflow), sep = "") )
 
-#out<-ssh::ssh_exec_wait(session,command = paste("dos2unix ",DirHPC,"/*",sep = "") )
-
+#system( paste("dos2unix ", gsub("bash/.*","bash/", DirWorkflow[1]),"*",sep = "")) # ???
 #out<-ssh::ssh_exec_wait(session,command = paste("sed -i -e 's/\r\n//g'",DirHPC,"/*",sep = "") )
 
 ssh::ssh_exec_wait(session,command = paste("chmod 777 ",DirHPC,"/*",sep = "") )
@@ -148,10 +160,11 @@ ssh::ssh_exec_wait(session,command = paste("chmod 777 ",DirHPC,"/*",sep = "") )
 #ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow1.sh"))
 
 outrun<-ssh::ssh_exec_internal(session,command = c(paste("cd",DirHPC),"pwd", "sh workflow.sh"))
+
 rawToChar(outrun$stdout)
 rawToChar(outrun$stderr)
 
-ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC), "sh workflow.sh"))
+#ssh::ssh_exec_wait(session,command = c(paste("cd",DirHPC), "sh workflow.sh"))
 #out<-ssh::ssh_exec_wait(session,command = file.path(DirHPC, "workflow.sh"))
 #ssh::ssh_exec_wait(session,command = 'sh /data/tmp/lverling/workflow1.sh')
 

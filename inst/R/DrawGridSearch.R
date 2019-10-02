@@ -3,29 +3,29 @@
 # wrapper function to run from command line
 # dont run draw if nets of various sizes
 
-#args="--NameProj LUNG_AMoNet_new --Validation T"
+#arguments="--NameProj LUNG_AMoNet_new --Validation T"
 # retrieve arguments eithers form command lines or from environments
 
-XV<-try(args)
+XV<-try(arguments)
 if("try-error"%in%class(XV)){
   print("Arguments retreived from command line")
-  args <- commandArgs(trailingOnly = TRUE)
+  arguments <- commandArgs(trailingOnly = TRUE)
 } else {
   print("Arguments retrieved from R environment")
 }
 
-hh <- paste(unlist(args),collapse=' ')
+hh <- paste(unlist(arguments),collapse=' ')
 listoptions <- unlist(strsplit(hh,'--'))[-1]
-options.args <- sapply(listoptions,function(x){
+options.arguments <- sapply(listoptions,function(x){
   unlist(strsplit(x, ' '))[-1]
 })
 options.names <- sapply(listoptions,function(x){
   option <-  unlist(strsplit(x, ' '))[1]
 })
-names(options.args) <- unlist(options.names)
+names(options.arguments) <- unlist(options.names)
 
-#Correct<-options.args[[3]]
-options.args<-lapply(options.args,function(Correct){
+#Correct<-options.arguments[[3]]
+options.arguments<-lapply(options.arguments,function(Correct){
   if(!is.na(as.numeric(Correct))){
     return(as.numeric(Correct))
   } else if(exists(Correct)){
@@ -36,10 +36,10 @@ options.args<-lapply(options.args,function(Correct){
 })
 
 print("options are:")
-print(options.args)
+print(options.arguments)
 
-if(exists("options.args")){
-  list2env(options.args,globalenv())
+if(exists("options.arguments")){
+  list2env(options.arguments,globalenv())
 }
 NameProjbase<-NameProj
 

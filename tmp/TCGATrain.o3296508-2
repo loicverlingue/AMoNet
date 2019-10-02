@@ -1,0 +1,4 @@
+[1] "Failed to load from local"
+Error in as.vector(y) : object 'Default' not found
+Calls: rm -> intersect -> as.vector
+Execution halted

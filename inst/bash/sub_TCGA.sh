@@ -6,6 +6,9 @@
 #PBS -l mem=20gb
 #PBS -l nodes=1:ppn=4
 #PBS -j oe
+#PBS -o /data/tmp/lverling/AMoNet
 #PBS -m ae
+
+cd /data/tmp/lverling/AMoNet/
 
 /bioinfo/local/build/Centos/R/R-3.4.0/bin/Rscript RunTCGAopt_HPC.R $CLASS

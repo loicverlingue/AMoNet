@@ -8,4 +8,6 @@
 #PBS -j oe
 #PBS -m ae
 
+cd /data/tmp/lverling/AMoNet/
+
 /bioinfo/local/build/Centos/R/R-3.4.0/bin/Rscript DrawGridSearch.R $CLASS

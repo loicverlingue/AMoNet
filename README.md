@@ -13,8 +13,6 @@ Within the ```install_git()``` function you can:
 
 * Change the ```user``` and ```password``` with your own.
 
-* Add the argument ```build_opts="-build-vignettes"``` to build vignettes before installation, but should take additional installation time.
-
 ```{r install}
 library(devtools)
 install_git("https://user:password@gitlab.curie.fr/lverling/amonet.git", dependencies = TRUE)
@@ -35,7 +33,3 @@ browseVignettes("AMoNet")
 
 * Dowload vignettes in Rmarkdown format at https://gitlab.curie.fr/lverling/amonet/tree/master/vignettes and open it with R studio.
 
-* If installation was made with building vignettes (or installation with source package) just do:
-```{r}
-browseVignettes("AMoNet")
-```

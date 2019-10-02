@@ -11,8 +11,8 @@
 #' @export
 #'
 SelectGridSearch<-function(NameProjbase="LungRegular", DIR=file.path(getwd(),"/model"),
-                           Default=Default,
-                           Bondaries=Bondaries,
+                           #Default=Default,
+                           #Bondaries=Bondaries,
                            ValSelect=T){
   #addOutputs=Default$Interval,MiniBatch=Default$MiniBatch,
   #Adam=!is.null(Default$Optimizer),LSTM=Default$LSTM,
@@ -154,7 +154,7 @@ SelectGridSearch<-function(NameProjbase="LungRegular", DIR=file.path(getwd(),"/m
           CO<-COST[as.numeric(names(RES[[i]]))]
           bp<-boxplot(CO~RES[[i]], ylab=paste( ifelse(ValSelect,"Validation","Training"),"Cost"), main = i)
           PRED<-bp$names[bp$stats[3,]==min(bp$stats[3,])]
-          Default[[i]]<-PRED
+          net$Parameters$Default[[i]]<-PRED
 
         }
       }

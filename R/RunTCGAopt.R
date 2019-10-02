@@ -38,37 +38,6 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
 
   NameProjbase<-NameProj
 
-  ###############
-  # initiate AMoNet
-  if(is.null(GENESman)&is.null(treatmt)){
-    print("You should select a list of genes in initial function to build the net")
-    stop()
-  }
-
-  # update Default parameters
-  CALL<-mget(names(formals()))
-  CNames<-intersect(names(Default),names(CALL))
-  Default[CNames] <- CALL[CNames]
-
-  if(FALSE){
-  #### control optional arguments
-  # totest
-  #CLnames<-list(...)
-  CLnames<-match.call()
-  CLnames<-CLnames[names(CLnames)%in%names(Default)]
-  if(length(CLnames)>0){
-    Default[names(CLnames)]<-CLnames
-    print("updated:")
-    print(Default[names(CLnames)])
-  }
-  }
-
-  ########
-  # initialize the net
-  net<-AMoNet(GENESman = GENESman, treatmt = treatmt)
-  net$Parameters$Default<-Default
-  net$Parameters$Boundaries<-Boundaries
-
   ########
   # Genes sets for phenotypes: take all here
   GenesSelec<-rbind(AMoNet::GenesSelectImmuno, AMoNet::GenesSelecHall)
@@ -103,7 +72,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
     # ok
 
     net<-SelectGridSearch(NameProjbase = NameProjbase,
-                              DIR=DIR, Default=net$Parameters$Default,
+                              DIR=DIR, #Default=net$Parameters$Default,
                               ValSelect=T)
 
     # update Hyperparameters with new ones
@@ -121,8 +90,26 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
 
   } else { # this is used for the first net building
 
+    ###############
+    # initiate AMoNet
+    if(is.null(GENESman)&is.null(treatmt)){
+      print("You should select a list of genes in initial function to build the net")
+      stop()
+    }
+
+    # update Default parameters with arguments passed to function
+    CALL<-mget(names(formals()))
+    CNames<-intersect(names(Default),names(CALL))
+    Default[CNames] <- CALL[CNames]
+
+    ########
+    # initialize the net
+    net<-AMoNet(GENESman = GENESman, treatmt = treatmt)
+    net$Parameters$Default<-Default
+    net$Parameters$Boundaries<-Boundaries
+
     # update Hyperparameters with new ones
-    net$Parameters$Default<-HyperP(C=Param,Default = net$Parameters$Default,
+    net$Parameters$Default<-HyperP(C=Param, Default = net$Parameters$Default,
                                    Boundaries = net$Parameters$Boundaries)
 
     net<-build.AMoNet(object = net,
@@ -230,7 +217,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
     tic=Sys.time()
 
     net<-train.AMoNet(net, y= net$Data$y[,net$TrainSplit$Train,drop=F],
-           MUT= net$Data$MUT[net$TrainSplit$Train], treatmt=NULL,
+           MUT= net$Data$MUT[net$TrainSplit$Train], treatmt=treatmt,
            Init = net$Data$Init[,net$TrainSplit$Train],
            ValMut = net$Parameters$Default$ValMut,
            iStates= net$iStates[net$TrainSplit$Train,],
@@ -262,7 +249,7 @@ RunTCGAopt<-function(Param=c("nblayers", "MinConnect"), DIR=getwd(),
                 MUT= net$Data$MUT[net$TrainSplit$Train],
                 Init = net$Data$Init[,net$TrainSplit$Train],
                 iStates= net$iStates[net$TrainSplit$Train,],
-                treatmt=NULL) # CGS, NETall1, Default,ValMut = net$Parameters$Default$ValMut,FixNodes=FixNodes, Plot=F
+                treatmt=treatmt) # CGS, NETall1, Default,ValMut = net$Parameters$Default$ValMut,FixNodes=FixNodes, Plot=F
       # Quant=3, no_cores=net$Parameters$Default$no_cores
   }
 
