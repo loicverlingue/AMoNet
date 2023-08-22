@@ -17,11 +17,14 @@ Depends:
   R (>= 3.4.0)
 Imports: 
   cgdsr (>= 1.2.10),
+  ggplot2 (>= 3.3.0),
   matrixStats (>= 0.53.1),
   parallel (>= 3.4.4),
   reshape2 (>= 1.4.3), 
   stringr (>= 1.4.0), 
   survival (>= 2.41.3),
+Remotes:
+  github::https://github.com/cBioPortal/cgdsr
 Suggests:
   rmarkdown (>= 1.9),
   knitr (>= 1.20)
