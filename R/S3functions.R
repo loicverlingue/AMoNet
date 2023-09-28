@@ -534,7 +534,7 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
     # train metrics
     Pred<-rowMeans(Pred_mat)
 
-    Cindex<-survival::survConcordance(survival::Surv(newy[,1],newy[,2])~as.numeric(Pred))
+    Cindex<-survival::concordance(survival::Surv(newy[,1],newy[,2])~as.numeric(Pred))
 
     # store
     object$Predict$metrics$Cindex<-c(Cindex$concordance,Cindex$std.err)
@@ -560,30 +560,37 @@ predict.AMoNet<-function(object, newy=NULL, newInit=NULL, newiStates=NULL, newMU
 #' @aliases plot
 #' @usage plot(x=net$Predict, ...)
 #' @param x object of class *predict.AMoNet* generated with the \code{predict()} function and accessible with *AMoNet* object subobject \code{object$Predict}.
+#' @param jitter allows adding a random offset to prediction points in case of overlap.
 #' @param ... additional arguments for the \code{plot()} function.
 #' @return The relation between true and predicted values.
 #' @export
-plot.predict.AMoNet<-function(x=net$Predict,
-                              main= "predictions",
-                              ylab="True survival time intervals",
-                              xlab="Predicted mean survival probability",
-                              pch=1,
-                              ...){
+plot.predict.AMoNet <- function(x = net$Predict,
+                                main = "Predictions",
+                                ylab = "True survival time intervals",
+                                xlab = "Predicted mean survival probability",
+                                pch = 1,
+                                jitter = 0,
+                                ...) {
 
-  Pred<-rowMeans(x$Pred_mat)
-  newy<-x$newy
+  Pred <- rowMeans(x$Pred_mat)
+  newy <- x$newy
 
-  par(mfrow=c(1,1))
-  par(mar=c(4,4,2,2)+0.1)
+  par(mfrow = c(1, 1))
+  par(mar = c(4, 4, 2, 2) + 0.1)
 
-  plot(Pred,newy[,1],main=main,ylab=ylab,xlab=xlab,pch=ifelse(newy[,2]==0,2,1), ...)
-  #CindexTrain<-survConcordance(Surv(Ytrain[Train,1],Ytrain[Train,2])~Pred_train)
-  #}
-  legend("topleft",legend = c(paste("C-index =", 1-round(x$metrics$Cindex["concordant"],3),
-                                    "; std =", round(x$metrics$Cindex["std(c-d)"],3)),
-                              paste("MSE =",round(x$metrics$Cost,3))#,
-                              #paste("IPCW =",round(as.numeric(IPCWtrain$AppCindex),3))
-  ),cex=0.5)
+  # Adding jittering.
+  plot(jitter(Pred, amount = jitter.amount), jitter(newy[, 1], amount = jitter.amount),
+       main = main, ylab = ylab, xlab = xlab,
+       pch = ifelse(newy[, 2] == 0, 2, 1)
+
+  )
+
+
+  legend("topleft",
+         legend = c(paste("C-index =", round(x$metrics$Cindex["concordant"], 3),
+                          "; std =", round(x$metrics$Cindex["std(c-d)"], 3)),
+                    paste("MSE =", round(x$metrics$Cost, 3))),
+         cex = 0.5)
 
 }
 
